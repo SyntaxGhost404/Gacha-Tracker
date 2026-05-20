@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+    <meta name="description" content="GachaRevenue — track upcoming gacha games, pre-registration titles, and games in development." />
+    <title>GachaRevenue | Upcoming Gacha Games</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons" />
+    <link rel="stylesheet" href="/src/styles/globals.css" />
+    <link rel="stylesheet" href="/src/styles/animations.css" />
+    <link rel="stylesheet" href="/src/styles/themes.css" />
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+    <script>
+      const themePreference =
+        localStorage.getItem('themePreference') ||
+        (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+      const rootElement = document.documentElement;
+      if (themePreference === 'dark') {
+        rootElement.classList.add('dark-mode');
+      } else {
+        rootElement.classList.remove('dark-mode');
+      }
+    </script>
+  </body>
+</html>
