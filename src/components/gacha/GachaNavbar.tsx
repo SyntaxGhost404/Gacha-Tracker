@@ -160,16 +160,21 @@ const SearchInput = styled.input<{ $open: boolean }>`
     border-color: var(--global-text-muted);
   }
 
+  @media (min-width: 601px) {
+    width: 16rem;
+    padding: 0.4rem 2.5rem 0.4rem 2rem;
+  }
+
   @media (max-width: 600px) {
     width: 100%;
-    background: #151515;
-    color: #fff;
+    background: var(--global-secondary-bg);
+    color: var(--global-text);
     padding: 0.75rem 2.5rem 0.75rem 2.5rem;
     font-size: 1rem;
     border-radius: 0.5rem;
-    border: 1px solid #333;
+    border: 1px solid var(--global-border);
     &::placeholder {
-      color: #999;
+      color: var(--global-text-muted);
     }
   }
 `;
@@ -182,6 +187,18 @@ const MobileSearchIcon = styled.div`
     left: 1.25rem;
     color: var(--global-text-muted);
     pointer-events: none;
+  }
+`;
+
+const DesktopSearchIcon = styled.div`
+  display: flex;
+  position: absolute;
+  left: 0.65rem;
+  color: var(--global-text-muted);
+  pointer-events: none;
+
+  @media (max-width: 600px) {
+    display: none;
   }
 `;
 
@@ -214,7 +231,7 @@ const SearchDropdown = styled.div`
   max-width: calc(100vw - 1rem);
   background: var(--global-card-bg);
   border: 1px solid var(--global-border);
-  border-radius: var(--global-border-radius);
+  border-radius: 0.5rem;
   box-shadow: 0 8px 24px var(--global-card-shadow);
   overflow: hidden;
   animation: slideDown 0.2s ease;
@@ -261,14 +278,11 @@ const ResultImageContainer = styled.div`
   border-radius: 0.5rem;
   overflow: hidden;
   flex-shrink: 0;
-  background: var(--global-secondary-bg);
-  display: none;
-
-  @media (max-width: 600px) {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
+  background: #131313;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 
   img {
     width: 100%;
@@ -289,22 +303,11 @@ const ResultName = styled.span`
   color: var(--global-text);
 `;
 
-const ResultMeta = styled.span`
-  font-size: 0.72rem;
-  color: var(--global-text-muted);
-  @media (max-width: 600px) {
-    display: none;
-  }
-`;
-
 const ResultTags = styled.div`
-  display: none;
-  @media (max-width: 600px) {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.35rem;
-    align-items: center;
-  }
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  align-items: center;
 `;
 
 const ResultTag = styled.span`
@@ -330,14 +333,10 @@ const ViewAllBtn = styled.button`
   font-size: 0.85rem;
   font-weight: 700;
   cursor: pointer;
-  display: none;
+  display: flex;
   align-items: center;
   gap: 0.4rem;
   transition: opacity 0.15s ease;
-
-  @media (max-width: 600px) {
-    display: flex;
-  }
 
   &:hover {
     opacity: 0.8;
@@ -372,6 +371,12 @@ const IconBtn = styled.button`
 
   &:hover {
     background: var(--global-button-hover-bg);
+  }
+`;
+
+const SearchToggleBtn = styled(IconBtn)`
+  @media (min-width: 601px) {
+    display: none;
   }
 `;
 
@@ -594,6 +599,7 @@ export function GachaNavbar() {
             Home
           </NavItem>
           <NavItem to='/games'>Games</NavItem>
+          <NavItem to='/news' id="nav-news-link">Latest News</NavItem>
         </NavLinks>
 
         <Spacer />
@@ -680,6 +686,9 @@ export function GachaNavbar() {
               <MobileSearchIcon>
                 <FiSearch size={16} />
               </MobileSearchIcon>
+              <DesktopSearchIcon>
+                <FiSearch size={14} />
+              </DesktopSearchIcon>
               <SearchInput
                 ref={searchRef}
                 $open={searchOpen}
@@ -689,7 +698,7 @@ export function GachaNavbar() {
                 onFocus={() => query && setShowDropdown(true)}
                 aria-label='Search Games'
               />
-              {searchOpen && query && (
+              {query && (
                 <SearchClearBtn onClick={() => setQuery('')} tabIndex={-1}>
                   <FiX size={16} />
                 </SearchClearBtn>
@@ -697,17 +706,17 @@ export function GachaNavbar() {
             </SearchWrapper>
 
             {!searchOpen ? (
-              <IconBtn onClick={openSearch} title='Search (Ctrl+K)'>
+              <SearchToggleBtn onClick={openSearch} title='Search (Ctrl+K)'>
                 <FiSearch />
                 <ShortcutHint>Ctrl K</ShortcutHint>
-              </IconBtn>
+              </SearchToggleBtn>
             ) : (
-              <IconBtn onClick={closeSearch} title='Close search'>
+              <SearchToggleBtn onClick={closeSearch} title='Close search'>
                 <FiX />
-              </IconBtn>
+              </SearchToggleBtn>
             )}
 
-            {searchOpen && showDropdown && query && (
+            {showDropdown && query && (
               <SearchDropdown>
                 {results.length > 0 ? (
                   <>
@@ -728,9 +737,6 @@ export function GachaNavbar() {
                         </ResultImageContainer>
                         <ResultContent>
                           <ResultName>{g.name}</ResultName>
-                          <ResultMeta>
-                            {g.genre} · {g.regions.join(', ')}
-                          </ResultMeta>
                           <ResultTags>
                             <ResultTag>
                               {g.releaseDate ? g.releaseDate.substring(0, 4) : 'TBA'}

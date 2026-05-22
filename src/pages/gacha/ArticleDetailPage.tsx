@@ -124,6 +124,12 @@ const ArticleLayout = styled.div`
   }
 `;
 
+const MainColumn = styled.div`
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+`;
+
 const MainContent = styled.article`
   background: var(--global-card-bg);
   border: 1px solid var(--global-border);
@@ -624,19 +630,20 @@ export function ArticleDetailPage() {
   return (
     <PageWrapper id={`article-page-wrapper-${article.id}`}>
       <PageInner id="article-page-inner">
-        <NavigationRow id="article-navigation-row">
-          <NavLinksGroup id="article-nav-links-group">
-            <BackToDashBtn to="/" id="back-to-dash-btn">
-              <FiHome data-testid="dashboard-icon" /> Dashboard
-            </BackToDashBtn>
-            <BackToNewsBtn to="/news" id="back-to-news-btn">
-              <FiFileText data-testid="news-icon" /> Latest News
-            </BackToNewsBtn>
-          </NavLinksGroup>
-        </NavigationRow>
-
         <ArticleLayout id="article-main-layout">
-          <MainContent id="article-block">
+          <MainColumn id="article-main-column">
+            <NavigationRow id="article-navigation-row">
+              <NavLinksGroup id="article-nav-links-group">
+                <BackToDashBtn to="/" id="back-to-dash-btn">
+                  <FiHome data-testid="dashboard-icon" /> Dashboard
+                </BackToDashBtn>
+                <BackToNewsBtn to="/news" id="back-to-news-btn">
+                  <FiFileText data-testid="news-icon" /> Latest News
+                </BackToNewsBtn>
+              </NavLinksGroup>
+            </NavigationRow>
+
+            <MainContent id="article-block">
             <HeaderPadding id="article-header-section">
               <ArticleTitle id="article-title-text">{article.title}</ArticleTitle>
               
@@ -724,6 +731,7 @@ export function ArticleDetailPage() {
               </CommunityReactions>
             </BodyPadding>
           </MainContent>
+          </MainColumn>
 
           <StickySidebar id="article-sidebar">
             <SidebarCard id="latest-news-sidebar-card">

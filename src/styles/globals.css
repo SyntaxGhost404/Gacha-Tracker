@@ -6,6 +6,14 @@
 }
 
 /* Basic Styles for the App */
+html, body, #root {
+  height: 100%;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+}
+
 body {
   font-family:
     ui-sans-serif,
@@ -15,22 +23,11 @@ body {
     Segoe UI Emoji,
     Segoe UI Symbol,
     Noto Color Emoji;
-  margin: 0 auto; /* Center the body content */
-  padding: 4.5rem 1rem 1.5rem; /* Top, Horizontal, Bottom padding */
-  max-width: 105rem; /* Max width to constrain content size */
   background-color: var(
     --global-primary-bg
   ); /* Background color from variable */
   color: var(--global-text); /* Text color from variable */
-  transition: 0.2s ease; /* Smooth transition for changes */
-}
-
-/* Responsive Styles */
-@media (max-width: 31.25rem) {
-  /* 500px */
-  body {
-    padding: 4rem 0.5rem 0.5rem; /* Adjust padding for small screens */
-  }
+  transition: background-color 0.2s ease, color 0.2s ease; /* Smooth transition for color changes only */
 }
 
 /* Text Selection Color */
@@ -41,24 +38,24 @@ body {
   color: var(--primary-accent); /* Text color when selected */
 }
 
-/* Custom Scrollbar Styles */
-/* Main scrollbar styling */
-::-webkit-scrollbar {
+/* Custom Scrollbar Styles (Applied only to sub-containers, excluding main website body/viewport and primary scroll container) */
+/* Main scrollbar styling for outer components */
+:not(html):not(body):not(#main-scroll-container)::-webkit-scrollbar {
   width: 0.3125rem; /* 5px */
 }
 
 /* Track of the scrollbar, set to be transparent */
-::-webkit-scrollbar-track {
+:not(html):not(body):not(#main-scroll-container)::-webkit-scrollbar-track {
   background: transparent;
 }
 
 /* Handle of the scrollbar */
-::-webkit-scrollbar-thumb {
+:not(html):not(body):not(#main-scroll-container)::-webkit-scrollbar-thumb {
   background: #888; /* Gray color for the handle */
   border-radius: 0.2rem; /* Rounded handle */
 }
 
 /* Handle color on hover */
-::-webkit-scrollbar-thumb:hover {
+:not(html):not(body):not(#main-scroll-container)::-webkit-scrollbar-thumb:hover {
   background: #555; /* Darker gray when hovering */
 }

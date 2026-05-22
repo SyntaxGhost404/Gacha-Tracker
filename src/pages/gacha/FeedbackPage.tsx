@@ -225,7 +225,7 @@ const SuccessCard = styled.div`
   align-items: center;
   gap: 1.25rem;
   box-shadow: 0 4px 20px var(--global-card-shadow);
-  animation: scaleUp 0.3s ease;
+  animation: popIn 0.3s ease;
 `;
 
 const SuccessIconWrapper = styled.div`

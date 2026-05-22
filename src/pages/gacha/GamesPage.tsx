@@ -74,6 +74,20 @@ const FeedbackBox = styled.div`
   color: var(--global-text-muted);
   line-height: 1.55;
 
+  .mobile-only {
+    display: inline;
+    @media (min-width: 601px) {
+      display: none;
+    }
+  }
+
+  .desktop-only {
+    display: none;
+    @media (min-width: 601px) {
+      display: inline;
+    }
+  }
+
   a {
     color: var(--global-text);
     font-weight: 700;
@@ -403,8 +417,12 @@ export function GamesPage() {
             Discover upcoming gacha games, pre-registration titles, and games in development.
           </PageSubtitle>
           <FeedbackBox>
-            Noticed any inconsistencies or want to add a new game to the list? Feel free to drop one at{' '}
-            <Link to="/feedback" id="games-feedback-link">feedback page</Link>
+            <span className="mobile-only">Noticed any inconsistencies or want to add a new game to the list? Feel free to drop one at </span>
+            <span className="desktop-only">Our upcoming titles database is completely community-driven. If you've discovered any missing gacha games, outdated release schedules, or platform details, we invite you to help us maintain a pristine and accurate record by submitting updates via our </span>
+            <Link to="/feedback" id="games-feedback-link">
+              <span className="mobile-only">feedback page</span>
+              <span className="desktop-only">community feedback and submissions page</span>
+            </Link>
           </FeedbackBox>
         </PageHeader>
 

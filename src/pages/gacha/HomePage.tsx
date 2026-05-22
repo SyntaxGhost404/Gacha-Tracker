@@ -20,59 +20,31 @@ const PageWrapper = styled.div`
 `;
 
 const Hero = styled.section`
-  padding: 5rem 1.5rem 4rem;
+  padding: 4rem 1.5rem 3rem;
   text-align: center;
   border-bottom: 1px solid var(--global-border);
-  position: relative;
-  
-  /* Fallback and responsive background images */
-  background-color: var(--global-card-bg);
-  background-image: 
-    linear-gradient(
-      to bottom,
-      rgba(0, 0, 0, 0.5) 0%,
-      rgba(0, 0, 0, 0.8) 100%
-    ),
-    url('/public/others/hero-mobile.jpg');
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-
-  @media (min-width: 769px) {
-    background-image: 
-      linear-gradient(
-        to bottom,
-        rgba(0, 0, 0, 0.5) 0%,
-        rgba(0, 0, 0, 0.8) 100%
-      ),
-      url('/public/others/hero-desktop.png');
-  }
 `;
 
 const HeroInner = styled.div`
   max-width: 40rem;
   margin: 0 auto;
-  position: relative;
-  z-index: 2;
 `;
 
 const HeroTitle = styled.h1`
   font-size: clamp(1.75rem, 5vw, 3rem);
-  font-weight: 850;
-  color: #ffffff;
+  font-weight: 800;
+  color: var(--global-text);
   letter-spacing: -0.035em;
   line-height: 1.2;
   margin: 0 0 0.85rem;
-  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
   animation: slideDown 0.4s ease;
 `;
 
 const HeroSub = styled.p`
-  font-size: clamp(0.9rem, 2vw, 1.05rem);
-  color: rgba(255, 255, 255, 0.85);
-  line-height: 1.75;
-  margin: 0 0 2.2rem;
-  text-shadow: 0 1px 6px rgba(0, 0, 0, 0.4);
+  font-size: clamp(0.9rem, 2vw, 1rem);
+  color: var(--global-text-muted);
+  line-height: 1.7;
+  margin: 0 0 2rem;
   animation: slideDown 0.4s ease 0.05s both;
 `;
 
@@ -89,18 +61,16 @@ const PrimaryBtn = styled(Link)`
   align-items: center;
   gap: 0.45rem;
   padding: 0.65rem 1.4rem;
-  border-radius: var(--global-border-radius);
-  background: #ffffff;
-  color: #111111;
+  border-radius: 0.35rem;
+  background: var(--global-text);
+  color: var(--global-primary-bg);
   font-size: 0.88rem;
   font-weight: 700;
   text-decoration: none;
-  transition: opacity 0.15s ease, transform 0.15s ease;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+  transition: opacity 0.15s ease;
 
   &:hover {
-    opacity: 0.95;
-    transform: translateY(-1px);
+    opacity: 0.85;
   }
 `;
 
@@ -109,20 +79,19 @@ const SecondaryBtn = styled(Link)`
   align-items: center;
   gap: 0.45rem;
   padding: 0.65rem 1.4rem;
-  border-radius: var(--global-border-radius);
-  background: rgba(255, 255, 255, 0.08);
-  color: rgba(255, 255, 255, 0.9);
+  border-radius: 0.35rem;
+  background: transparent;
+  color: var(--global-text-muted);
   font-size: 0.88rem;
   font-weight: 600;
   text-decoration: none;
-  border: 1px solid rgba(255, 255, 255, 0.25);
-  backdrop-filter: blur(4px);
+  border: 1px solid var(--global-border);
   transition: all 0.15s ease;
 
   &:hover {
-    background: rgba(255, 255, 255, 0.15);
-    color: #ffffff;
-    border-color: rgba(255, 255, 255, 0.45);
+    background: var(--global-secondary-bg);
+    color: var(--global-text);
+    border-color: var(--global-text-muted);
   }
 `;
 
@@ -808,11 +777,6 @@ export function HomePage() {
             );
           })}
         </FeaturedList>
-
-        <FeedbackBox>
-          Noticed any inconsistencies or want to add a new gacha game to the tracker?{' '}
-          <a href='#'>Feel free to drop one at feedback page</a>
-        </FeedbackBox>
       </ContentInner>
     </PageWrapper>
   );

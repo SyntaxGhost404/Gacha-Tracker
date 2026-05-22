@@ -1,11 +1,15 @@
 import React from 'react';
 import styled from 'styled-components';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { FaReddit, FaDiscord, FaTwitter } from 'react-icons/fa';
 
 const FooterWrapper = styled.footer`
   margin-top: 4rem;
   border-top: 1px solid var(--global-border);
+
+  @media (max-width: 768px) {
+    padding-bottom: 5.25rem; /* Make room for MobileBottomNavbar on mobile */
+  }
 `;
 
 const FooterInner = styled.div`
@@ -149,6 +153,20 @@ const Disclaimer = styled.p`
 `;
 
 export function GachaFooter() {
+  const location = useLocation();
+
+  const handleLinkClick = (to: string) => (e: React.MouseEvent<HTMLAnchorElement>) => {
+    if (location.pathname === to) {
+      e.preventDefault();
+      const container = document.getElementById('main-scroll-container');
+      if (container) {
+        container.scrollTo({ top: 0, behavior: 'smooth' });
+      } else {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+    }
+  };
+
   return (
     <FooterWrapper>
       <FooterInner>
@@ -159,7 +177,7 @@ export function GachaFooter() {
           <FooterText>
             An independent platform tracking upcoming gacha games, release dates,
             and development status. Not affiliated with or endorsed by any
-            featured game or company.
+            featured gacha game or company.
           </FooterText>
         </FooterLeft>
 
@@ -191,8 +209,8 @@ export function GachaFooter() {
 
           <FooterCol>
             <ColTitle>Resources</ColTitle>
-            <FooterLink href='#'>Changelog</FooterLink>
-            <FooterRouterLink to='/feedback' id="footer-feedback-link">Feedback</FooterRouterLink>
+            <FooterRouterLink to='/changelog' id="footer-changelog-link" onClick={handleLinkClick('/changelog')}>Changelog</FooterRouterLink>
+            <FooterRouterLink to='/feedback' id="footer-feedback-link" onClick={handleLinkClick('/feedback')}>Feedback</FooterRouterLink>
           </FooterCol>
         </FooterRight>
       </FooterInner>

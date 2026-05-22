@@ -574,6 +574,20 @@ const FeedbackBox = styled.div`
   color: var(--global-text-muted);
   line-height: 1.55;
 
+  .mobile-only {
+    display: inline;
+    @media (min-width: 601px) {
+      display: none;
+    }
+  }
+
+  .desktop-only {
+    display: none;
+    @media (min-width: 601px) {
+      display: inline;
+    }
+  }
+
   a {
     color: var(--global-text);
     font-weight: 700;
@@ -659,8 +673,12 @@ export function NewsPage() {
             Official announcements, development milestones, beta tests, and status reports for ongoing gacha titles.
           </PageSubtitle>
           <FeedbackBox>
-            Spotted a news update we missed or want to submit an official press release?{' '}
-            <Link to="/feedback" id="news-feedback-link">Drop a tip at feedback page</Link>
+            <span className="mobile-only">Spotted a news update we missed or want to submit an official press release? </span>
+            <span className="desktop-only">Have we overlooked an upcoming closed beta test timeline, official development milestone, or regional release announcement? Or are you a developer wanting to pitch a press release or media kit for our coverage feed? We appreciate all community tips to keep our news archive accurate. Please go ahead and </span>
+            <Link to="/feedback" id="news-feedback-link">
+              <span className="mobile-only">Drop a tip at feedback page</span>
+              <span className="desktop-only">submit a news tip via our dedicated feedback page</span>
+            </Link>
           </FeedbackBox>
         </PageHeader>
 
