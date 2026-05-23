@@ -13,17 +13,31 @@ export interface ChangelogItem {
 
 export const changelogData: ChangelogItem[] = [
   {
+    version: '1.3.2',
+    date: 'May 23, 2026',
+    title: 'Mobile Layout and Navigation Density Refinement',
+    isLatest: true,
+    categories: {
+      improved: [
+        'Optimized layout density on mobile viewports by hiding the redundant top "Back to Dashboard" and "Back to Home" links on the Games, News, Feedback, and Changelog directory pages, while preserving full visibility and actionability on desktop screens.'
+      ]
+    }
+  },
+  {
     version: '1.3.1',
     date: 'May 22, 2026',
     title: 'Scroll Optimization & Aesthetic Refinement',
-    isLatest: true,
     categories: {
       added: [
         'Introduced a responsive "Scroll to Top" floating button dynamically adapted for mobile (icon-only tag) and desktop (labelled action button).',
         'Integrated inline high-fidelity brand SVGs for supported gaming platforms (Android, iOS, PC, Nintendo Switch, PS5) and major engines (Unity, Unreal Engine) inside the games index list.',
-        'Launched an experimental mobile bottom navigation bar incorporating dedicated tabs for Home, Games, News, and an Others trigger popup.'
+        'Launched an experimental mobile bottom navigation bar incorporating dedicated tabs for Home, Games, News, and an Others trigger popup.',
+        'Configured explicit responsive background images (hero-desktop.png and hero-mobile.jpg) inside the Homepage Hero section with premium, theme-aware masks.',
+        'Mapped high-quality custom banner and profile images for the remaining 14 gacha games inside the directory database.'
       ],
       improved: [
+        'Completely rewrote the desktop GachaNavbar and mobile MobileBottomNavbar from scratch to achieve an elite visual design and immaculate code organization.',
+        'Added an elegant bottom caret to the mobile Others popup menu, seamlessly centering it above the OTHERS tab trigger.',
         'Modified the floating scroll-to-top button border-radius to perfectly align with the website\'s boxy-but-rounded design language utilizing custom CSS tokens.',
         'Enhanced same-page footer navigation clicks to intercept page reloads and perform elegant viewport scroll-to-top movements.',
         'Reverted the main website body and outer viewport to use default system scrollbars, ensuring dynamic show/hide behaviors based on OS scroll states.',
@@ -34,18 +48,22 @@ export const changelogData: ChangelogItem[] = [
         'Upgraded QuiverAI vector brand logos for PlayStation 5 (PS5), Nintendo Switch, Unity, and Unreal Engine inside the games index catalog to resolve rendering bugs.',
         'Isolated the global navigation header from the core scrolling viewport, causing container scrollbar tracks to calculate and render exactly beneath the header rather than overlapping it.',
         'Removed custom-styled scrollbars from the main outer window scrolling viewport, restoring default system scrollbars that fade out automatically.',
-        'Configured smart, directional container scroll handlers that dynamically slide the mobile navigation bar into view on scroll up and out of view on scroll down.',
-        'Synchronized the floating "Scroll to Top" action button to automatically scale and shift vertical space in tandem with the slide behaviors of the bottom navigation bar, preventing layout overlaps.',
+        'Configured ultra-responsive, directional container scroll handlers that dynamically slide the mobile bottom navigation bar into view on scroll up and out of view on scroll down with micro-gesture threshold tracking, while auto-collapsing open popups upon scroll movement.',
+        'Synchronized the floating "Scroll to Top" action button with the mobile bottom navbar visibility status and popup open states, causing it to automatically drop smoothly when the navbar slides out of view, and shift upward or fade out completely when the mobile bottom menu is open to prevent any visual and interaction overlaps.',
         'Optimized mobile scroll margins by introducing extra bottom spacing offsets within footer panels to comfortably clear the mobile navigation bar.',
-        'Repositioned and anchored the mobile Others popup menu directly relative to the main bottom navigation bar container (BottomBarContainer) with a precise 0.5rem right-side offset, ensuring pixel-perfect horizontal alignment directly above the OTHERS tab button across all mobile display sizes.',
+        'Refactored the mobile Others popup menu alignment by hoisting it to be a direct child of the main fixed bottom navigation bar (BottomBarContainer) with a precise 0.75rem right-side offset and enclosing click-outside triggers on the entire navbar, ensuring pixel-perfect, bulletproof alignment directly above the OTHERS tab button across all mobile display sizes.',
         'Refined the visual mask bridge pseudo-element (::after) on the bottom edge of the Others popup with custom inset borders, seamlessly blending its layout flush over the bottom navigation bar\'s top border to remove any vertical gaps.',
-        'Corrected mobile search bar contrast in light theme by replacing hardcoded dark colors with adaptive CSS theme variables.'
+        'Corrected mobile search bar contrast in light theme by replacing hardcoded dark colors with adaptive CSS theme variables.',
+        'Restored cohesive purplish active state colors (var(--primary-accent)) for the mobile "Others" navigation tab when its popup menu is active, ensuring it does not revert to plain gray on hover/focus.',
+        'Introduced elegant hover and active state highlights with a purplish tint (var(--primary-accent)) for items inside the mobile navigation "Others" popup container.'
       ],
       fixed: [
-        'Resolved a layout issue where the "Read more" toggle rendered unnecessarily for short game description texts on the games directory list.'
+        'Resolved a layout issue where the "Read more" toggle rendered unnecessarily for short game description texts on the games directory list.',
+        'Corrected background resolution and contrast inside the Homepage Hero section on light/dark modes when user-uploaded images are missing.'
       ],
       technical: [
-        'Integrated modular event listeners to dynamically track and toggle display visibilities of layout back-to-top indicators.'
+        'Integrated modular event listeners to dynamically track and toggle display visibilities of layout back-to-top indicators.',
+        'Standardized all interface icons inside navigation headers to use lucide-react exclusively.'
       ]
     }
   },

@@ -20,37 +20,92 @@ const PageWrapper = styled.div`
 `;
 
 const Hero = styled.section`
-  padding: 4rem 1.5rem 3rem;
+  position: relative;
+  padding: 5rem 1.5rem 4rem;
   text-align: center;
   border-bottom: 1px solid var(--global-border);
+  background-color: var(--global-primary-bg);
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  overflow: hidden;
+
+  /* Premium background layout with radial gradient glow fallback */
+  background-image: radial-gradient(circle at 50% 30%, var(--global-secondary-bg) 0%, var(--global-primary-bg) 100%);
+
+  /* User-uploaded responsive backgrounds, overlayed with a theme-aware readability mask */
+  @media (max-width: 768px) {
+    background-image: linear-gradient(to bottom, rgba(var(--hero-overlay-rgb, 12, 12, 12), 0.82), rgba(var(--hero-overlay-rgb, 12, 12, 12), 0.94)), url('/hero-mobile.jpg');
+  }
+
+  @media (min-width: 769px) {
+    padding: 6rem 2rem 5rem;
+    background-image: linear-gradient(to bottom, rgba(var(--hero-overlay-rgb, 12, 12, 12), 0.78), rgba(var(--hero-overlay-rgb, 12, 12, 12), 0.94)), url('/hero-desktop.png');
+  }
+
+  /* Light theme variable overrides */
+  :root:not(.dark-mode) & {
+    --hero-overlay-rgb: 247, 247, 249;
+    background-image: radial-gradient(circle at 50% 30%, #ffffff 0%, #f3f3f6 100%);
+
+    @media (max-width: 768px) {
+      background-image: linear-gradient(to bottom, rgba(247, 247, 249, 0.75), rgba(247, 247, 249, 0.96)), url('/hero-mobile.jpg');
+    }
+
+    @media (min-width: 769px) {
+      background-image: linear-gradient(to bottom, rgba(247, 247, 249, 0.72), rgba(247, 247, 249, 0.94)), url('/hero-desktop.png');
+    }
+  }
+
+  /* Subtle futuristic accent glow */
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at 50% 35%, var(--primary-accent)0c, transparent 65%);
+    pointer-events: none;
+    z-index: 1;
+  }
 `;
 
 const HeroInner = styled.div`
-  max-width: 40rem;
+  max-width: 44rem;
   margin: 0 auto;
+  position: relative;
+  z-index: 2;
 `;
 
 const HeroTitle = styled.h1`
-  font-size: clamp(1.75rem, 5vw, 3rem);
-  font-weight: 800;
+  font-size: clamp(2rem, 5.5vw, 3.25rem);
+  font-weight: 850;
   color: var(--global-text);
-  letter-spacing: -0.035em;
-  line-height: 1.2;
-  margin: 0 0 0.85rem;
+  letter-spacing: -0.04em;
+  line-height: 1.15;
+  margin: 0 0 1rem;
   animation: slideDown 0.4s ease;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.12);
+
+  :root.dark-mode & {
+    text-shadow: 0 2px 20px rgba(0, 0, 0, 0.6);
+  }
 `;
 
 const HeroSub = styled.p`
-  font-size: clamp(0.9rem, 2vw, 1rem);
+  font-size: clamp(0.95rem, 2.2vw, 1.05rem);
   color: var(--global-text-muted);
   line-height: 1.7;
-  margin: 0 0 2rem;
+  margin: 0 0 2.2rem;
   animation: slideDown 0.4s ease 0.05s both;
+  text-shadow: 0 1px 6px rgba(0, 0, 0, 0.08);
+
+  :root.dark-mode & {
+    text-shadow: 0 1px 12px rgba(0, 0, 0, 0.5);
+  }
 `;
 
 const HeroCTA = styled.div`
   display: flex;
-  gap: 0.6rem;
+  gap: 0.75rem;
   justify-content: center;
   flex-wrap: wrap;
   animation: slideUp 0.4s ease 0.1s both;

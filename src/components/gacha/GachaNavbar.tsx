@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import styled from 'styled-components';
 import { Link, NavLink, useNavigate } from 'react-router-dom';
-import { FiSun, FiMoon, FiSearch, FiX, FiBookmark, FiArrowRight } from 'react-icons/fi';
+import { Sun, Moon, Search, X, Bookmark, ArrowRight } from 'lucide-react';
 import { useTheme } from '../ThemeContext';
 import { useWatchlist } from '../../context/WatchlistContext';
 import { gachaGames, statusColors, type GachaGame } from '../../data/gachaGames';
@@ -11,19 +11,19 @@ const StyledNavbar = styled.nav`
   top: 0;
   left: 0;
   right: 0;
-  padding: 0 1rem;
+  padding: 0 1.5rem;
   height: 3.5rem;
   background-color: var(--global-primary-bg-tr);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
   border-bottom: 1px solid var(--global-border);
   z-index: 100;
   display: flex;
   align-items: center;
-  animation: fadeIn 0.3s ease;
+  transition: background-color 0.2s ease, border-color 0.2s ease;
 
   @media (max-width: 600px) {
-    padding: 0 0.75rem;
+    padding: 0 0.85rem;
   }
 `;
 
@@ -33,14 +33,14 @@ const NavInner = styled.div`
   margin: 0 auto;
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 1rem;
 `;
 
 const Logo = styled(Link)`
-  font-size: 1rem;
-  font-weight: 800;
+  font-size: 1.1rem;
+  font-weight: 850;
   text-decoration: none;
-  letter-spacing: -0.02em;
+  letter-spacing: -0.03em;
   color: var(--global-text);
   white-space: nowrap;
   flex-shrink: 0;
@@ -51,40 +51,15 @@ const Logo = styled(Link)`
   }
 
   &:hover {
-    opacity: 0.8;
+    opacity: 0.85;
   }
-`;
-
-const WatchlistImageContainer = styled.div`
-  width: 3rem;
-  height: 3rem;
-  border-radius: 0.5rem;
-  overflow: hidden;
-  flex-shrink: 0;
-  background: var(--global-secondary-bg);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
-`;
-
-const WatchlistTags = styled.div`
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.35rem;
-  align-items: center;
 `;
 
 const NavLinks = styled.div`
   display: flex;
   align-items: center;
-  gap: 0.25rem;
-  margin-left: 1.5rem;
+  gap: 0.5rem;
+  margin-left: 2rem;
 
   @media (max-width: 768px) {
     display: none;
@@ -92,10 +67,10 @@ const NavLinks = styled.div`
 `;
 
 const NavItem = styled(NavLink)`
-  padding: 0.35rem 0.75rem;
-  border-radius: var(--global-border-radius);
-  font-size: 0.85rem;
-  font-weight: 500;
+  padding: 0.35rem 0.85rem;
+  border-radius: var(--global-border-radius, 0.3rem);
+  font-size: 0.82rem;
+  font-weight: 650;
   color: var(--global-text-muted);
   text-decoration: none;
   transition: all 0.15s ease;
@@ -119,7 +94,51 @@ const Spacer = styled.div`
 const RightSection = styled.div`
   display: flex;
   align-items: center;
+  gap: 0.6rem;
+`;
+
+const ShortcutHint = styled.span`
+  font-size: 0.65rem;
+  padding: 0.15rem 0.4rem;
+  border-radius: 0.2rem;
+  background: var(--global-tertiary-bg);
+  border: 1px solid var(--global-border);
+  color: var(--global-text-muted);
+  font-family: monospace;
+  margin-left: 0.25rem;
+  opacity: 0.8;
+
+  @media (max-width: 900px) {
+    display: none;
+  }
+`;
+
+const IconButton = styled.button`
+  display: flex;
+  align-items: center;
+  justify-content: center;
   gap: 0.5rem;
+  padding: 0.45rem 0.75rem;
+  border-radius: var(--global-border-radius, 0.3rem);
+  border: 1px solid var(--global-border);
+  background: var(--global-button-bg);
+  color: var(--global-text);
+  cursor: pointer;
+  font-size: 0.8rem;
+  font-weight: 600;
+  transition: all 0.15s cubic-bezier(0.16, 1, 0.3, 1);
+  white-space: nowrap;
+
+  svg {
+    width: 0.95rem;
+    height: 0.95rem;
+    color: var(--global-text);
+  }
+
+  &:hover {
+    background: var(--global-button-hover-bg);
+    border-color: var(--global-text-muted);
+  }
 `;
 
 const SearchWrapper = styled.div<{ $open: boolean }>`
@@ -133,24 +152,25 @@ const SearchWrapper = styled.div<{ $open: boolean }>`
     top: 3.5rem;
     left: 0;
     right: 0;
-    padding: 0.5rem;
+    padding: 0.6rem;
     background: var(--global-primary-bg);
     z-index: 150;
     border-bottom: 1px solid var(--global-border);
+    box-shadow: 0 4px 12px var(--global-card-shadow);
   }
 `;
 
 const SearchInput = styled.input<{ $open: boolean }>`
-  width: ${({ $open }) => ($open ? '14rem' : '0')};
-  padding: ${({ $open }) => ($open ? '0.4rem 2.5rem 0.4rem 0.8rem' : '0.4rem 0')};
-  border-radius: var(--global-border-radius);
+  width: ${({ $open }) => ($open ? '15rem' : '0')};
+  padding: ${({ $open }) => ($open ? '0.45rem 2.2rem 0.45rem 2.2rem' : '0.45rem 0')};
+  border-radius: var(--global-border-radius, 0.3rem);
   border: 1px solid var(--global-border);
   background: var(--global-secondary-bg);
   color: var(--global-text);
   font-size: 0.8rem;
   outline: none;
   overflow: hidden;
-  transition: width 0.25s ease, padding 0.25s ease, border-color 0.2s ease;
+  transition: width 0.25s cubic-bezier(0.16, 1, 0.3, 1), padding 0.25s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.15s ease;
 
   &::placeholder {
     color: var(--global-text-muted);
@@ -158,61 +178,59 @@ const SearchInput = styled.input<{ $open: boolean }>`
 
   &:focus {
     border-color: var(--global-text-muted);
+    background: var(--global-card-bg);
   }
 
   @media (min-width: 601px) {
-    width: 16rem;
-    padding: 0.4rem 2.5rem 0.4rem 2rem;
+    width: 17rem;
+    padding: 0.45rem 2.2rem 0.45rem 2rem;
   }
 
   @media (max-width: 600px) {
     width: 100%;
-    background: var(--global-secondary-bg);
-    color: var(--global-text);
-    padding: 0.75rem 2.5rem 0.75rem 2.5rem;
-    font-size: 1rem;
-    border-radius: 0.5rem;
-    border: 1px solid var(--global-border);
-    &::placeholder {
-      color: var(--global-text-muted);
-    }
+    padding: 0.65rem 2.5rem 0.65rem 2.5rem;
+    font-size: 0.95rem;
   }
 `;
 
-const MobileSearchIcon = styled.div`
-  display: none;
-  @media (max-width: 600px) {
-    display: flex;
-    position: absolute;
-    left: 1.25rem;
-    color: var(--global-text-muted);
-    pointer-events: none;
-  }
-`;
-
-const DesktopSearchIcon = styled.div`
-  display: flex;
+const SearchIconPrefix = styled.div`
   position: absolute;
   left: 0.65rem;
-  color: var(--global-text-muted);
+  display: flex;
+  align-items: center;
   pointer-events: none;
+  color: var(--global-text-muted);
+
+  svg {
+    width: 0.85rem;
+    height: 0.85rem;
+  }
 
   @media (max-width: 600px) {
-    display: none;
+    left: 1.25rem;
+    svg {
+      width: 1rem;
+      height: 1rem;
+    }
   }
 `;
 
 const SearchClearBtn = styled.button`
   position: absolute;
-  right: 0.4rem;
+  right: 0.6rem;
   background: none;
   border: none;
   color: var(--global-text-muted);
   cursor: pointer;
-  padding: 0;
+  padding: 0.15rem;
   display: flex;
   align-items: center;
   transition: color 0.15s ease;
+
+  svg {
+    width: 0.9rem;
+    height: 0.9rem;
+  }
 
   &:hover {
     color: var(--global-text);
@@ -220,46 +238,65 @@ const SearchClearBtn = styled.button`
 
   @media (max-width: 600px) {
     right: 1.25rem;
+    svg {
+      width: 1.15rem;
+      height: 1.15rem;
+    }
   }
 `;
 
-const SearchDropdown = styled.div`
+const SearchToggleBtn = styled(IconButton)`
+  @media (min-width: 601px) {
+    display: none;
+  }
+`;
+
+const SearchDropdownGrid = styled.div`
   position: absolute;
-  top: calc(100% + 0.5rem);
+  top: calc(100% + 0.4rem);
   right: 0;
   width: 22rem;
   max-width: calc(100vw - 1rem);
   background: var(--global-card-bg);
   border: 1px solid var(--global-border);
-  border-radius: 0.5rem;
-  box-shadow: 0 8px 24px var(--global-card-shadow);
+  border-radius: var(--global-border-radius, 0.4rem);
+  box-shadow: 0 10px 30px var(--global-card-shadow);
   overflow: hidden;
-  animation: slideDown 0.2s ease;
   z-index: 200;
+  animation: slideDropdown 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+
+  @keyframes slideDropdown {
+    from {
+      opacity: 0;
+      transform: translateY(8px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
 
   @media (max-width: 600px) {
     position: fixed;
-    top: calc(3.5rem + 3.5rem + 0.5rem);
-    right: 0.5rem;
-    left: 0.5rem;
+    top: calc(3.5rem + 3.7rem);
+    right: 0.6rem;
+    left: 0.6rem;
     width: auto;
-    max-width: calc(100vw - 1rem);
-    border-radius: 0.5rem;
+    max-width: none;
   }
 `;
 
-const SearchResult = styled.button<{ $statusColor: string }>`
+const SearchResultRow = styled.button<{ $statusColor: string }>`
   width: 100%;
-  padding: 0.65rem 0.85rem;
+  padding: 0.7rem 0.9rem;
   border: none;
   background: none;
   text-align: left;
   cursor: pointer;
   display: flex;
-  flex-direction: row;
   align-items: center;
   gap: 0.75rem;
-  border-left: 3px solid ${({ $statusColor }) => $statusColor};
+  border-left: 3px solid ${({ $statusColor }) => $statusColor || 'transparent'};
   transition: background 0.15s ease;
   color: var(--global-text);
 
@@ -272,17 +309,17 @@ const SearchResult = styled.button<{ $statusColor: string }>`
   }
 `;
 
-const ResultImageContainer = styled.div`
-  width: 3rem;
-  height: 3rem;
-  border-radius: 0.5rem;
+const ImageContainer = styled.div`
+  width: 2.8rem;
+  height: 2.8rem;
+  border-radius: 0.4rem;
   overflow: hidden;
   flex-shrink: 0;
-  background: #131313;
-  color: #ffffff;
+  background: var(--global-secondary-bg);
   display: flex;
   align-items: center;
   justify-content: center;
+  border: 1px solid var(--global-border);
 
   img {
     width: 100%;
@@ -294,172 +331,117 @@ const ResultImageContainer = styled.div`
 const ResultContent = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 0.2rem;
+  gap: 0.15rem;
+  min-width: 0;
 `;
 
 const ResultName = styled.span`
   font-size: 0.85rem;
-  font-weight: 700;
+  font-weight: 750;
   color: var(--global-text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 `;
 
-const ResultTags = styled.div`
+const ResultTagRow = styled.div`
   display: flex;
   flex-wrap: wrap;
-  gap: 0.35rem;
+  gap: 0.3rem;
   align-items: center;
 `;
 
-const ResultTag = styled.span`
-  padding: 0.18rem 0.45rem;
-  border-radius: 0.25rem;
-  font-size: 0.7rem;
+const MiniBadge = styled.span`
+  padding: 0.1rem 0.4rem;
+  border-radius: 0.2rem;
+  font-size: 0.65rem;
   font-weight: 600;
   background: var(--global-secondary-bg);
   color: var(--global-text-muted);
   border: 1px solid var(--global-border);
   display: flex;
   align-items: center;
-  gap: 0.25rem;
+  gap: 0.2rem;
 `;
 
-const ViewAllBtn = styled.button`
+const ViewAllFooter = styled.button`
   width: 100%;
-  padding: 0.85rem;
+  padding: 0.8rem;
   background: var(--global-secondary-bg);
   color: var(--global-text);
   border: none;
   border-top: 1px solid var(--global-border);
-  font-size: 0.85rem;
-  font-weight: 700;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: 0.4rem;
-  transition: opacity 0.15s ease;
-
-  &:hover {
-    opacity: 0.8;
-  }
-`;
-
-const NoResults = styled.div`
-  padding: 1rem;
-  text-align: center;
   font-size: 0.8rem;
-  color: var(--global-text-muted);
-`;
-
-const IconBtn = styled.button`
+  font-weight: 750;
+  cursor: pointer;
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 0.4rem;
-  padding: 0.4rem 0.6rem;
-  border-radius: var(--global-border-radius);
-  border: 1px solid var(--global-border);
-  background: var(--global-button-bg);
-  color: var(--global-text);
-  cursor: pointer;
-  font-size: 0.85rem;
-  font-weight: 500;
-  transition: all 0.15s ease;
-  white-space: nowrap;
-
-  svg {
-    font-size: 1rem;
-  }
+  transition: opacity 0.15s ease, background 0.15s ease;
 
   &:hover {
-    background: var(--global-button-hover-bg);
+    background: var(--global-tertiary-bg);
   }
 `;
 
-const SearchToggleBtn = styled(IconBtn)`
-  @media (min-width: 601px) {
-    display: none;
-  }
-`;
-
-const WatchlistCount = styled.span`
+const WatchlistCountBadge = styled.span`
   background: var(--global-text);
   color: var(--global-primary-bg);
   border-radius: 999px;
-  padding: 0.05rem 0.4rem;
-  font-size: 0.7rem;
-  font-weight: 700;
-  min-width: 1.2rem;
+  padding: 0rem 0.35rem;
+  font-size: 0.65rem;
+  font-weight: 800;
+  min-width: 1.15rem;
   text-align: center;
 `;
 
-const ShortcutHint = styled.span`
-  font-size: 0.65rem;
-  padding: 0.1rem 0.35rem;
-  border-radius: 0.2rem;
-  background: var(--global-tertiary-bg);
-  border: 1px solid var(--global-border);
-  color: var(--global-text-muted);
-  font-family: monospace;
-
-  @media (max-width: 900px) {
-    display: none;
-  }
-`;
-
-const WatchlistPanel = styled.div`
+const DropdownPanel = styled.div`
   position: absolute;
-  top: calc(100% + 0.5rem);
+  top: calc(100% + 0.4rem);
   right: 0;
   width: 22rem;
   max-width: calc(100vw - 1rem);
   background: var(--global-card-bg);
   border: 1px solid var(--global-border);
-  border-radius: var(--global-border-radius);
-  box-shadow: 0 8px 24px var(--global-card-shadow);
+  border-radius: var(--global-border-radius, 0.4rem);
+  box-shadow: 0 10px 30px var(--global-card-shadow);
   overflow: hidden;
-  animation: slideDown 0.2s ease;
   z-index: 200;
+  animation: slideDropdown 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 
   @media (max-width: 600px) {
     position: fixed;
     top: 3.5rem;
-    right: 0.5rem;
-    left: 0.5rem;
+    right: 0.6rem;
+    left: 0.6rem;
     width: auto;
-    max-width: 100%;
+    max-width: none;
   }
 `;
 
-const WatchlistHeader = styled.div`
-  padding: 0.75rem 0.85rem;
+const PanelHeader = styled.div`
+  padding: 0.75rem 0.9rem;
   border-bottom: 1px solid var(--global-border);
-  font-size: 0.8rem;
-  font-weight: 600;
+  font-size: 0.72rem;
+  font-weight: 750;
   color: var(--global-text-muted);
   text-transform: uppercase;
   letter-spacing: 0.06em;
 `;
 
-const WatchlistItem = styled.div<{ $statusColor: string }>`
-  padding: 0.65rem 0.85rem;
-  border-left: 3px solid ${({ $statusColor }) => $statusColor};
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  gap: 0.75rem;
-  transition: background 0.15s ease;
-  color: var(--global-text);
+const ScrollContainer = styled.div`
+  max-height: 25.5rem;
+  overflow-y: auto;
+  overscroll-behavior: contain;
 
-  &:hover {
-    background: var(--global-secondary-bg);
-  }
-
-  & + & {
-    border-top: 1px solid var(--global-border);
+  @media (max-width: 600px) {
+    max-height: 18rem;
   }
 `;
 
-const EmptyWatchlist = styled.div`
-  padding: 1.5rem;
+const EmptyPanelState = styled.div`
+  padding: 1.8rem;
   text-align: center;
   font-size: 0.8rem;
   color: var(--global-text-muted);
@@ -469,36 +451,9 @@ const EmptyWatchlist = styled.div`
   gap: 0.5rem;
 
   svg {
-    font-size: 1.5rem;
-    opacity: 0.4;
-  }
-`;
-
-const WatchlistItemsContainer = styled.div`
-  max-height: 25.8rem;
-  overflow-y: auto;
-  overscroll-behavior: contain;
-  scrollbar-width: thin;
-  scrollbar-color: var(--global-border) transparent;
-
-  /* Custom Scrollbar for Webkit */
-  &::-webkit-scrollbar {
-    width: 6px;
-  }
-  &::-webkit-scrollbar-track {
-    background: transparent;
-  }
-  &::-webkit-scrollbar-thumb {
-    background: var(--global-border);
-    border-radius: 3px;
-    transition: background 0.15s ease;
-  }
-  &::-webkit-scrollbar-thumb:hover {
-    background: var(--global-text-muted);
-  }
-
-  @media (max-width: 600px) {
-    max-height: 17.2rem;
+    width: 1.35rem;
+    height: 1.35rem;
+    opacity: 0.45;
   }
 `;
 
@@ -512,7 +467,7 @@ export function GachaNavbar() {
   const [showDropdown, setShowDropdown] = useState(false);
   const [showWatchlist, setShowWatchlist] = useState(false);
 
-  const searchRef = useRef<HTMLInputElement>(null);
+  const searchInputRef = useRef<HTMLInputElement>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const watchlistRef = useRef<HTMLDivElement>(null);
 
@@ -527,7 +482,7 @@ export function GachaNavbar() {
   const openSearch = useCallback(() => {
     setSearchOpen(true);
     setShowWatchlist(false);
-    setTimeout(() => searchRef.current?.focus(), 50);
+    setTimeout(() => searchInputRef.current?.focus(), 60);
   }, []);
 
   const closeSearch = useCallback(() => {
@@ -605,62 +560,67 @@ export function GachaNavbar() {
         <Spacer />
 
         <RightSection>
+          {/* Watchlist Section */}
           <div style={{ position: 'relative' }} ref={watchlistRef}>
-            <IconBtn
+            <IconButton
               onClick={() => {
                 setShowWatchlist((v) => !v);
                 closeSearch();
               }}
               title='Watchlist'
             >
-              <FiBookmark />
+              <Bookmark />
               {watchlist.length > 0 ? (
-                <WatchlistCount>{watchlist.length}</WatchlistCount>
+                <WatchlistCountBadge>{watchlist.length}</WatchlistCountBadge>
               ) : (
                 <span style={{ fontSize: '0.8rem' }}>Watchlist</span>
               )}
-            </IconBtn>
+            </IconButton>
 
             {showWatchlist && (
-              <WatchlistPanel>
-                <WatchlistHeader>
+              <DropdownPanel>
+                <PanelHeader>
                   Watchlist — {watchlist.length} game
                   {watchlist.length !== 1 ? 's' : ''}
-                </WatchlistHeader>
+                </PanelHeader>
                 {watchlistedGames.length === 0 ? (
-                  <EmptyWatchlist>
-                    <FiBookmark />
-                    <span>No games followed yet</span>
-                  </EmptyWatchlist>
+                  <EmptyPanelState>
+                    <Bookmark />
+                    <span>No followed games yet</span>
+                  </EmptyPanelState>
                 ) : (
-                  <WatchlistItemsContainer>
+                  <ScrollContainer>
                     {watchlistedGames.map((g) => (
-                      <WatchlistItem
+                      <SearchResultRow
                         key={g.id}
                         $statusColor={statusColors[g.status]}
+                        onClick={() => {
+                          navigate(`/games?q=${encodeURIComponent(g.name)}`);
+                          setShowWatchlist(false);
+                        }}
                       >
-                        <WatchlistImageContainer>
+                        <ImageContainer>
                           {g.profileImage ? (
-                            <img src={g.profileImage} alt={g.name} />
+                            <img src={g.profileImage} alt={g.name} referrerPolicy="no-referrer" />
                           ) : (
-                            <span style={{ fontSize: '0.8rem', fontWeight: 800 }}>
+                            <span style={{ fontSize: '0.75rem', fontWeight: 800 }}>
                               {g.iconInitials ?? g.name.slice(0, 2).toUpperCase()}
                             </span>
                           )}
-                        </WatchlistImageContainer>
+                        </ImageContainer>
                         <ResultContent>
                           <ResultName>{g.name}</ResultName>
-                          <WatchlistTags>
-                            <ResultTag>
+                          <ResultTagRow>
+                            <MiniBadge>
                               {g.releaseDate ? g.releaseDate.substring(0, 4) : 'TBA'}
-                            </ResultTag>
-                            <ResultTag>{g.genre}</ResultTag>
-                            <ResultTag>
+                            </MiniBadge>
+                            <MiniBadge>{g.genre}</MiniBadge>
+                            <MiniBadge>
                               <span
                                 style={{
                                   display: 'inline-block',
-                                  width: '5px',
-                                  height: '5px',
+                                  width: '4px',
+                                  height: '4px',
                                   borderRadius: '50%',
                                   backgroundColor: statusColors[g.status],
                                 }}
@@ -670,27 +630,25 @@ export function GachaNavbar() {
                                 : g.status === 'Pre-registration'
                                 ? 'Pre-reg'
                                 : 'Dev'}
-                            </ResultTag>
-                          </WatchlistTags>
+                            </MiniBadge>
+                          </ResultTagRow>
                         </ResultContent>
-                      </WatchlistItem>
+                      </SearchResultRow>
                     ))}
-                  </WatchlistItemsContainer>
+                  </ScrollContainer>
                 )}
-              </WatchlistPanel>
+              </DropdownPanel>
             )}
           </div>
 
+          {/* Search Section */}
           <div style={{ position: 'relative' }} ref={dropdownRef}>
             <SearchWrapper $open={searchOpen}>
-              <MobileSearchIcon>
-                <FiSearch size={16} />
-              </MobileSearchIcon>
-              <DesktopSearchIcon>
-                <FiSearch size={14} />
-              </DesktopSearchIcon>
+              <SearchIconPrefix>
+                <Search />
+              </SearchIconPrefix>
               <SearchInput
-                ref={searchRef}
+                ref={searchInputRef}
                 $open={searchOpen}
                 placeholder='Search Games'
                 value={query}
@@ -700,82 +658,85 @@ export function GachaNavbar() {
               />
               {query && (
                 <SearchClearBtn onClick={() => setQuery('')} tabIndex={-1}>
-                  <FiX size={16} />
+                  <X />
                 </SearchClearBtn>
               )}
             </SearchWrapper>
 
             {!searchOpen ? (
               <SearchToggleBtn onClick={openSearch} title='Search (Ctrl+K)'>
-                <FiSearch />
+                <Search />
                 <ShortcutHint>Ctrl K</ShortcutHint>
               </SearchToggleBtn>
             ) : (
               <SearchToggleBtn onClick={closeSearch} title='Close search'>
-                <FiX />
+                <X />
               </SearchToggleBtn>
             )}
 
             {showDropdown && query && (
-              <SearchDropdown>
+              <SearchDropdownGrid>
                 {results.length > 0 ? (
                   <>
-                    {results.map((g) => (
-                      <SearchResult
-                        key={g.id}
-                        $statusColor={statusColors[g.status]}
-                        onClick={() => handleResultClick(g)}
-                      >
-                        <ResultImageContainer>
-                          {g.profileImage ? (
-                            <img src={g.profileImage} alt={g.name} />
-                          ) : (
-                            <span style={{ fontSize: '0.8rem', fontWeight: 800 }}>
-                              {g.iconInitials ?? g.name.slice(0, 2).toUpperCase()}
-                            </span>
-                          )}
-                        </ResultImageContainer>
-                        <ResultContent>
-                          <ResultName>{g.name}</ResultName>
-                          <ResultTags>
-                            <ResultTag>
-                              {g.releaseDate ? g.releaseDate.substring(0, 4) : 'TBA'}
-                            </ResultTag>
-                            <ResultTag>{g.genre}</ResultTag>
-                            <ResultTag>
-                              <span
-                                style={{
-                                  display: 'inline-block',
-                                  width: '5px',
-                                  height: '5px',
-                                  borderRadius: '50%',
-                                  backgroundColor: statusColors[g.status],
-                                }}
-                              />
-                              {g.status === 'Released'
-                                ? 'Released'
-                                : g.status === 'Pre-registration'
-                                ? 'Pre-reg'
-                                : 'Dev'}
-                            </ResultTag>
-                          </ResultTags>
-                        </ResultContent>
-                      </SearchResult>
-                    ))}
-                    <ViewAllBtn onClick={handleViewAllClick}>
-                      VIEW ALL <FiArrowRight size={16} />
-                    </ViewAllBtn>
+                    <ScrollContainer>
+                      {results.map((g) => (
+                        <SearchResultRow
+                          key={g.id}
+                          $statusColor={statusColors[g.status]}
+                          onClick={() => handleResultClick(g)}
+                        >
+                          <ImageContainer>
+                            {g.profileImage ? (
+                              <img src={g.profileImage} alt={g.name} referrerPolicy="no-referrer" />
+                            ) : (
+                              <span style={{ fontSize: '0.75rem', fontWeight: 800 }}>
+                                {g.iconInitials ?? g.name.slice(0, 2).toUpperCase()}
+                              </span>
+                            )}
+                          </ImageContainer>
+                          <ResultContent>
+                            <ResultName>{g.name}</ResultName>
+                            <ResultTagRow>
+                              <MiniBadge>
+                                {g.releaseDate ? g.releaseDate.substring(0, 4) : 'TBA'}
+                              </MiniBadge>
+                              <MiniBadge>{g.genre}</MiniBadge>
+                              <MiniBadge>
+                                <span
+                                  style={{
+                                    display: 'inline-block',
+                                    width: '4px',
+                                    height: '4px',
+                                    borderRadius: '50%',
+                                    backgroundColor: statusColors[g.status],
+                                  }}
+                                />
+                                {g.status === 'Released'
+                                  ? 'Released'
+                                  : g.status === 'Pre-registration'
+                                  ? 'Pre-reg'
+                                  : 'Dev'}
+                              </MiniBadge>
+                            </ResultTagRow>
+                          </ResultContent>
+                        </SearchResultRow>
+                      ))}
+                    </ScrollContainer>
+                    <ViewAllFooter onClick={handleViewAllClick}>
+                      VIEW ALL <ArrowRight size={14} />
+                    </ViewAllFooter>
                   </>
                 ) : (
-                  <NoResults>No games found for "{query}"</NoResults>
+                  <EmptyPanelState>No games found for "{query}"</EmptyPanelState>
                 )}
-              </SearchDropdown>
+              </SearchDropdownGrid>
             )}
           </div>
 
-          <IconBtn onClick={toggleTheme} title='Toggle theme'>
-            {isDarkMode ? <FiSun /> : <FiMoon />}
-          </IconBtn>
+          {/* Theme Toggle Button */}
+          <IconButton onClick={toggleTheme} title='Toggle theme'>
+            {isDarkMode ? <Sun /> : <Moon />}
+          </IconButton>
         </RightSection>
       </NavInner>
     </StyledNavbar>

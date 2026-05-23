@@ -6,7 +6,7 @@ const FloatingButton = styled.button<{ $visible: boolean; $showBottomNav: boolea
   position: fixed;
   bottom: ${({ $showBottomNav }) => ($showBottomNav ? '5.75rem' : '1.5rem')};
   right: 1.5rem;
-  z-index: 99;
+  z-index: 80;
   
   display: flex;
   align-items: center;
@@ -66,7 +66,7 @@ const ButtonText = styled.span`
   }
 `;
 
-export function ScrollToTopButton({ showBottomNav = true }: { showBottomNav?: boolean }) {
+export function ScrollToTopButton({ showBottomNav = true, hide = false }: { showBottomNav?: boolean; hide?: boolean }) {
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
@@ -120,7 +120,7 @@ export function ScrollToTopButton({ showBottomNav = true }: { showBottomNav?: bo
   return (
     <FloatingButton 
       id="scroll-to-top-btn"
-      $visible={visible} 
+      $visible={visible && !hide} 
       $showBottomNav={showBottomNav}
       onClick={scrollToTop}
       title="Scroll to top"

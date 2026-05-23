@@ -48,6 +48,10 @@ const BackLink = styled(Link)`
   &:hover {
     color: var(--global-text);
   }
+
+  @media (max-width: 768px) {
+    display: none;
+  }
 `;
 
 const PageTitle = styled.h1`

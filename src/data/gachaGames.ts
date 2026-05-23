@@ -122,6 +122,8 @@ export const gachaGames: GachaGame[] = [
     engine: 'N/A',
     bannerColor: '#1a0e0e',
     iconInitials: 'BB',
+    bannerImage: '/banners/codename-bang-bang.jpeg',
+    profileImage: '/profiles/codename-bang-bang.png',
   },
   {
     id: 'digimon-alysion',
@@ -136,6 +138,8 @@ export const gachaGames: GachaGame[] = [
     engine: 'N/A',
     bannerColor: '#0e1020',
     iconInitials: 'DA',
+    bannerImage: '/banners/digimon-alysion.jpg',
+    profileImage: '/profiles/digimon-alysion.jpg',
   },
   {
     id: 'honkai-nexus-anima',
@@ -150,6 +154,8 @@ export const gachaGames: GachaGame[] = [
     engine: 'N/A',
     bannerColor: '#0c1020',
     iconInitials: 'HN',
+    bannerImage: '/banners/honkai-nexus-anima.jpg',
+    profileImage: '/profiles/honkai-nexus-anima.jpg',
   },
   {
     id: 'illusion-connect-re',
@@ -164,6 +170,8 @@ export const gachaGames: GachaGame[] = [
     engine: 'N/A',
     bannerColor: '#1a1015',
     iconInitials: 'IC',
+    bannerImage: '/banners/illusion-connect-re.jpg',
+    profileImage: '/profiles/illusion-connect-re.webp',
   },
   {
     id: 'kings-raid-revival',
@@ -178,6 +186,8 @@ export const gachaGames: GachaGame[] = [
     engine: 'Unity',
     bannerColor: '#1a1208',
     iconInitials: 'KR',
+    bannerImage: '/banners/kings-raid-revival.jpg',
+    profileImage: '/profiles/kings-raid-revival.jpg',
   },
   {
     id: 'last-origin-r-plus',
@@ -191,6 +201,8 @@ export const gachaGames: GachaGame[] = [
     engine: 'N/A',
     bannerColor: '#0e1818',
     iconInitials: 'LO',
+    bannerImage: '/banners/last-origin-r.webp',
+    profileImage: '/profiles/last-origin-r.webp',
   },
   {
     id: 'miresi-invisible-future',
@@ -204,6 +216,8 @@ export const gachaGames: GachaGame[] = [
     engine: 'N/A',
     bannerColor: '#120e1a',
     iconInitials: 'MI',
+    bannerImage: '/banners/miresi-invisible-future.jpeg',
+    profileImage: '/profiles/miresi-invisible-future.jpg',
   },
   {
     id: 'monster-hunter-outlanders',
@@ -217,6 +231,8 @@ export const gachaGames: GachaGame[] = [
     engine: 'N/A',
     bannerColor: '#14100a',
     iconInitials: 'MH',
+    bannerImage: '/banners/monster-hunter-outlanders.jpg',
+    profileImage: '/profiles/monster-hunter-outlanders.webp',
   },
   {
     id: 'petit-planet',
@@ -230,6 +246,8 @@ export const gachaGames: GachaGame[] = [
     engine: 'Unity',
     bannerColor: '#0a0e1a',
     iconInitials: 'PP',
+    bannerImage: '/banners/petit-planet.jpg',
+    profileImage: '/profiles/petit-planet.jpg',
   },
   {
     id: 'project-2-3',
@@ -243,6 +261,8 @@ export const gachaGames: GachaGame[] = [
     engine: 'N/A',
     bannerColor: '#0e1418',
     iconInitials: 'P2',
+    bannerImage: '/banners/project-2-3.jpg',
+    profileImage: '/profiles/project-2-3.jpg',
   },
   {
     id: 'rewinding-cadence',
@@ -257,6 +277,8 @@ export const gachaGames: GachaGame[] = [
     engine: 'N/A',
     bannerColor: '#14100e',
     iconInitials: 'RC',
+    bannerImage: '/banners/rewinding-cadence.png',
+    profileImage: '/profiles/rewinding-cadence.jpg',
   },
   {
     id: 'scarlet-tide-zeroera',
@@ -271,6 +293,8 @@ export const gachaGames: GachaGame[] = [
     engine: 'N/A',
     bannerColor: '#1a0c0c',
     iconInitials: 'ST',
+    bannerImage: '/banners/scarlet-tide-zeroera.jpg',
+    profileImage: '/profiles/scarlet-tide-zeroera.jpg',
   },
   {
     id: 'silver-palace',
@@ -285,6 +309,8 @@ export const gachaGames: GachaGame[] = [
     engine: 'Unreal Engine 5',
     bannerColor: '#141210',
     iconInitials: 'SP',
+    bannerImage: '/banners/silver-palace.jpg',
+    profileImage: '/profiles/silver-palace.jpg',
   },
   {
     id: 'terbis',
@@ -298,6 +324,8 @@ export const gachaGames: GachaGame[] = [
     engine: 'N/A',
     bannerColor: '#0e1410',
     iconInitials: 'TB',
+    bannerImage: '/banners/terbis.jpg',
+    profileImage: '/profiles/terbis.jpg',
   },
 ];
 

@@ -97,6 +97,7 @@ function PlaceholderPage({ title }: { title: string }) {
 
 function AppRoutes() {
   const [showBottomNav, setShowBottomNav] = useState(true);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const lastScrollTop = useRef(0);
 
@@ -107,21 +108,26 @@ function AppRoutes() {
     const handleScroll = () => {
       const currentScrollTop = container.scrollTop;
       
+      // Auto-collapse mobile others menu on scroll to keep the viewport clean
+      setIsMobileMenuOpen(false);
+
       // Near top of container, always keep visible
       if (currentScrollTop <= 50) {
         setShowBottomNav(true);
+        lastScrollTop.current = currentScrollTop;
         return;
       }
 
-      // scrolled more than 10 pixels threshold to toggle
-      if (Math.abs(currentScrollTop - lastScrollTop.current) > 10) {
-        if (currentScrollTop > lastScrollTop.current) {
-          // scrolling down -> Hide bottom navbar
-          setShowBottomNav(false);
-        } else {
-          // scrolling up -> Show bottom navbar
-          setShowBottomNav(true);
-        }
+      const diff = currentScrollTop - lastScrollTop.current;
+      
+      // We only toggle if the scroll deviation exceeds 12px to avoid jitteriness
+      if (diff > 12) {
+        // scrolling down -> Hide bottom navbar
+        setShowBottomNav(false);
+        lastScrollTop.current = currentScrollTop;
+      } else if (diff < -12) {
+        // scrolling up -> Show bottom navbar
+        setShowBottomNav(true);
         lastScrollTop.current = currentScrollTop;
       }
     };
@@ -135,7 +141,7 @@ function AppRoutes() {
       <GachaNavbar />
       <ScrollContainer id="main-scroll-container" ref={scrollContainerRef}>
         <ScrollToTop />
-        <ScrollToTopButton showBottomNav={showBottomNav} />
+        <ScrollToTopButton showBottomNav={showBottomNav} hide={isMobileMenuOpen} />
         <ContentWrapper style={{ flex: 1 }}>
           <main style={{ minHeight: '60vh', flex: 1 }}>
             <Routes>
@@ -151,7 +157,11 @@ function AppRoutes() {
         </ContentWrapper>
         <GachaFooter />
       </ScrollContainer>
-      <MobileBottomNavbar visible={showBottomNav} />
+      <MobileBottomNavbar 
+        visible={showBottomNav} 
+        popupOpen={isMobileMenuOpen} 
+        onPopupOpenChange={setIsMobileMenuOpen} 
+      />
     </MainLayout>
   );
 }
