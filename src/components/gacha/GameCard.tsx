@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 import { FiCalendar, FiChevronDown, FiChevronUp, FiBookmark, FiCheck } from 'react-icons/fi';
-import { type GachaGame, STATUS_LABELS, REGION_COLORS, PLATFORM_ICONS } from '../../data/gachaGames';
+import { type GachaGame, STATUS_LABELS, REGION_COLORS } from '../../data/gachaGames';
 import { useWatchlist } from '../../context/WatchlistContext';
 import { ScrollableSocialContainer } from './ScrollableSocialContainer';
 

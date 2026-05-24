@@ -553,10 +553,3 @@ export const REGION_COLORS: Record<Region, string> = {
   SEA: '#55efc4',
 };
 
-export const PLATFORM_ICONS: Record<Platform, string> = {
-  Android: '⬥',
-  iOS: '',
-  PC: '⊡',
-  PS5: '⬡',
-  Switch: '◈',
-};

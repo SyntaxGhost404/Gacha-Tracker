@@ -47,6 +47,9 @@ export const changelogData: ChangelogItem[] = [
         'Corrected Pre-Registration button platform icons (Google Play and Apple App Store) to display in standard white on active game detail entries instead of accent purple.',
         'Corrected and cleaned up the naming nomenclature for "E.T.E: Shattered Skie" across all pages, completely removing database and text references to "E.T.E Chronicle / Project E.T.E".',
         'Resolved a build-time duplication on the individual Game Details page by removing redundant imports for the gachaGames list and useWatchlist configuration.'
+      ],
+      technical: [
+        'Safely audited the codebase for the obsolete PLATFORM_ICONS record from the initial iterations, successfully deleting it from the game definitions and removing its unused imports from GameCard.tsx.'
       ]
     }
   },
