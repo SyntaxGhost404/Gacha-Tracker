@@ -203,7 +203,7 @@ export function MobileBottomNavbar({
     navigate(path);
   };
 
-  const isOthersActive = ['/changelog', '/feedback'].includes(activeTab) || isPopupOpen;
+  const isOthersActive = ['/changelog', '/feedback', '/archive'].includes(activeTab) || isPopupOpen;
 
   return (
     <BottomBarContainer $visible={visible} ref={navbarRef}>
@@ -247,6 +247,15 @@ export function MobileBottomNavbar({
       </TabButton>
 
       <PopupMenu $visible={isPopupOpen}>
+        <PopupItem
+          onClick={() => navigate('/archive')}
+          id='popup-archive-btn'
+          $active={activeTab === '/archive'}
+        >
+          <Gamepad2 />
+          <span>Archive</span>
+        </PopupItem>
+
         <PopupItem
           onClick={() => navigate('/changelog')}
           id='popup-changelog-btn'

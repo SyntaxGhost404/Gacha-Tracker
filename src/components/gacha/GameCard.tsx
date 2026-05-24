@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
+import { Link } from 'react-router-dom';
 import { FiCalendar, FiChevronDown, FiChevronUp, FiBookmark, FiCheck } from 'react-icons/fi';
 import { type GachaGame, STATUS_LABELS, REGION_COLORS, PLATFORM_ICONS } from '../../data/gachaGames';
 import { useWatchlist } from '../../context/WatchlistContext';
+import { ScrollableSocialContainer } from './ScrollableSocialContainer';
 
 // Scalable, crisp inline SVG brand logos for platforms & engines
 const AndroidIcon = () => (
@@ -60,6 +62,59 @@ const UnityIcon = () => (
   </svg>
 );
 
+const BrandGlobeIcon = ({ size = 13 }: { size?: number }) => (
+  <svg viewBox="0 0 24 24" width={size} height={size} fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" style={{ flexShrink: 0 }}>
+    <circle cx="12" cy="12" r="10" />
+    <path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20" />
+    <path d="M2 12h20" />
+  </svg>
+);
+
+const BrandXIcon = ({ size = 13 }: { size?: number }) => (
+  <svg viewBox="0 0 24 24" width={size} height={size} fill="currentColor" aria-hidden="true" style={{ flexShrink: 0 }}>
+    <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+  </svg>
+);
+
+const BrandYouTubeIcon = ({ size = 13 }: { size?: number }) => (
+  <svg viewBox="0 0 24 24" width={size} height={size} fill="currentColor" aria-hidden="true" style={{ flexShrink: 0 }}>
+    <path d="M23.498 6.163a3.003 3.003 0 0 0-2.11-2.108C19.53 3.515 12 3.515 12 3.515s-7.53 0-9.388.54a3.003 3.003 0 0 0-2.11 2.108c-.54 1.85-.54 5.717-.54 5.717s0 3.868.54 5.718a3.003 3.003 0 0 0 2.11 2.108c1.858.54 9.388.54 9.388.54s7.53 0 9.388-.54a3.003 3.003 0 0 0 2.11-2.108c.54-1.85.54-5.718.54-5.718s0-3.868-.54-5.717zm-13.886 9.42V8.18l6.21 3.702-6.21 3.7z" />
+  </svg>
+);
+
+const BrandRedditIcon = ({ size = 13 }: { size?: number }) => (
+  <svg viewBox="0 0 16 16" width={size} height={size} fill="currentColor" aria-hidden="true" style={{ flexShrink: 0 }}>
+    <path d="M6.167 8a.83.83 0 0 0-.83.83c0 .459.372.84.83.831a.831.831 0 0 0 0-1.661m1.843 3.647c.315 0 1.403-.038 1.976-.611a.23.23 0 0 0 0-.306.213.213 0 0 0-.306 0c-.353.363-1.126.487-1.67.487-.545 0-1.308-.124-1.671-.487a.213.213 0 0 0-.306 0 .213.213 0 0 0 0 .306c.564.563 1.652.61 1.977.61zm.992-2.807c0 .458.373.83.831.83s.83-.381.83-.83a.831.831 0 0 0-1.66 0z"/>
+    <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0m-3.828-1.165c-.315 0-.602.124-.812.325-.801-.573-1.9-.945-3.121-.993l.534-2.501 1.738.372a.83.83 0 1 0 .83-.869.83.83 0 0 0-.744.468l-1.938-.41a.2.2 0 0 0-.153.028.2.2 0 0 0-.086.134l-.592 2.788c-1.24.038-2.358.41-3.17.992-.21-.2-.496-.324-.81-.324a1.163 1.163 0 0 0-.478 2.224q-.03.17-.029.353c0 1.795 2.091 3.256 4.669 3.256s4.668-1.451 4.668-3.256c0-.114-.01-.238-.029-.353.401-.181.688-.592.688-1.069 0-.65-.525-1.165-1.165-1.165"/>
+  </svg>
+);
+
+const BrandDiscordIcon = ({ size = 13 }: { size?: number }) => (
+  <svg viewBox="0 0 127.14 96.36" width={size} height={size} fill="currentColor" aria-hidden="true" style={{ flexShrink: 0 }}>
+    <path d="M107.7,8.07A105.15,105.15,0,0,0,77.26,0a77.19,77.19,0,0,0-3.3,6.83A96.67,96.67,0,0,0,53.22,6.83,77.19,77.19,0,0,0,49.88,0,105.15,105.15,0,0,0,19.44,8.07C3.66,31.58-1.86,54.65,1,77.53A105.73,105.73,0,0,0,32,96.36a77.7,77.7,0,0,0,6.63-10.85,68.43,68.43,0,0,1-10.5-5c.88-.65,1.72-1.34,2.53-2a75.58,75.58,0,0,0,73,0c.81.71,1.65,1.4,2.53,2a68.43,68.43,0,0,1-10.5,5A77.7,77.7,0,0,0,95.14,96.36a105.73,105.73,0,0,0,31-18.83C130,51,123.36,28.24,107.7,8.07ZM42.45,65.69C36.18,65.69,31,60,31,53S36.18,40.36,42.45,40.36,53.9,46,53.9,53,48.72,65.69,42.45,65.69Zm42.24,0C78.41,65.69,73.24,60,73.24,53S78.41,40.36,84.69,40.36,96.14,46,96.14,53,91,65.69,84.69,65.69Z" />
+  </svg>
+);
+
+const BrandFacebookIcon = ({ size = 13 }: { size?: number }) => (
+  <svg viewBox="0 0 24 24" width={size} height={size} fill="currentColor" aria-hidden="true" style={{ flexShrink: 0 }}>
+    <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
+  </svg>
+);
+
+const BrandInstagramIcon = ({ size = 13 }: { size?: number }) => (
+  <svg viewBox="0 0 24 24" width={size} height={size} fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" style={{ flexShrink: 0 }}>
+    <rect x="2" y="2" width="20" height="20" rx="5" ry="5" />
+    <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
+    <line x1="17.5" y1="6.5" x2="17.51" y2="6.5" />
+  </svg>
+);
+
+const BrandTikTokIcon = ({ size = 13 }: { size?: number }) => (
+  <svg viewBox="0 0 24 24" width={size} height={size} fill="currentColor" aria-hidden="true" style={{ flexShrink: 0 }}>
+    <path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.18 1.12 1.09 2.69 1.66 4.22 1.75v3.9c-1.43-.01-2.86-.33-4.13-1.01-.13-.07-.26-.15-.4-.23V14.5c.06 1.73-.42 3.52-1.52 4.86-1.12 1.36-2.84 2.25-4.59 2.45-1.93.22-3.99-.21-5.54-1.44-1.54-1.22-2.5-3.15-2.53-5.11-.04-2.22 1.05-4.42 2.87-5.69 1.62-1.14 3.76-1.55 5.67-1.1v3.91c-1.04-.3-2.19-.13-3.11.45-.88.56-1.42 1.58-1.42 2.63-.01 1.01.52 1.99 1.36 2.54.85.56 1.93.68 2.88.31.63-.25 1.19-.71 1.52-1.31.25-.46.36-.98.35-1.51V.02z" />
+  </svg>
+);
+
 const getPlatformIcon = (platform: string) => {
   switch (platform) {
     case 'Android':
@@ -100,7 +155,7 @@ const Card = styled.article`
   }
 `;
 
-const Banner = styled.div<{ $color: string; $image?: string }>`
+const Banner = styled(Link)<{ $color: string; $image?: string }>`
   position: relative;
   height: 10rem;
   background-color: ${({ $color }) => $color};
@@ -110,9 +165,32 @@ const Banner = styled.div<{ $color: string; $image?: string }>`
     background-position: center top;
   `}
   overflow: hidden;
+  display: block;
+  text-decoration: none;
 
   @media (max-width: 600px) {
     height: 8rem;
+  }
+`;
+
+const IconLink = styled(Link)`
+  display: flex;
+  flex-shrink: 0;
+  text-decoration: none;
+  outline: none;
+  border-radius: 0.6rem;
+  overflow: hidden;
+`;
+
+const GameNameLink = styled(Link)`
+  text-decoration: none;
+  color: inherit;
+  outline: none;
+  min-width: 0;
+  display: block;
+
+  &:hover h3 {
+    color: var(--primary-accent, #3b82f6);
   }
 `;
 
@@ -421,6 +499,7 @@ const EngineBadge = styled.span`
 const FollowRow = styled.div`
   display: flex;
   align-items: center;
+  justify-content: space-between;
   gap: 0.75rem;
 `;
 
@@ -428,6 +507,51 @@ const FollowLabel = styled.span`
   font-size: 0.78rem;
   color: var(--global-text-muted);
   font-weight: 600;
+
+  @media (max-width: 640px) {
+    display: none;
+  }
+`;
+
+const SocialGroup = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  flex: 1;
+  min-width: 0;
+`;
+
+const SocialLinks = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  flex-wrap: wrap;
+`;
+
+const SocialLink = styled.a<{ $hoverColor: string }>`
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.85rem;
+  height: 1.85rem;
+  border-radius: 0.35rem;
+  border: 1px solid var(--global-border);
+  background: var(--global-card-bg);
+  color: var(--global-text-muted);
+  transition: all 0.15s ease-in-out;
+  flex-shrink: 0;
+
+  &:hover {
+    color: ${({ $hoverColor }) => $hoverColor};
+    border-color: ${({ $hoverColor }) => $hoverColor}dd;
+    background: var(--global-secondary-bg);
+    transform: translateY(-1px);
+  }
+
+  svg {
+    display: block;
+    flex-shrink: 0;
+  }
 `;
 
 const FollowBtn = styled.button<{ $active: boolean }>`
@@ -522,7 +646,7 @@ export function GameCard({ game }: { game: GachaGame }) {
 
   return (
     <Card>
-      <Banner $color={game.bannerColor} $image={game.bannerImage}>
+      <Banner to={`/game/${game.id}`} $color={game.bannerColor} $image={game.bannerImage}>
         <BannerOverlay />
         <BannerBadgesLeft>
           <BannerBadge>{bannerLabel}</BannerBadge>
@@ -538,14 +662,20 @@ export function GameCard({ game }: { game: GachaGame }) {
       <CardBody>
         <GameHeader>
           {game.profileImage ? (
-            <GameIconImg src={game.profileImage} alt={game.name} />
+            <IconLink to={`/game/${game.id}`}>
+              <GameIconImg src={game.profileImage} alt={game.name} />
+            </IconLink>
           ) : (
-            <GameIcon $color={game.bannerColor + 'cc'}>
-              {game.iconInitials ?? game.name.slice(0, 2).toUpperCase()}
-            </GameIcon>
+            <IconLink to={`/game/${game.id}`}>
+              <GameIcon $color={game.bannerColor + 'cc'}>
+                {game.iconInitials ?? game.name.slice(0, 2).toUpperCase()}
+              </GameIcon>
+            </IconLink>
           )}
           <GameMeta>
-            <GameName title={game.name}>{game.name}</GameName>
+            <GameNameLink to={`/game/${game.id}`}>
+              <GameName title={game.name}>{game.name}</GameName>
+            </GameNameLink>
             <DateRow>
               <FiCalendar size={12} />
               {game.status === 'Released'
@@ -625,7 +755,76 @@ export function GameCard({ game }: { game: GachaGame }) {
         <Divider />
 
         <FollowRow>
-          <FollowLabel>Follow:</FollowLabel>
+          <SocialGroup>
+            <FollowLabel>Follow:</FollowLabel>
+            {(() => {
+              const socialLinksCount = [
+                game.socialLinks?.website,
+                game.socialLinks?.twitter,
+                game.socialLinks?.youtube,
+                game.socialLinks?.reddit,
+                game.socialLinks?.discord,
+                game.socialLinks?.facebook,
+                game.socialLinks?.instagram,
+                game.socialLinks?.tiktok
+              ].filter(Boolean).length;
+
+              const socialMediaElements = (
+                <>
+                  {game.socialLinks?.website && (
+                    <SocialLink href={game.socialLinks.website} target="_blank" rel="noopener noreferrer" title="Official Website" $hoverColor="#3b82f6">
+                      <BrandGlobeIcon size={13} />
+                    </SocialLink>
+                  )}
+                  {game.socialLinks?.twitter && (
+                    <SocialLink href={game.socialLinks.twitter} target="_blank" rel="noopener noreferrer" title="X (Twitter)" $hoverColor="var(--global-text)">
+                      <BrandXIcon size={13} />
+                    </SocialLink>
+                  )}
+                  {game.socialLinks?.youtube && (
+                    <SocialLink href={game.socialLinks.youtube} target="_blank" rel="noopener noreferrer" title="YouTube" $hoverColor="#ef4444">
+                      <BrandYouTubeIcon size={13} />
+                    </SocialLink>
+                  )}
+                  {game.socialLinks?.reddit && (
+                    <SocialLink href={game.socialLinks.reddit} target="_blank" rel="noopener noreferrer" title="Reddit" $hoverColor="#ff4500">
+                      <BrandRedditIcon size={13} />
+                    </SocialLink>
+                  )}
+                  {game.socialLinks?.discord && (
+                    <SocialLink href={game.socialLinks.discord} target="_blank" rel="noopener noreferrer" title="Discord" $hoverColor="#5865f2">
+                      <BrandDiscordIcon size={13} />
+                    </SocialLink>
+                  )}
+                  {game.socialLinks?.facebook && (
+                    <SocialLink href={game.socialLinks.facebook} target="_blank" rel="noopener noreferrer" title="Facebook" $hoverColor="#1877f2">
+                      <BrandFacebookIcon size={13} />
+                    </SocialLink>
+                  )}
+                  {game.socialLinks?.instagram && (
+                    <SocialLink href={game.socialLinks.instagram} target="_blank" rel="noopener noreferrer" title="Instagram" $hoverColor="#e1306c">
+                      <BrandInstagramIcon size={13} />
+                    </SocialLink>
+                  )}
+                  {game.socialLinks?.tiktok && (
+                    <SocialLink href={game.socialLinks.tiktok} target="_blank" rel="noopener noreferrer" title="TikTok" $hoverColor="#fe2c55">
+                      <BrandTikTokIcon size={13} />
+                    </SocialLink>
+                  )}
+                </>
+              );
+
+              return socialLinksCount > 4 ? (
+                <ScrollableSocialContainer $variant="card">
+                  {socialMediaElements}
+                </ScrollableSocialContainer>
+              ) : (
+                <SocialLinks>
+                  {socialMediaElements}
+                </SocialLinks>
+              );
+            })()}
+          </SocialGroup>
           <FollowBtn
             $active={followed}
             onClick={() => toggle(game.id)}

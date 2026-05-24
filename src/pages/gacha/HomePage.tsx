@@ -706,8 +706,9 @@ const FeedbackBox = styled.div`
 
 export function HomePage() {
   const navigate = useNavigate();
-  const total = gachaGames.length;
-  const featured = gachaGames.slice(0, 8);
+  const upcomingGames = React.useMemo(() => gachaGames.filter((g) => g.status !== 'Released'), []);
+  const total = upcomingGames.length;
+  const featured = upcomingGames.slice(0, 8);
 
   return (
     <PageWrapper>

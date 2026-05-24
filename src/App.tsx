@@ -13,9 +13,11 @@ import { GachaNavbar } from './components/gacha/GachaNavbar';
 import { GachaFooter } from './components/gacha/GachaFooter';
 import { HomePage } from './pages/gacha/HomePage';
 import { GamesPage } from './pages/gacha/GamesPage';
+import { ArchivePage } from './pages/gacha/ArchivePage';
 import { NewsPage } from './pages/gacha/NewsPage';
 import { FeedbackPage } from './pages/gacha/FeedbackPage';
 import { ArticleDetailPage } from './pages/gacha/ArticleDetailPage';
+import { GameDetailPage } from './pages/gacha/GameDetailPage';
 import { ChangelogPage } from './pages/gacha/ChangelogPage';
 import { ScrollToTopButton } from './components/gacha/ScrollToTopButton';
 import { MobileBottomNavbar } from './components/gacha/MobileBottomNavbar';
@@ -147,8 +149,10 @@ function AppRoutes() {
             <Routes>
               <Route path='/' element={<HomePage />} />
               <Route path='/games' element={<GamesPage />} />
+              <Route path='/archive' element={<ArchivePage />} />
               <Route path='/news' element={<NewsPage />} />
               <Route path='/news/:id' element={<ArticleDetailPage />} />
+              <Route path='/game/:id' element={<GameDetailPage />} />
               <Route path='/feedback' element={<FeedbackPage />} />
               <Route path='/changelog' element={<ChangelogPage />} />
               <Route path='*' element={<PlaceholderPage title='Page Not Found' />} />

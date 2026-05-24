@@ -1,13 +1,12 @@
-import React, { useState, useEffect, useRef, useMemo } from 'react';
+import React, { useState, useMemo, useRef, useEffect } from 'react';
 import styled from 'styled-components';
-import { useSearchParams, Link } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { FiSearch, FiX, FiFilter, FiChevronDown, FiArrowLeft } from 'react-icons/fi';
 import { Calendar } from 'lucide-react';
 import {
   gachaGames,
   type Platform,
   type Region,
-  type GameStatus,
 } from '../../data/gachaGames';
 import { GameCard } from '../../components/gacha/GameCard';
 
@@ -69,7 +68,7 @@ const PageSubtitle = styled.p`
   line-height: 1.6;
 `;
 
-const FeedbackBox = styled.div`
+const HeaderBox = styled.div`
   padding: 0.75rem 1rem;
   background: var(--global-card-bg);
   border-radius: 0.4rem;
@@ -77,20 +76,6 @@ const FeedbackBox = styled.div`
   font-size: 0.82rem;
   color: var(--global-text-muted);
   line-height: 1.55;
-
-  .mobile-only {
-    display: inline;
-    @media (min-width: 601px) {
-      display: none;
-    }
-  }
-
-  .desktop-only {
-    display: none;
-    @media (min-width: 601px) {
-      display: inline;
-    }
-  }
 
   a {
     color: var(--global-text);
@@ -326,35 +311,25 @@ const EmptyState = styled.div`
 `;
 
 const PLATFORMS: (Platform | 'All')[] = ['All', 'Android', 'iOS', 'PC', 'PS5', 'Switch'];
-const STATUSES: (GameStatus | 'All')[] = ['All', 'Pre-registration', 'In Development', 'Announced'];
 const REGIONS: (Region | 'All')[] = ['All', 'Global', 'JP', 'CN', 'KR', 'NA', 'EU', 'SEA'];
 const SORT_OPTIONS = [
   { value: 'none', label: 'No Sorting' },
   { value: 'name-asc', label: 'Name A → Z' },
   { value: 'name-desc', label: 'Name Z → A' },
-  { value: 'date-asc', label: 'Release Date' },
+  { value: 'date-desc', label: 'Release Date (Newest First)' },
+  { value: 'date-asc', label: 'Release Date (Oldest First)' },
 ];
 
-type SortOption = 'none' | 'name-asc' | 'name-desc' | 'date-asc';
+type SortOption = 'none' | 'name-asc' | 'name-desc' | 'date-desc' | 'date-asc';
 
-export function GamesPage() {
-  const [searchParams] = useSearchParams();
-  const searchRef = useRef<HTMLInputElement>(null);
-
-  const [query, setQuery] = useState(() => searchParams.get('q') || '');
+export function ArchivePage() {
+  const [query, setQuery] = useState('');
   const [platform, setPlatform] = useState<Platform | 'All'>('All');
-  const [status, setStatus] = useState<GameStatus | 'All'>(
-    () => (searchParams.get('status') as GameStatus) || 'All',
-  );
   const [region, setRegion] = useState<Region | 'All'>('All');
   const [sort, setSort] = useState<SortOption>('none');
   const [filtersOpen, setFiltersOpen] = useState(false);
   const [sortOpen, setSortOpen] = useState(false);
-
-  useEffect(() => {
-    const q = searchParams.get('q');
-    if (q) setQuery(q);
-  }, []);
+  const searchRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
@@ -367,22 +342,21 @@ export function GamesPage() {
     return () => window.removeEventListener('keydown', handler);
   }, []);
 
-  const upcomingGames = useMemo(() => {
-    return gachaGames.filter((g) => g.status !== 'Released');
+  const releasedGames = useMemo(() => {
+    return gachaGames.filter((g) => g.status === 'Released');
   }, []);
 
-  const isFiltered = query || platform !== 'All' || status !== 'All' || region !== 'All';
+  const isFiltered = query || platform !== 'All' || region !== 'All';
 
   const resetFilters = () => {
     setQuery('');
     setPlatform('All');
-    setStatus('All');
     setRegion('All');
     setSort('none');
   };
 
   const filtered = useMemo(() => {
-    let list = upcomingGames.filter((g) => {
+    let list = releasedGames.filter((g) => {
       const q = query.toLowerCase();
       const matchQ =
         !q ||
@@ -390,13 +364,20 @@ export function GamesPage() {
         g.genre.toLowerCase().includes(q) ||
         (g.alternativeName || '').toLowerCase().includes(q);
       const matchP = platform === 'All' || g.platforms.includes(platform);
-      const matchS = status === 'All' || g.status === status;
       const matchR = region === 'All' || g.regions.includes(region);
-      return matchQ && matchP && matchS && matchR;
+      return matchQ && matchP && matchR;
     });
 
     if (sort === 'name-asc') list = [...list].sort((a, b) => a.name.localeCompare(b.name));
     if (sort === 'name-desc') list = [...list].sort((a, b) => b.name.localeCompare(a.name));
+    if (sort === 'date-desc') {
+      list = [...list].sort((a, b) => {
+        if (a.releaseDate && b.releaseDate) return b.releaseDate.localeCompare(a.releaseDate);
+        if (a.releaseDate) return -1;
+        if (b.releaseDate) return 1;
+        return 0;
+      });
+    }
     if (sort === 'date-asc') {
       list = [...list].sort((a, b) => {
         if (a.releaseDate && b.releaseDate) return a.releaseDate.localeCompare(b.releaseDate);
@@ -406,10 +387,7 @@ export function GamesPage() {
       });
     }
     return list;
-  }, [query, platform, status, region, sort]);
-
-  const withDates = filtered.filter((g) => g.releaseDate);
-  const withoutDates = filtered.filter((g) => !g.releaseDate);
+  }, [releasedGames, query, platform, region, sort]);
 
   const currentSortLabel = SORT_OPTIONS.find((o) => o.value === sort)?.label ?? 'No Sorting';
 
@@ -420,18 +398,14 @@ export function GamesPage() {
           <BackLink to="/">
             <FiArrowLeft size={12} /> Back to Dashboard
           </BackLink>
-          <PageTitle>Upcoming Gacha Games</PageTitle>
+          <PageTitle>Released Games Archive</PageTitle>
           <PageSubtitle>
-            Discover upcoming gacha games, pre-registration titles, and games in development.
+            A consolidated index of gacha games that have already launched and are fully playable globally or regionally.
           </PageSubtitle>
-          <FeedbackBox>
-            <span className="mobile-only">Noticed any inconsistencies or want to add a new game to the list? Feel free to drop one at </span>
-            <span className="desktop-only">Our upcoming titles database is completely community-driven. If you've discovered any missing gacha games, outdated release schedules, or platform details, we invite you to help us maintain a pristine and accurate record by submitting updates via our </span>
-            <Link to="/feedback" id="games-feedback-link">
-              <span className="mobile-only">feedback page</span>
-              <span className="desktop-only">community feedback and submissions page</span>
-            </Link>
-          </FeedbackBox>
+          <HeaderBox>
+            Looking for upcoming and pre-registration titles? Check out the active tracking list on the{' '}
+            <Link to="/games">Upcoming Games</Link> page.
+          </HeaderBox>
         </PageHeader>
 
         <SearchRow>
@@ -440,7 +414,7 @@ export function GamesPage() {
           </SearchIcon>
           <SearchInput
             ref={searchRef}
-            placeholder='Search games, developers, publishers...'
+            placeholder='Search released games...'
             value={query}
             onChange={(e) => setQuery(e.target.value)}
           />
@@ -453,7 +427,7 @@ export function GamesPage() {
 
         <ControlRow>
           <ControlBtn
-            $active={filtersOpen || (platform !== 'All' || region !== 'All' || status !== 'All')}
+            $active={filtersOpen || (platform !== 'All' || region !== 'All')}
             onClick={() => { setFiltersOpen((v) => !v); setSortOpen(false); }}
           >
             <FiFilter size={13} />
@@ -487,20 +461,6 @@ export function GamesPage() {
                     onClick={() => setPlatform(p as Platform | 'All')}
                   >
                     {p}
-                  </Pill>
-                ))}
-              </PillGroup>
-            </FilterGroup>
-            <FilterGroup>
-              <FilterLabel>Status</FilterLabel>
-              <PillGroup>
-                {STATUSES.map((s) => (
-                  <Pill
-                    key={s}
-                    $active={status === s}
-                    onClick={() => setStatus(s as GameStatus | 'All')}
-                  >
-                    {s}
                   </Pill>
                 ))}
               </PillGroup>
@@ -543,9 +503,9 @@ export function GamesPage() {
 
         <ResultsMeta>
           <ResultsCount>
-            {filtered.length === upcomingGames.length
-              ? `Showing all ${filtered.length} games`
-              : `Showing ${filtered.length} of ${upcomingGames.length} games`}
+            {filtered.length === releasedGames.length
+              ? `Showing all ${filtered.length} released games`
+              : `Showing ${filtered.length} of ${releasedGames.length} released games`}
           </ResultsCount>
           {isFiltered && (
             <ResetBtn onClick={resetFilters}>
@@ -555,39 +515,20 @@ export function GamesPage() {
         </ResultsMeta>
 
         {filtered.length === 0 ? (
-          <EmptyState>No games found matching your filters.</EmptyState>
+          <EmptyState>No released games found matching your filters.</EmptyState>
         ) : (
-          <>
-            {withDates.length > 0 && (
-              <SectionBlock>
-                <SectionHeader $accent='#4a9eff'>
-                  <SectionIconBox $accent='#4a9eff'><Calendar size={14} /></SectionIconBox>
-                  <SectionTitle>Games with Release Dates</SectionTitle>
-                  <SectionBadge $accent='#4a9eff'>{withDates.length}</SectionBadge>
-                </SectionHeader>
-                <GameList>
-                  {withDates.map((g) => (
-                    <GameCard key={g.id} game={g} />
-                  ))}
-                </GameList>
-              </SectionBlock>
-            )}
-
-            {withoutDates.length > 0 && (
-              <SectionBlock>
-                <SectionHeader $accent='#f59e0b'>
-                  <SectionIconBox $accent='#f59e0b'><Calendar size={14} /></SectionIconBox>
-                  <SectionTitle>Games without Release Dates</SectionTitle>
-                  <SectionBadge $accent='#f59e0b'>{withoutDates.length}</SectionBadge>
-                </SectionHeader>
-                <GameList>
-                  {withoutDates.map((g) => (
-                    <GameCard key={g.id} game={g} />
-                  ))}
-                </GameList>
-              </SectionBlock>
-            )}
-          </>
+          <SectionBlock>
+            <SectionHeader $accent='#22c55e'>
+              <SectionIconBox $accent='#22c55e'><Calendar size={14} /></SectionIconBox>
+              <SectionTitle>Released Titles</SectionTitle>
+              <SectionBadge $accent='#22c55e'>{filtered.length}</SectionBadge>
+            </SectionHeader>
+            <GameList>
+              {filtered.map((g) => (
+                <GameCard key={g.id} game={g} />
+              ))}
+            </GameList>
+          </SectionBlock>
         )}
       </PageInner>
     </PageWrapper>

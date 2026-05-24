@@ -93,8 +93,11 @@ const Spacer = styled.div`
 
 const RightSection = styled.div`
   display: flex;
+  flex-direction: row;
   align-items: center;
+  justify-content: flex-end;
   gap: 0.6rem;
+  flex-shrink: 0;
 `;
 
 const ShortcutHint = styled.span`
@@ -396,6 +399,15 @@ const WatchlistCountBadge = styled.span`
   text-align: center;
 `;
 
+const WatchlistText = styled.span`
+  font-size: 0.8rem;
+  display: inline;
+
+  @media (max-width: 768px) {
+    display: none;
+  }
+`;
+
 const DropdownPanel = styled.div`
   position: absolute;
   top: calc(100% + 0.4rem);
@@ -554,6 +566,7 @@ export function GachaNavbar() {
             Home
           </NavItem>
           <NavItem to='/games'>Games</NavItem>
+          <NavItem to='/archive'>Archive</NavItem>
           <NavItem to='/news' id="nav-news-link">Latest News</NavItem>
         </NavLinks>
 
@@ -561,19 +574,20 @@ export function GachaNavbar() {
 
         <RightSection>
           {/* Watchlist Section */}
-          <div style={{ position: 'relative' }} ref={watchlistRef}>
+          <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }} ref={watchlistRef}>
             <IconButton
               onClick={() => {
                 setShowWatchlist((v) => !v);
                 closeSearch();
               }}
               title='Watchlist'
+              id='nav-watchlist-btn'
             >
               <Bookmark />
               {watchlist.length > 0 ? (
                 <WatchlistCountBadge>{watchlist.length}</WatchlistCountBadge>
               ) : (
-                <span style={{ fontSize: '0.8rem' }}>Watchlist</span>
+                <WatchlistText>Watchlist</WatchlistText>
               )}
             </IconButton>
 
@@ -585,8 +599,8 @@ export function GachaNavbar() {
                 </PanelHeader>
                 {watchlistedGames.length === 0 ? (
                   <EmptyPanelState>
-                    <Bookmark />
-                    <span>No followed games yet</span>
+                     <Bookmark />
+                     <span>No followed games yet</span>
                   </EmptyPanelState>
                 ) : (
                   <ScrollContainer>
@@ -642,7 +656,7 @@ export function GachaNavbar() {
           </div>
 
           {/* Search Section */}
-          <div style={{ position: 'relative' }} ref={dropdownRef}>
+          <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }} ref={dropdownRef}>
             <SearchWrapper $open={searchOpen}>
               <SearchIconPrefix>
                 <Search />
@@ -664,12 +678,12 @@ export function GachaNavbar() {
             </SearchWrapper>
 
             {!searchOpen ? (
-              <SearchToggleBtn onClick={openSearch} title='Search (Ctrl+K)'>
+              <SearchToggleBtn onClick={openSearch} title='Search (Ctrl+K)' id='nav-search-toggle-btn'>
                 <Search />
                 <ShortcutHint>Ctrl K</ShortcutHint>
               </SearchToggleBtn>
             ) : (
-              <SearchToggleBtn onClick={closeSearch} title='Close search'>
+              <SearchToggleBtn onClick={closeSearch} title='Close search' id='nav-search-toggle-btn'>
                 <X />
               </SearchToggleBtn>
             )}
@@ -734,7 +748,7 @@ export function GachaNavbar() {
           </div>
 
           {/* Theme Toggle Button */}
-          <IconButton onClick={toggleTheme} title='Toggle theme'>
+          <IconButton onClick={toggleTheme} title='Toggle theme' id='nav-theme-toggle-btn'>
             {isDarkMode ? <Sun /> : <Moon />}
           </IconButton>
         </RightSection>

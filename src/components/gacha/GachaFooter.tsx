@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import { Link, useLocation } from 'react-router-dom';
-import { FaReddit, FaDiscord, FaTwitter } from 'react-icons/fa';
+import { FaDiscord } from 'react-icons/fa';
 
 const FooterWrapper = styled.footer`
   margin-top: 4rem;
@@ -226,7 +226,10 @@ export function GachaFooter() {
             rel='noopener noreferrer'
             aria-label='Reddit'
           >
-            <FaReddit />
+            <svg viewBox="0 0 16 16" width="18" height="18" fill="currentColor" aria-hidden="true" style={{ display: 'block', flexShrink: 0 }}>
+              <path d="M6.167 8a.83.83 0 0 0-.83.83c0 .459.372.84.83.831a.831.831 0 0 0 0-1.661m1.843 3.647c.315 0 1.403-.038 1.976-.611a.23.23 0 0 0 0-.306.213.213 0 0 0-.306 0c-.353.363-1.126.487-1.67.487-.545 0-1.308-.124-1.671-.487a.213.213 0 0 0-.306 0 .213.213 0 0 0 0 .306c.564.563 1.652.61 1.977.61zm.992-2.807c0 .458.373.83.831.83s.83-.381.83-.83a.831.831 0 0 0-1.66 0z" />
+              <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0m-3.828-1.165c-.315 0-.602.124-.812.325-.801-.573-1.9-.945-3.121-.993l.534-2.501 1.738.372a.83.83 0 1 0 .83-.869.83.83 0 0 0-.744.468l-1.938-.41a.2.2 0 0 0-.153.028.2.2 0 0 0-.086.134l-.592 2.788c-1.24.038-2.358.41-3.17.992-.21-.2-.496-.324-.81-.324a1.163 1.163 0 0 0-.478 2.224q-.03.17-.029.353c0 1.795 2.091 3.256 4.669 3.256s4.668-1.451 4.668-3.256c0-.114-.01-.238-.029-.353.401-.181.688-.592.688-1.069 0-.65-.525-1.165-1.165-1.165" />
+            </svg>
           </SocialIcon>
           <SocialIcon
             href='https://discord.com'
@@ -242,7 +245,9 @@ export function GachaFooter() {
             rel='noopener noreferrer'
             aria-label='Twitter'
           >
-            <FaTwitter />
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true" style={{ display: 'block', flexShrink: 0 }}>
+              <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+            </svg>
           </SocialIcon>
         </SocialRow>
       </SubFooter>
