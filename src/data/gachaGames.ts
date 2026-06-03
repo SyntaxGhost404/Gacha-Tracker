@@ -32,6 +32,7 @@ export interface GachaGame {
   devStatus?: DevStatus;
   releaseDate?: string;
   releaseDateConfirmed?: boolean;
+  releaseDateTime?: string;
   description: string;
   platforms: Platform[];
   engine?: string;
@@ -77,6 +78,7 @@ export const gachaGames: GachaGame[] = [
     status: 'Pre-registration',
     releaseDate: '2026-08-31',
     releaseDateConfirmed: false,
+    releaseDateTime: '2026-08-31T00:00:00Z',
     description:
       'hololive Dreams is the first-party rhythm RPG developed by Cover Corporation and QualiArts. Launching tentatively in August 2026, it features over fifty active hololive VTubers as collectible characters and more than 150 songs at launch. Players build intricate skill trees, collect high-tier support cards, and acquire premium cosmetic outfits, all driven by intense, immersive parasocial fan devotion.',
     platforms: ['iOS', 'Android'],
@@ -286,7 +288,9 @@ export const gachaGames: GachaGame[] = [
     genre: 'RPG Strategy',
     regions: ['Global', 'SEA', 'NA'],
     status: 'Pre-registration',
-    devStatus: 'Closed Beta',
+    releaseDate: '2026-06-04',
+    releaseDateConfirmed: true,
+    releaseDateTime: '2026-06-04T11:00:00+08:00',
     description:
       "Illusion Connect: Re resurrects the classic anime strategy RPG experience on mobile platforms. Spearheaded by Sugargame, players command high-fidelity Radiants in real-time tactical grid battles against malevolent Nightmares. It brings back popular Live2D interactions, custom base decorative elements, and the beloved original voice cast featuring Ai Kayano, Yui Ishikawa, and Saori Hayami.",
     platforms: ['Android', 'iOS'],
@@ -553,3 +557,10 @@ export const REGION_COLORS: Record<Region, string> = {
   SEA: '#55efc4',
 };
 
+export const PLATFORM_ICONS: Record<Platform, string> = {
+  Android: '⬥',
+  iOS: '',
+  PC: '⊡',
+  PS5: '⬡',
+  Switch: '◈',
+};

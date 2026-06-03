@@ -25,10 +25,6 @@ export const changelogData: ChangelogItem[] = [
         'Implemented custom, verified inline brand SVG icons next to all platform names (iOS, Android, PC, Nintendo Switch, PS5) and game engines (Unreal Engine, Unity) inside individual game details pages to ensure visual consistency with cards on the games index.'
       ],
       improved: [
-        'Redesigned the Connect/Share social media container on individual separate game pages, transitioning the layout to a highly responsive, space-efficient 5-column grid layout on mobile and tablet viewports when a game contains more than 4 configured social links.',
-        'Configured the 5-column grid layout on mobile and tablet viewports with standard grid spacing to wrap items vertically, ensuring all brand icons fit neatly and remain completely contained within the sidebar card\'s padding boundaries without any horizontal screen overflow.',
-        'Maintained standard side-by-side flex inline layouts on wide desktop screens where horizontal space is ample, ensuring natural responsiveness across all display sizes, and falling back gracefully on constrained displays.',
-        'Reconfigured the Connect/Share social media container inside both individual separate game pages and mobile index cards with a touch-swipe horizontally scrollable viewport equipped with dynamic left/right chevron navigation overlay buttons that reactively toggle visibility based on scroll position.',
         'Optimized the Connect/Share social media icons layout on individual separate game pages to automatically transition into a balanced 5-column grid layout when more than 4 social platforms are configured, preventing horizontal screen overflow and layout clipping.',
         'Mapped authentic and verified social media links (Official Website, X, YouTube, Reddit, Discord, Facebook, Instagram, TikTok) dynamically across all nineteen games on both individual details pages and index cards, replacing hardcoded links.',
         'Aligned the individual game page connect/share row with high-fidelity, responsive brand SVGs (Globe, X/Twitter, YouTube, and custom Reddit) and identical transition animations as seen on `/games` card list.',
@@ -39,17 +35,11 @@ export const changelogData: ChangelogItem[] = [
         'Reconfigured the layout of all specifications and metadata rows on mobile viewports under 768px, transitioning them from a cramped side-by-side format to an elegant vertically-stacked structure with left-aligned parameter labels and values.'
       ],
       fixed: [
-        'Locked mobile social media icons in the scroll carousel to standard dimensions using flex-shrink parameters, preventing cramped or squished shapes.',
-        'Constrained the visible width of the horizontal scroll container on mobile viewports so that exactly 3 standard-sized icons fit perfectly inline, clipping subsequent icons correctly off-screen.',
-        'Implemented conditional activation of the carousel wrapper so it triggers only for games with more than 4 configured social links, correctly falling back to a standard static horizontal row otherwise.',
         'Resolved the visual mismatch of the "UNCONFIRMED" release date badge style and inline side-by-side horizontal alignment on the individual game pages.',
         'Completed global sanitization of game title spelling to strictly be "E.T.E: Shattered Skie" without the trailing plural across all components, database contexts, and changelogs.',
         'Corrected Pre-Registration button platform icons (Google Play and Apple App Store) to display in standard white on active game detail entries instead of accent purple.',
         'Corrected and cleaned up the naming nomenclature for "E.T.E: Shattered Skie" across all pages, completely removing database and text references to "E.T.E Chronicle / Project E.T.E".',
         'Resolved a build-time duplication on the individual Game Details page by removing redundant imports for the gachaGames list and useWatchlist configuration.'
-      ],
-      technical: [
-        'Safely audited the codebase for the obsolete PLATFORM_ICONS record from the initial iterations, successfully deleting it from the game definitions and removing its unused imports from GameCard.tsx.'
       ]
     }
   },

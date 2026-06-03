@@ -1,7 +1,8 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import styled from 'styled-components';
 import { Link, NavLink, useNavigate } from 'react-router-dom';
-import { Sun, Moon, Search, X, Bookmark, ArrowRight } from 'lucide-react';
+import { Sun, Moon, Search, X, Bookmark, ArrowRight, Trash2, Check } from 'lucide-react';
+import { AnimatePresence, motion } from 'motion/react';
 import { useTheme } from '../ThemeContext';
 import { useWatchlist } from '../../context/WatchlistContext';
 import { gachaGames, statusColors, type GachaGame } from '../../data/gachaGames';
@@ -312,7 +313,52 @@ const SearchResultRow = styled.button<{ $statusColor: string }>`
   }
 `;
 
+const AnimatedSearchResultRow = styled(motion.button)<{ $statusColor: string }>`
+  width: 100%;
+  padding: 0.7rem 0.9rem;
+  border: none;
+  background: none;
+  text-align: left;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  border-left: 3px solid ${({ $statusColor }) => $statusColor || 'transparent'};
+  transition: background 0.15s ease;
+  color: var(--global-text);
+
+  &:hover {
+    background: var(--global-secondary-bg);
+  }
+
+  & + & {
+    border-top: 1px solid var(--global-border);
+  }
+`;
+
+const SelectionOverlay = styled.div<{ $selected: boolean }>`
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: ${({ $selected }) => ($selected ? 1 : 0)};
+  pointer-events: none;
+  transition: opacity 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  color: #fff;
+  z-index: 2;
+
+  svg {
+    width: 1.15rem;
+    height: 1.15rem;
+    transform: scale(${({ $selected }) => ($selected ? 1 : 0.52)});
+    transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+`;
+
 const ImageContainer = styled.div`
+  position: relative;
   width: 2.8rem;
   height: 2.8rem;
   border-radius: 0.4rem;
@@ -328,6 +374,7 @@ const ImageContainer = styled.div`
     width: 100%;
     height: 100%;
     object-fit: cover;
+    transition: filter 0.25s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.25s cubic-bezier(0.16, 1, 0.3, 1);
   }
 `;
 
@@ -440,6 +487,42 @@ const PanelHeader = styled.div`
   color: var(--global-text-muted);
   text-transform: uppercase;
   letter-spacing: 0.06em;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+`;
+
+const HeaderActions = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  text-transform: none;
+  letter-spacing: normal;
+`;
+
+const HeaderActionButton = styled.button<{ $active?: boolean; $danger?: boolean }>`
+  background: none;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.3rem;
+  color: ${({ $active, $danger }) => 
+    $danger 
+      ? ($active ? 'var(--danger-accent, #ef4444)' : 'var(--global-text-muted)') 
+      : 'var(--global-text-muted)'};
+  opacity: ${({ disabled }) => (disabled ? 0.45 : 1)};
+  cursor: ${({ disabled }) => (disabled ? 'not-allowed' : 'pointer')};
+  font-size: 0.72rem;
+  font-weight: 750;
+  padding: 0.2rem 0.4rem;
+  border-radius: 0.25rem;
+  transition: all 0.15s ease;
+
+  &:hover:not(:disabled) {
+    color: ${({ $danger }) => ($danger ? 'var(--danger-accent, #ef4444)' : 'var(--global-text)')};
+    background: var(--global-secondary-bg);
+  }
 `;
 
 const ScrollContainer = styled.div`
@@ -469,15 +552,99 @@ const EmptyPanelState = styled.div`
   }
 `;
 
+function WatchlistReleaseBadge({ game }: { game: GachaGame }) {
+  const [now, setNow] = useState(() => new Date());
+
+  useEffect(() => {
+    if (!game.releaseDate) return;
+    const target = game.releaseDateTime
+      ? new Date(game.releaseDateTime)
+      : new Date(game.releaseDate + 'T00:00:00Z');
+    
+    if (target.getTime() <= now.getTime()) return;
+
+    const timer = setInterval(() => {
+      setNow(new Date());
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, [game.releaseDate, game.releaseDateTime]);
+
+  if (!game.releaseDate) {
+    return <MiniBadge>TBA</MiniBadge>;
+  }
+
+  const target = game.releaseDateTime
+    ? new Date(game.releaseDateTime)
+    : new Date(game.releaseDate + 'T00:00:00Z');
+
+  const diff = target.getTime() - now.getTime();
+
+  if (diff <= 0) {
+    return (
+      <MiniBadge>
+        {game.releaseDate ? game.releaseDate.substring(0, 4) : 'TBA'}
+      </MiniBadge>
+    );
+  }
+
+  const days = Math.floor(diff / 86_400_000);
+  const hours = Math.floor((diff % 86_400_000) / 3_600_000);
+  const mins = Math.floor((diff % 3_600_000) / 60_000);
+
+  const countdownText = `${days}D ${hours}H ${mins}M`;
+
+  return (
+    <MiniBadge style={{ color: 'var(--primary-accent)', borderColor: 'var(--primary-accent)', fontWeight: 700 }}>
+       {countdownText}
+    </MiniBadge>
+  );
+}
+
 export function GachaNavbar() {
   const { isDarkMode, toggleTheme } = useTheme();
-  const { watchlist } = useWatchlist();
+  const { watchlist, toggle } = useWatchlist();
   const navigate = useNavigate();
 
   const [searchOpen, setSearchOpen] = useState(false);
   const [query, setQuery] = useState('');
   const [showDropdown, setShowDropdown] = useState(false);
   const [showWatchlist, setShowWatchlist] = useState(false);
+
+  const [isDeletingState, setIsDeletingState] = useState(false);
+  const [selectedIds, setSelectedIds] = useState<string[]>([]);
+  const [localWatchlist, setLocalWatchlist] = useState<string[]>(watchlist);
+  const [isAnimatingDelete, setIsAnimatingDelete] = useState(false);
+
+  useEffect(() => {
+    if (!isAnimatingDelete) {
+      setLocalWatchlist(watchlist);
+    }
+  }, [watchlist, isAnimatingDelete]);
+
+  useEffect(() => {
+    if (!showWatchlist) {
+      setIsDeletingState(false);
+      setSelectedIds([]);
+      setIsAnimatingDelete(false);
+    }
+  }, [showWatchlist]);
+
+  const handleDeleteConfirm = () => {
+    if (selectedIds.length === 0) return;
+
+    setIsAnimatingDelete(true);
+    setLocalWatchlist((prev) => prev.filter((id) => !selectedIds.includes(id)));
+
+    setTimeout(() => {
+      selectedIds.forEach((id) => {
+        toggle(id);
+      });
+      setSelectedIds([]);
+      setIsDeletingState(false);
+      setIsAnimatingDelete(false);
+    }, 300);
+  };
 
   const searchInputRef = useRef<HTMLInputElement>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -552,7 +719,7 @@ export function GachaNavbar() {
     closeSearch();
   };
 
-  const watchlistedGames = gachaGames.filter((g) => watchlist.includes(g.id));
+  const watchlistedGames = gachaGames.filter((g) => localWatchlist.includes(g.id));
 
   return (
     <StyledNavbar>
@@ -594,8 +761,45 @@ export function GachaNavbar() {
             {showWatchlist && (
               <DropdownPanel>
                 <PanelHeader>
-                  Watchlist — {watchlist.length} game
-                  {watchlist.length !== 1 ? 's' : ''}
+                  <span>
+                    Watchlist — {watchlist.length} game
+                    {watchlist.length !== 1 ? 's' : ''}
+                  </span>
+                  {watchlist.length > 0 && (
+                    <HeaderActions>
+                      {isDeletingState ? (
+                        <>
+                          <HeaderActionButton
+                            onClick={() => {
+                              setIsDeletingState(false);
+                              setSelectedIds([]);
+                            }}
+                          >
+                            Cancel
+                          </HeaderActionButton>
+                          <HeaderActionButton
+                            $danger
+                            $active={selectedIds.length > 0}
+                            disabled={selectedIds.length === 0}
+                            onClick={handleDeleteConfirm}
+                            title="Confirm Delete"
+                          >
+                            <Trash2 size={13} />
+                          </HeaderActionButton>
+                        </>
+                      ) : (
+                        <HeaderActionButton
+                          onClick={() => {
+                            setIsDeletingState(true);
+                            setSelectedIds([]);
+                          }}
+                          title="Enter edit mode"
+                        >
+                          <Trash2 size={13} />
+                        </HeaderActionButton>
+                      )}
+                    </HeaderActions>
+                  )}
                 </PanelHeader>
                 {watchlistedGames.length === 0 ? (
                   <EmptyPanelState>
@@ -604,51 +808,76 @@ export function GachaNavbar() {
                   </EmptyPanelState>
                 ) : (
                   <ScrollContainer>
-                    {watchlistedGames.map((g) => (
-                      <SearchResultRow
-                        key={g.id}
-                        $statusColor={statusColors[g.status]}
-                        onClick={() => {
-                          navigate(`/games?q=${encodeURIComponent(g.name)}`);
-                          setShowWatchlist(false);
-                        }}
-                      >
-                        <ImageContainer>
-                          {g.profileImage ? (
-                            <img src={g.profileImage} alt={g.name} referrerPolicy="no-referrer" />
-                          ) : (
-                            <span style={{ fontSize: '0.75rem', fontWeight: 800 }}>
-                              {g.iconInitials ?? g.name.slice(0, 2).toUpperCase()}
-                            </span>
-                          )}
-                        </ImageContainer>
-                        <ResultContent>
-                          <ResultName>{g.name}</ResultName>
-                          <ResultTagRow>
-                            <MiniBadge>
-                              {g.releaseDate ? g.releaseDate.substring(0, 4) : 'TBA'}
-                            </MiniBadge>
-                            <MiniBadge>{g.genre}</MiniBadge>
-                            <MiniBadge>
-                              <span
-                                style={{
-                                  display: 'inline-block',
-                                  width: '4px',
-                                  height: '4px',
-                                  borderRadius: '50%',
-                                  backgroundColor: statusColors[g.status],
-                                }}
-                              />
-                              {g.status === 'Released'
-                                ? 'Released'
-                                : g.status === 'Pre-registration'
-                                ? 'Pre-reg'
-                                : 'Dev'}
-                            </MiniBadge>
-                          </ResultTagRow>
-                        </ResultContent>
-                      </SearchResultRow>
-                    ))}
+                    <AnimatePresence initial={false}>
+                      {watchlistedGames.map((g) => {
+                        const isSelected = selectedIds.includes(g.id);
+                        return (
+                          <AnimatedSearchResultRow
+                            key={g.id}
+                            $statusColor={statusColors[g.status]}
+                            initial={{ opacity: 1, height: 'auto', scale: 1 }}
+                            exit={{ opacity: 0, height: 0, scale: 0.9, padding: 0, borderLeftWidth: 0, overflow: 'hidden' }}
+                            transition={{ duration: 0.25, ease: 'easeInOut' }}
+                            onClick={() => {
+                              if (isDeletingState) {
+                                setSelectedIds((prev) =>
+                                  prev.includes(g.id)
+                                    ? prev.filter((id) => id !== g.id)
+                                    : [...prev, g.id]
+                                );
+                              } else {
+                                navigate(`/game/${g.id}`);
+                                setShowWatchlist(false);
+                              }
+                            }}
+                            style={{ overflow: 'hidden' }}
+                          >
+                            <ImageContainer>
+                              <SelectionOverlay $selected={isDeletingState && isSelected}>
+                                <Check size={16} strokeWidth={3.5} />
+                              </SelectionOverlay>
+                              {g.profileImage ? (
+                                <img
+                                  src={g.profileImage}
+                                  alt={g.name}
+                                  referrerPolicy="no-referrer"
+                                  style={{
+                                    filter: isDeletingState && isSelected ? 'grayscale(100%) opacity(0.4)' : 'none',
+                                  }}
+                                />
+                              ) : (
+                                <span style={{ fontSize: '0.75rem', fontWeight: 800 }}>
+                                  {g.iconInitials ?? g.name.slice(0, 2).toUpperCase()}
+                                </span>
+                              )}
+                            </ImageContainer>
+                            <ResultContent>
+                              <ResultName>{g.name}</ResultName>
+                              <ResultTagRow>
+                                <WatchlistReleaseBadge game={g} />
+                                <MiniBadge>{g.genre}</MiniBadge>
+                                <MiniBadge>
+                                  <span
+                                    style={{
+                                      display: 'inline-block',
+                                      width: '4px',
+                                      height: '4px',
+                                      borderRadius: '50%',
+                                      backgroundColor: statusColors[g.status],
+                                    }}
+                                  />
+                                  {g.status === 'Released'
+                                    ? 'Released'
+                                    : g.status === 'Pre-registration'
+                                    ? 'Pre-reg'
+                                    : 'Dev'}
+                                </MiniBadge>
+                              </ResultTagRow>
+                            </ResultContent>
+                          </AnimatedSearchResultRow>
+                        );
+                      })}
+                    </AnimatePresence>
                   </ScrollContainer>
                 )}
               </DropdownPanel>

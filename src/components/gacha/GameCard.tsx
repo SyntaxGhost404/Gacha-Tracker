@@ -2,9 +2,9 @@ import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 import { FiCalendar, FiChevronDown, FiChevronUp, FiBookmark, FiCheck } from 'react-icons/fi';
-import { type GachaGame, STATUS_LABELS, REGION_COLORS } from '../../data/gachaGames';
+import { type GachaGame, STATUS_LABELS, REGION_COLORS, PLATFORM_ICONS } from '../../data/gachaGames';
 import { useWatchlist } from '../../context/WatchlistContext';
-import { ScrollableSocialContainer } from './ScrollableSocialContainer';
+import { MoreVertical } from 'lucide-react';
 
 // Scalable, crisp inline SVG brand logos for platforms & engines
 const AndroidIcon = () => (
@@ -443,6 +443,12 @@ const PlatformsRow = styled.div`
   justify-content: space-between;
   gap: 1rem;
   flex-wrap: wrap;
+
+  @media (max-width: 640px) {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+  }
 `;
 
 const PlatformsGroup = styled.div`
@@ -481,6 +487,10 @@ const EngineGroup = styled.div`
   flex-direction: column;
   gap: 0.35rem;
   align-items: flex-end;
+
+  @media (max-width: 640px) {
+    align-items: flex-start;
+  }
 `;
 
 const EngineBadge = styled.span`
@@ -517,15 +527,12 @@ const SocialGroup = styled.div`
   display: flex;
   align-items: center;
   gap: 0.65rem;
-  flex: 1;
-  min-width: 0;
 `;
 
 const SocialLinks = styled.div`
   display: flex;
   align-items: center;
   gap: 0.45rem;
-  flex-wrap: wrap;
 `;
 
 const SocialLink = styled.a<{ $hoverColor: string }>`
@@ -539,7 +546,6 @@ const SocialLink = styled.a<{ $hoverColor: string }>`
   background: var(--global-card-bg);
   color: var(--global-text-muted);
   transition: all 0.15s ease-in-out;
-  flex-shrink: 0;
 
   &:hover {
     color: ${({ $hoverColor }) => $hoverColor};
@@ -551,6 +557,40 @@ const SocialLink = styled.a<{ $hoverColor: string }>`
   svg {
     display: block;
     flex-shrink: 0;
+  }
+`;
+
+const DesktopOnlySocialLink = styled(SocialLink)`
+  @media (max-width: 768px) {
+    display: none;
+  }
+`;
+
+const MobileOnlyMoreLink = styled(Link)`
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 1.85rem;
+  height: 1.85rem;
+  border-radius: 0.35rem;
+  border: 1px solid var(--global-border);
+  background: var(--global-card-bg);
+  color: var(--global-text-muted);
+  transition: all 0.15s ease-in-out;
+  font-size: 0.75rem;
+  font-weight: bold;
+  cursor: pointer;
+  text-decoration: none;
+
+  &:hover {
+    color: var(--global-text);
+    border-color: var(--global-text)dd;
+    background: var(--global-secondary-bg);
+    transform: translateY(-1px);
+  }
+
+  @media (max-width: 768px) {
+    display: inline-flex;
   }
 `;
 
@@ -577,25 +617,29 @@ const FollowBtn = styled.button<{ $active: boolean }>`
   }
 `;
 
-function useCountdown(dateStr: string | undefined) {
+function useCountdown(game: GachaGame) {
   const [now, setNow] = useState(() => new Date());
 
   useEffect(() => {
-    if (!dateStr) return;
-    const t = setInterval(() => setNow(new Date()), 60_000);
+    if (!game?.releaseDate) return;
+    const t = setInterval(() => setNow(new Date()), 1000);
     return () => clearInterval(t);
-  }, [dateStr]);
+  }, [game?.releaseDate, game?.releaseDateTime]);
 
-  if (!dateStr) return null;
+  if (!game?.releaseDate) return null;
 
-  const target = new Date(dateStr + 'T00:00:00');
+  const target = game.releaseDateTime
+    ? new Date(game.releaseDateTime)
+    : new Date(game.releaseDate + 'T00:00:00Z');
+
   const diff = target.getTime() - now.getTime();
   if (diff <= 0) return null;
 
   const days = Math.floor(diff / 86_400_000);
   const hours = Math.floor((diff % 86_400_000) / 3_600_000);
   const mins = Math.floor((diff % 3_600_000) / 60_000);
-  const exact = `${days}D ${hours}H ${mins}M`;
+  const secs = Math.floor((diff % 60_000) / 1000);
+  const exact = `${days}D ${hours}H ${mins}M ${secs}S`;
 
   let relative: string;
   if (days >= 60) {
@@ -606,8 +650,16 @@ function useCountdown(dateStr: string | undefined) {
     relative = `In ${Math.floor(days / 7)} weeks`;
   } else if (days >= 7) {
     relative = `In 1 week`;
-  } else {
+  } else if (days > 0) {
     relative = `In ${days} day${days !== 1 ? 's' : ''}`;
+  } else {
+    if (hours > 0) {
+      relative = `In ${hours} hour${hours !== 1 ? 's' : ''}`;
+    } else if (mins > 0) {
+      relative = `In ${mins} minute${mins !== 1 ? 's' : ''}`;
+    } else {
+      relative = `In ${secs} second${secs !== 1 ? 's' : ''}`;
+    }
   }
 
   return { exact, relative, days };
@@ -641,8 +693,67 @@ export function GameCard({ game }: { game: GachaGame }) {
   const [expanded, setExpanded] = useState(false);
   const { toggle, isWatchlisted } = useWatchlist();
   const followed = isWatchlisted(game.id);
-  const countdown = useCountdown(game.releaseDate);
+  const countdown = useCountdown(game);
   const bannerLabel = getBannerLabel(game);
+
+  const activeSocials = [
+    game.socialLinks?.website && {
+      key: 'website',
+      href: game.socialLinks.website,
+      title: 'Official Website',
+      hoverColor: '#3b82f6',
+      icon: <BrandGlobeIcon size={13} />
+    },
+    game.socialLinks?.twitter && {
+      key: 'twitter',
+      href: game.socialLinks.twitter,
+      title: 'X (Twitter)',
+      hoverColor: 'var(--global-text)',
+      icon: <BrandXIcon size={13} />
+    },
+    game.socialLinks?.youtube && {
+      key: 'youtube',
+      href: game.socialLinks.youtube,
+      title: 'YouTube',
+      hoverColor: '#ef4444',
+      icon: <BrandYouTubeIcon size={13} />
+    },
+    game.socialLinks?.reddit && {
+      key: 'reddit',
+      href: game.socialLinks.reddit,
+      title: 'Reddit',
+      hoverColor: '#ff4500',
+      icon: <BrandRedditIcon size={13} />
+    },
+    game.socialLinks?.discord && {
+      key: 'discord',
+      href: game.socialLinks.discord,
+      title: 'Discord',
+      hoverColor: '#5865f2',
+      icon: <BrandDiscordIcon size={13} />
+    },
+    game.socialLinks?.facebook && {
+      key: 'facebook',
+      href: game.socialLinks.facebook,
+      title: 'Facebook',
+      hoverColor: '#1877f2',
+      icon: <BrandFacebookIcon size={13} />
+    },
+    game.socialLinks?.instagram && {
+      key: 'instagram',
+      href: game.socialLinks.instagram,
+      title: 'Instagram',
+      hoverColor: '#e1306c',
+      icon: <BrandInstagramIcon size={13} />
+    },
+    game.socialLinks?.tiktok && {
+      key: 'tiktok',
+      href: game.socialLinks.tiktok,
+      title: 'TikTok',
+      hoverColor: '#fe2c55',
+      icon: <BrandTikTokIcon size={13} />
+    }
+  ].filter(Boolean) as Array<{ key: string; href: string; title: string; hoverColor: string; icon: React.ReactNode }>;
 
   return (
     <Card>
@@ -757,73 +868,55 @@ export function GameCard({ game }: { game: GachaGame }) {
         <FollowRow>
           <SocialGroup>
             <FollowLabel>Follow:</FollowLabel>
-            {(() => {
-              const socialLinksCount = [
-                game.socialLinks?.website,
-                game.socialLinks?.twitter,
-                game.socialLinks?.youtube,
-                game.socialLinks?.reddit,
-                game.socialLinks?.discord,
-                game.socialLinks?.facebook,
-                game.socialLinks?.instagram,
-                game.socialLinks?.tiktok
-              ].filter(Boolean).length;
-
-              const socialMediaElements = (
+            <SocialLinks>
+              {activeSocials.length > 4 ? (
                 <>
-                  {game.socialLinks?.website && (
-                    <SocialLink href={game.socialLinks.website} target="_blank" rel="noopener noreferrer" title="Official Website" $hoverColor="#3b82f6">
-                      <BrandGlobeIcon size={13} />
+                  {activeSocials.slice(0, 3).map((social) => (
+                    <SocialLink
+                      key={social.key}
+                      href={social.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      title={social.title}
+                      $hoverColor={social.hoverColor}
+                    >
+                      {social.icon}
                     </SocialLink>
-                  )}
-                  {game.socialLinks?.twitter && (
-                    <SocialLink href={game.socialLinks.twitter} target="_blank" rel="noopener noreferrer" title="X (Twitter)" $hoverColor="var(--global-text)">
-                      <BrandXIcon size={13} />
-                    </SocialLink>
-                  )}
-                  {game.socialLinks?.youtube && (
-                    <SocialLink href={game.socialLinks.youtube} target="_blank" rel="noopener noreferrer" title="YouTube" $hoverColor="#ef4444">
-                      <BrandYouTubeIcon size={13} />
-                    </SocialLink>
-                  )}
-                  {game.socialLinks?.reddit && (
-                    <SocialLink href={game.socialLinks.reddit} target="_blank" rel="noopener noreferrer" title="Reddit" $hoverColor="#ff4500">
-                      <BrandRedditIcon size={13} />
-                    </SocialLink>
-                  )}
-                  {game.socialLinks?.discord && (
-                    <SocialLink href={game.socialLinks.discord} target="_blank" rel="noopener noreferrer" title="Discord" $hoverColor="#5865f2">
-                      <BrandDiscordIcon size={13} />
-                    </SocialLink>
-                  )}
-                  {game.socialLinks?.facebook && (
-                    <SocialLink href={game.socialLinks.facebook} target="_blank" rel="noopener noreferrer" title="Facebook" $hoverColor="#1877f2">
-                      <BrandFacebookIcon size={13} />
-                    </SocialLink>
-                  )}
-                  {game.socialLinks?.instagram && (
-                    <SocialLink href={game.socialLinks.instagram} target="_blank" rel="noopener noreferrer" title="Instagram" $hoverColor="#e1306c">
-                      <BrandInstagramIcon size={13} />
-                    </SocialLink>
-                  )}
-                  {game.socialLinks?.tiktok && (
-                    <SocialLink href={game.socialLinks.tiktok} target="_blank" rel="noopener noreferrer" title="TikTok" $hoverColor="#fe2c55">
-                      <BrandTikTokIcon size={13} />
-                    </SocialLink>
-                  )}
+                  ))}
+                  {activeSocials.slice(3).map((social) => (
+                    <DesktopOnlySocialLink
+                      key={social.key}
+                      href={social.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      title={social.title}
+                      $hoverColor={social.hoverColor}
+                    >
+                      {social.icon}
+                    </DesktopOnlySocialLink>
+                  ))}
+                  <MobileOnlyMoreLink
+                    to={`/game/${game.id}#connect-share`}
+                    title="More links"
+                  >
+                    <MoreVertical size={13} strokeWidth={2} />
+                  </MobileOnlyMoreLink>
                 </>
-              );
-
-              return socialLinksCount > 4 ? (
-                <ScrollableSocialContainer $variant="card">
-                  {socialMediaElements}
-                </ScrollableSocialContainer>
               ) : (
-                <SocialLinks>
-                  {socialMediaElements}
-                </SocialLinks>
-              );
-            })()}
+                activeSocials.map((social) => (
+                  <SocialLink
+                    key={social.key}
+                    href={social.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    title={social.title}
+                    $hoverColor={social.hoverColor}
+                  >
+                    {social.icon}
+                  </SocialLink>
+                ))
+              )}
+            </SocialLinks>
           </SocialGroup>
           <FollowBtn
             $active={followed}

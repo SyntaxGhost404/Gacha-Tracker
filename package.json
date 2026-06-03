@@ -30,6 +30,7 @@
     "lodash": "^4.17.21",
     "lru-cache": "latest",
     "lucide-react": "^1.16.0",
+    "motion": "^12.40.0",
     "prettier": "^3.2.5",
     "prettier-plugin-tailwindcss": "^0.5.14",
     "react": "^18.2.0",

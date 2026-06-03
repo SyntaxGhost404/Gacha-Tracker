@@ -5,6 +5,7 @@ import {
   Route,
   useLocation,
 } from 'react-router-dom';
+import { AnimatePresence, motion } from 'motion/react';
 import { Construction } from 'lucide-react';
 import styled from 'styled-components';
 import { ThemeProvider } from './components/ThemeContext';
@@ -37,6 +38,7 @@ const ScrollContainer = styled.div`
   overflow-x: hidden;
   position: relative;
   -webkit-overflow-scrolling: touch;
+  scroll-behavior: smooth;
   margin-top: 3.5rem; /* Start directly beneath the fixed height navbar */
   height: calc(100vh - 3.5rem);
   
@@ -59,15 +61,28 @@ const ContentWrapper = styled.div`
 `;
 
 function ScrollToTop() {
-  const { pathname } = useLocation();
+  const { pathname, hash } = useLocation();
   useEffect(() => {
     const container = document.getElementById('main-scroll-container');
+    
+    if (hash) {
+      const id = hash.replace('#', '');
+      const element = document.getElementById(id);
+      if (element && container) {
+        setTimeout(() => {
+          const topPos = element.getBoundingClientRect().top + container.scrollTop - 90;
+          container.scrollTo({ top: topPos, behavior: 'smooth' });
+        }, 120);
+        return;
+      }
+    }
+
     if (container) {
       container.scrollTo({ top: 0, behavior: 'instant' as ScrollBehavior });
     } else {
       window.scrollTo({ top: 0, behavior: 'instant' as ScrollBehavior });
     }
-  }, [pathname]);
+  }, [pathname, hash]);
   return null;
 }
 
@@ -97,11 +112,34 @@ function PlaceholderPage({ title }: { title: string }) {
   );
 }
 
+const AnimatedPage = ({ children }: { children: React.ReactNode }) => {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 12 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: -12 }}
+      transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
+      style={{
+        width: '100%',
+        height: '100%',
+        display: 'flex',
+        flexDirection: 'column',
+        transformStyle: 'preserve-3d',
+        backfaceVisibility: 'hidden',
+        willChange: 'transform, opacity'
+      }}
+    >
+      {children}
+    </motion.div>
+  );
+};
+
 function AppRoutes() {
   const [showBottomNav, setShowBottomNav] = useState(true);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const lastScrollTop = useRef(0);
+  const location = useLocation();
 
   useEffect(() => {
     const container = scrollContainerRef.current;
@@ -145,18 +183,20 @@ function AppRoutes() {
         <ScrollToTop />
         <ScrollToTopButton showBottomNav={showBottomNav} hide={isMobileMenuOpen} />
         <ContentWrapper style={{ flex: 1 }}>
-          <main style={{ minHeight: '60vh', flex: 1 }}>
-            <Routes>
-              <Route path='/' element={<HomePage />} />
-              <Route path='/games' element={<GamesPage />} />
-              <Route path='/archive' element={<ArchivePage />} />
-              <Route path='/news' element={<NewsPage />} />
-              <Route path='/news/:id' element={<ArticleDetailPage />} />
-              <Route path='/game/:id' element={<GameDetailPage />} />
-              <Route path='/feedback' element={<FeedbackPage />} />
-              <Route path='/changelog' element={<ChangelogPage />} />
-              <Route path='*' element={<PlaceholderPage title='Page Not Found' />} />
-            </Routes>
+          <main style={{ minHeight: '60vh', flex: 1, position: 'relative' }}>
+            <AnimatePresence mode="wait">
+              <Routes location={location} key={location.pathname}>
+                <Route path='/' element={<AnimatedPage><HomePage /></AnimatedPage>} />
+                <Route path='/games' element={<AnimatedPage><GamesPage /></AnimatedPage>} />
+                <Route path='/archive' element={<AnimatedPage><ArchivePage /></AnimatedPage>} />
+                <Route path='/news' element={<AnimatedPage><NewsPage /></AnimatedPage>} />
+                <Route path='/news/:id' element={<AnimatedPage><ArticleDetailPage /></AnimatedPage>} />
+                <Route path='/game/:id' element={<AnimatedPage><GameDetailPage /></AnimatedPage>} />
+                <Route path='/feedback' element={<AnimatedPage><FeedbackPage /></AnimatedPage>} />
+                <Route path='/changelog' element={<AnimatedPage><ChangelogPage /></AnimatedPage>} />
+                <Route path='*' element={<AnimatedPage><PlaceholderPage title='Page Not Found' /></AnimatedPage>} />
+              </Routes>
+            </AnimatePresence>
           </main>
         </ContentWrapper>
         <GachaFooter />

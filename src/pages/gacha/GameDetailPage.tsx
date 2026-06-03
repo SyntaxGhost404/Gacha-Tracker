@@ -641,37 +641,16 @@ const FollowBtn = styled.button<{ $active: boolean }>`
   }
 `;
 
-const GridSocialContainer = styled.div<{ $socialsCount: number }>`
-  box-sizing: border-box;
-  width: 100%;
+const SocialShareRow = styled.div<{ $grid?: boolean }>`
+  display: ${({ $grid }) => ($grid ? 'grid' : 'flex')};
+  grid-template-columns: ${({ $grid }) => ($grid ? 'repeat(5, 1fr)' : 'none')};
+  align-items: center;
+  justify-content: ${({ $grid }) => ($grid ? 'center' : 'space-around')};
+  justify-items: center;
+  gap: 0.5rem;
   margin-top: 0.5rem;
-
-  /* If socials > 4 */
-  ${({ $socialsCount }) =>
-    $socialsCount > 4
-      ? `
-        display: grid;
-        grid-template-columns: repeat(5, minmax(0, 1fr));
-        gap: 0.5rem;
-        justify-items: center;
-        align-items: center;
-        
-        /* On very big desktops where horizontal space is ample, display in a single horizontal line */
-        @media (min-width: 1400px) {
-          display: flex;
-          align-items: center;
-          justify-content: flex-start;
-          flex-wrap: nowrap;
-          gap: 0.5rem;
-        }
-      `
-      : `
-        /* If 4 or fewer socials: always standard static horizontal row */
-        display: flex;
-        align-items: center;
-        justify-content: flex-start;
-        gap: 0.5rem;
-      `}
+  width: 100%;
+  box-sizing: border-box;
 `;
 
 const SocialRoundBtn = styled.a<{ $hoverColor: string }>`
@@ -685,7 +664,6 @@ const SocialRoundBtn = styled.a<{ $hoverColor: string }>`
   background: var(--global-secondary-bg);
   color: var(--global-text-muted);
   transition: all 0.15s ease-in-out;
-  flex-shrink: 0;
 
   &:hover, &:active {
     color: ${({ $hoverColor }) => $hoverColor};
@@ -762,26 +740,30 @@ const ErrorTitle = styled.h2`
   margin: 0;
 `;
 
-function useDetailedCountdown(dateStr: string | undefined) {
+function useDetailedCountdown(game: GachaGame | undefined) {
   const [now, setNow] = useState(() => new Date());
 
   useEffect(() => {
-    if (!dateStr) return;
-    const t = setInterval(() => setNow(new Date()), 60_000);
+    if (!game?.releaseDate) return;
+    const t = setInterval(() => setNow(new Date()), 1000);
     return () => clearInterval(t);
-  }, [dateStr]);
+  }, [game?.releaseDate, game?.releaseDateTime]);
 
-  if (!dateStr) return null;
+  if (!game?.releaseDate) return null;
 
-  const target = new Date(dateStr + 'T00:00:00');
+  const target = game.releaseDateTime
+    ? new Date(game.releaseDateTime)
+    : new Date(game.releaseDate + 'T00:00:00Z');
+
   const diff = target.getTime() - now.getTime();
   if (diff <= 0) return null;
 
   const days = Math.floor(diff / 86_400_000);
   const hours = Math.floor((diff % 86_400_000) / 3_600_000);
   const mins = Math.floor((diff % 3_600_000) / 60_000);
+  const secs = Math.floor((diff % 60_000) / 1000);
 
-  return { exact: `${days} Days, ${hours} Hours, ${mins} Mins`, relative: `In ${days} Days` };
+  return { exact: `${days} Days, ${hours} Hours, ${mins} Mins, ${secs} Secs`, relative: `In ${days} Days` };
 }
 
 function formatDateFull(dateStr: string) {
@@ -803,7 +785,7 @@ export function GameDetailPage() {
   }, [id]);
 
   const followed = game ? isWatchlisted(game.id) : false;
-  const countdown = useDetailedCountdown(game?.releaseDate);
+  const countdown = useDetailedCountdown(game);
 
   // Extract developer & publisher info
   const metaExt = useMemo(() => {
@@ -1041,157 +1023,138 @@ export function GameDetailPage() {
               </KeyValueList>
             </SectionCard>
 
-            <SectionCard id="game-action-watchlist">
-              <SectionTitle id="game-action-title">
-                Watchlist
-              </SectionTitle>
-              <FollowWidget id="game-watchlist-widget">
-                <FollowBtn 
-                  id="game-detail-watchlist-button"
-                  $active={followed}
-                  onClick={() => toggle(game.id)}
-                >
-                  {followed ? (
-                    <>
-                      <Check size={14} strokeWidth={2.5} /> Following
-                    </>
-                  ) : (
-                    <>
-                      <Bookmark size={14} /> Bookmark Title
-                    </>
-                  )}
-                </FollowBtn>
-
-                <p style={{ fontSize: '0.74rem', color: 'var(--global-text-muted)', textAlign: 'center', margin: '0.2rem 0 0.5rem', lineHeight: '1.4' }}>
-                  {followed 
-                    ? 'This title is saved in your watchlist database, synced live on your dashboard pipeline.'
-                    : 'Toggle watch to track status changes and custom schedules live on your dashboard.'}
-                </p>
-
-                <SectionTitle id="game-social-title" style={{ fontSize: '0.85rem', borderBottom: '1px solid var(--global-border)', paddingBottom: '0.4rem', marginTop: '0.5rem', marginBottom: '0.5rem' }}>
-                  Connect/Share
+            <div id="connect-share" style={{ scrollMarginTop: '1rem', width: '100%' }}>
+              <SectionCard id="game-action-watchlist">
+                <SectionTitle id="game-action-title">
+                  Watchlist
                 </SectionTitle>
-                {(() => {
-                  const socialsCount = [
-                    game?.socialLinks?.website,
-                    game?.socialLinks?.twitter,
-                    game?.socialLinks?.youtube,
-                    game?.socialLinks?.reddit,
-                    game?.socialLinks?.discord,
-                    game?.socialLinks?.facebook,
-                    game?.socialLinks?.instagram,
-                    game?.socialLinks?.tiktok
-                  ].filter(Boolean).length;
+                <FollowWidget id="game-watchlist-widget">
+                  <FollowBtn 
+                    id="game-detail-watchlist-button"
+                    $active={followed}
+                    onClick={() => toggle(game.id)}
+                  >
+                    {followed ? (
+                      <>
+                        <Check size={14} strokeWidth={2.5} /> Following
+                      </>
+                    ) : (
+                      <>
+                        <Bookmark size={14} /> Bookmark Title
+                      </>
+                    )}
+                  </FollowBtn>
 
-                  const socialMediaElements = (
-                    <>
-                      {game?.socialLinks?.website && (
-                        <SocialRoundBtn 
-                          href={game.socialLinks.website} 
-                          target="_blank" 
-                          rel="noopener noreferrer" 
-                          title="Official Website"
-                          $hoverColor="#3b82f6"
-                          id="social-link-website"
-                        >
-                          <BrandGlobeIcon size={14} />
-                        </SocialRoundBtn>
-                      )}
-                      {game?.socialLinks?.twitter && (
-                        <SocialRoundBtn 
-                          href={game.socialLinks.twitter} 
-                          target="_blank" 
-                          rel="noopener noreferrer" 
-                          title="X (Twitter)"
-                          $hoverColor="var(--global-text)"
-                          id="social-link-twitter"
-                        >
-                          <BrandXIcon size={14} />
-                        </SocialRoundBtn>
-                      )}
-                      {game?.socialLinks?.youtube && (
-                        <SocialRoundBtn 
-                          href={game.socialLinks.youtube} 
-                          target="_blank" 
-                          rel="noopener noreferrer" 
-                          title="YouTube"
-                          $hoverColor="#ef4444"
-                          id="social-link-youtube"
-                        >
-                          <BrandYouTubeIcon size={14} />
-                        </SocialRoundBtn>
-                      )}
-                      {game?.socialLinks?.reddit && (
-                        <SocialRoundBtn 
-                          href={game.socialLinks.reddit} 
-                          target="_blank" 
-                          rel="noopener noreferrer" 
-                          title="Reddit"
-                          $hoverColor="#ff4500"
-                          id="social-link-reddit"
-                        >
-                          <BrandRedditIcon size={14} />
-                        </SocialRoundBtn>
-                      )}
-                      {game?.socialLinks?.discord && (
-                        <SocialRoundBtn 
-                          href={game.socialLinks.discord} 
-                          target="_blank" 
-                          rel="noopener noreferrer" 
-                          title="Discord"
-                          $hoverColor="#5865f2"
-                          id="social-link-discord"
-                        >
-                          <BrandDiscordIcon size={14} />
-                        </SocialRoundBtn>
-                      )}
-                      {game?.socialLinks?.facebook && (
-                        <SocialRoundBtn 
-                          href={game.socialLinks.facebook} 
-                          target="_blank" 
-                          rel="noopener noreferrer" 
-                          title="Facebook"
-                          $hoverColor="#1877f2"
-                          id="social-link-facebook"
-                        >
-                          <BrandFacebookIcon size={14} />
-                        </SocialRoundBtn>
-                      )}
-                      {game?.socialLinks?.instagram && (
-                        <SocialRoundBtn 
-                          href={game.socialLinks.instagram} 
-                          target="_blank" 
-                          rel="noopener noreferrer" 
-                          title="Instagram"
-                          $hoverColor="#e1306c"
-                          id="social-link-instagram"
-                        >
-                          <BrandInstagramIcon size={14} />
-                        </SocialRoundBtn>
-                      )}
-                      {game?.socialLinks?.tiktok && (
-                        <SocialRoundBtn 
-                          href={game.socialLinks.tiktok} 
-                          target="_blank" 
-                          rel="noopener noreferrer" 
-                          title="TikTok"
-                          $hoverColor="#fe2c55"
-                          id="social-link-tiktok"
-                        >
-                          <BrandTikTokIcon size={14} />
-                        </SocialRoundBtn>
-                      )}
-                    </>
-                  );
+                  <p style={{ fontSize: '0.74rem', color: 'var(--global-text-muted)', textAlign: 'center', margin: '0.2rem 0 0.5rem', lineHeight: '1.4' }}>
+                    {followed 
+                      ? 'This title is saved in your watchlist database, synced live on your dashboard pipeline.'
+                      : 'Toggle watch to track status changes and custom schedules live on your dashboard.'}
+                  </p>
 
-                  return (
-                    <GridSocialContainer $socialsCount={socialsCount}>
-                      {socialMediaElements}
-                    </GridSocialContainer>
-                  );
-                })()}
-              </FollowWidget>
-            </SectionCard>
+                  <SectionTitle id="game-social-title" style={{ fontSize: '0.85rem', borderBottom: '1px solid var(--global-border)', paddingBottom: '0.4rem', marginTop: '0.5rem', marginBottom: '0.5rem' }}>
+                    Connect/Share
+                  </SectionTitle>
+                  <SocialShareRow id="game-social-links-row" $grid={game?.socialLinks ? Object.values(game.socialLinks).filter(Boolean).length > 4 : false}>
+                    {game?.socialLinks?.website && (
+                      <SocialRoundBtn 
+                        href={game.socialLinks.website} 
+                        target="_blank" 
+                        rel="noopener noreferrer" 
+                        title="Official Website"
+                        $hoverColor="#3b82f6"
+                        id="social-link-website"
+                      >
+                        <BrandGlobeIcon size={14} />
+                      </SocialRoundBtn>
+                    )}
+                    {game?.socialLinks?.twitter && (
+                      <SocialRoundBtn 
+                        href={game.socialLinks.twitter} 
+                        target="_blank" 
+                        rel="noopener noreferrer" 
+                        title="X (Twitter)"
+                        $hoverColor="var(--global-text)"
+                        id="social-link-twitter"
+                      >
+                        <BrandXIcon size={14} />
+                      </SocialRoundBtn>
+                    )}
+                    {game?.socialLinks?.youtube && (
+                      <SocialRoundBtn 
+                        href={game.socialLinks.youtube} 
+                        target="_blank" 
+                        rel="noopener noreferrer" 
+                        title="YouTube"
+                        $hoverColor="#ef4444"
+                        id="social-link-youtube"
+                      >
+                        <BrandYouTubeIcon size={14} />
+                      </SocialRoundBtn>
+                    )}
+                    {game?.socialLinks?.reddit && (
+                      <SocialRoundBtn 
+                        href={game.socialLinks.reddit} 
+                        target="_blank" 
+                        rel="noopener noreferrer" 
+                        title="Reddit"
+                        $hoverColor="#ff4500"
+                        id="social-link-reddit"
+                      >
+                        <BrandRedditIcon size={14} />
+                      </SocialRoundBtn>
+                    )}
+                    {game?.socialLinks?.discord && (
+                      <SocialRoundBtn 
+                        href={game.socialLinks.discord} 
+                        target="_blank" 
+                        rel="noopener noreferrer" 
+                        title="Discord"
+                        $hoverColor="#5865f2"
+                        id="social-link-discord"
+                      >
+                        <BrandDiscordIcon size={14} />
+                      </SocialRoundBtn>
+                    )}
+                    {game?.socialLinks?.facebook && (
+                      <SocialRoundBtn 
+                        href={game.socialLinks.facebook} 
+                        target="_blank" 
+                        rel="noopener noreferrer" 
+                        title="Facebook"
+                        $hoverColor="#1877f2"
+                        id="social-link-facebook"
+                      >
+                        <BrandFacebookIcon size={14} />
+                      </SocialRoundBtn>
+                    )}
+                    {game?.socialLinks?.instagram && (
+                      <SocialRoundBtn 
+                        href={game.socialLinks.instagram} 
+                        target="_blank" 
+                        rel="noopener noreferrer" 
+                        title="Instagram"
+                        $hoverColor="#e1306c"
+                        id="social-link-instagram"
+                      >
+                        <BrandInstagramIcon size={14} />
+                      </SocialRoundBtn>
+                    )}
+                    {game?.socialLinks?.tiktok && (
+                      <SocialRoundBtn 
+                        href={game.socialLinks.tiktok} 
+                        target="_blank" 
+                        rel="noopener noreferrer" 
+                        title="TikTok"
+                        $hoverColor="#fe2c55"
+                        id="social-link-tiktok"
+                      >
+                        <BrandTikTokIcon size={14} />
+                      </SocialRoundBtn>
+                    )}
+                  </SocialShareRow>
+                </FollowWidget>
+              </SectionCard>
+            </div>
           </SidebarVolume>
         </DetailGrid>
       </PageInner>
