@@ -14,14 +14,20 @@ import {
   Clock,
   Briefcase,
   Layers,
-  Sparkles
+  Sparkles,
+  Film,
+  Play,
+  ChevronLeft,
+  ChevronRight
 } from 'lucide-react';
 import { FiGlobe, FiTwitter, FiYoutube } from 'react-icons/fi';
 import { 
   gachaGames, 
   type GachaGame, 
   STATUS_LABELS, 
-  REGION_COLORS 
+  REGION_COLORS,
+  getRuntimeGachaGames,
+  getReleaseTargetDate
 } from '../../data/gachaGames';
 import { useWatchlist } from '../../context/WatchlistContext';
 
@@ -187,6 +193,7 @@ const GAME_DETAILS_EXTENSIONS: Record<string, { developer: string; publisher: st
   'scarlet-tide-zeroera': { developer: 'YoMioBeYoung', publisher: 'YoMioBeYoung' },
   'silver-palace': { developer: 'Elementa Studio', publisher: 'Elementa' },
   terbis: { developer: 'Webzen', publisher: 'Webzen' },
+  'limit-zero-breakers': { developer: 'Vic Game Studios (South Korea)', publisher: 'NCSoft (Korea) / NC America (globally)' },
 };
 
 const PageWrapper = styled.div`
@@ -718,6 +725,127 @@ const PreRegButton = styled.a<{ $disabled?: boolean }>`
   }
 `;
 
+const CarouselContainer = styled.div`
+  position: relative;
+  width: 100%;
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
+`;
+
+const ScrollableTrack = styled.div`
+  display: flex;
+  gap: 1rem;
+  overflow-x: auto;
+  scroll-behavior: smooth;
+  scroll-snap-type: x mandatory;
+  padding: 0.5rem 0rem 1rem;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none;  /* IE and Edge */
+  
+  &::-webkit-scrollbar {
+    display: none; /* Chrome, Safari and Opera */
+  }
+`;
+
+const MediaSlideWrapper = styled.div`
+  flex: 0 0 calc(90% - 0.5rem);
+  scroll-snap-align: center;
+  aspect-ratio: 16 / 9;
+  border-radius: 0.5rem;
+  overflow: hidden;
+  background: #05070a;
+  position: relative;
+  border: 1px solid var(--global-border);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+
+  @media (min-width: 640px) {
+    flex: 0 0 calc(80% - 0.35rem);
+  }
+  @media (min-width: 1024px) {
+    flex: 0 0 calc(75% - 0.35rem);
+  }
+`;
+
+const SlideImage = styled.img`
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  user-select: none;
+  -webkit-user-drag: none;
+`;
+
+const SlideVideoContainer = styled.div`
+  width: 100%;
+  height: 100%;
+  position: relative;
+`;
+
+const SlideVideo = styled.iframe`
+  width: 100%;
+  height: 100%;
+  border: none;
+  display: block;
+`;
+
+const CarouselNavButton = styled.button<{ $prev?: boolean }>`
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  ${props => props.$prev ? 'left: 0.5rem;' : 'right: 0.5rem;'}
+  background: rgba(10, 15, 25, 0.75);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(4px);
+  color: #fff;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 10;
+  transition: all 0.15s ease-in-out;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
+
+  &:hover {
+    background: rgba(10, 15, 25, 0.9);
+    border-color: var(--primary-accent, #3b82f6);
+    transform: translateY(-50%) scale(1.08);
+  }
+
+  &:active {
+    transform: translateY(-50%) scale(0.95);
+  }
+
+  @media (max-width: 640px) {
+    display: none; /* Swipe is natural on mobile, hide arrows for a clean app-store aesthetic */
+  }
+`;
+
+const CarouselPagination = styled.div`
+  display: flex;
+  justify-content: center;
+  gap: 0.45rem;
+  margin-top: 0.25rem;
+`;
+
+const CarouselDot = styled.button<{ $active: boolean }>`
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 50%;
+  background: ${props => props.$active ? 'var(--primary-accent, #3b82f6)' : 'var(--global-border, rgba(255, 255, 255, 0.2))'};
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background: ${props => props.$active ? 'var(--primary-accent, #3b82f6)' : 'var(--global-text-muted, rgba(255, 255, 255, 0.4))'};
+  }
+`;
+
 const ErrorState = styled.div`
   max-width: 32rem;
   margin: 5rem auto;
@@ -751,9 +879,8 @@ function useDetailedCountdown(game: GachaGame | undefined) {
 
   if (!game?.releaseDate) return null;
 
-  const target = game.releaseDateTime
-    ? new Date(game.releaseDateTime)
-    : new Date(game.releaseDate + 'T00:00:00Z');
+  const target = getReleaseTargetDate(game);
+  if (!target) return null;
 
   const diff = target.getTime() - now.getTime();
   if (diff <= 0) return null;
@@ -779,13 +906,71 @@ export function GameDetailPage() {
   const { id } = useParams<{ id: string }>();
   const { toggle, isWatchlisted } = useWatchlist();
 
+  const [now, setNow] = useState(() => new Date());
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setNow(new Date());
+    }, 1000);
+    return () => clearInterval(timer);
+  }, []);
+
   // Find game details
   const game = useMemo(() => {
-    return gachaGames.find((g) => g.id === id);
-  }, [id]);
+    return getRuntimeGachaGames(now).find((g) => g.id === id);
+  }, [id, now]);
 
   const followed = game ? isWatchlisted(game.id) : false;
   const countdown = useDetailedCountdown(game);
+
+  const [activeSlide, setActiveSlide] = useState(0);
+  const trackRef = React.useRef<HTMLDivElement>(null);
+
+  const handleScroll = () => {
+    if (!trackRef.current) return;
+    const container = trackRef.current;
+    const children = container.children;
+    let closestIndex = 0;
+    let minDistance = Infinity;
+    const containerCenter = container.getBoundingClientRect().left + container.clientWidth / 2;
+
+    for (let i = 0; i < children.length; i++) {
+      const childRect = children[i].getBoundingClientRect();
+      const childCenter = childRect.left + childRect.width / 2;
+      const distance = Math.abs(childCenter - containerCenter);
+      if (distance < minDistance) {
+        minDistance = distance;
+        closestIndex = i;
+      }
+    }
+    setActiveSlide(closestIndex);
+  };
+
+  const scrollToSlide = (index: number) => {
+    if (!trackRef.current || !game?.media || game.media.length === 0) return;
+    const container = trackRef.current;
+    const children = container.children;
+    if (index >= 0 && index < children.length) {
+      const targetChild = children[index] as HTMLElement;
+      const containerRect = container.getBoundingClientRect();
+      const childRect = targetChild.getBoundingClientRect();
+      const relativeLeft = childRect.left - containerRect.left + container.scrollLeft;
+      const targetScroll = relativeLeft - (container.clientWidth - childRect.width) / 2;
+      container.scrollTo({
+        left: targetScroll,
+        behavior: 'smooth'
+      });
+      setActiveSlide(index);
+    }
+  };
+
+  const scrollCarousel = (direction: 'left' | 'right') => {
+    if (!trackRef.current || !game?.media || game.media.length === 0) return;
+    const nextIndex = direction === 'left' 
+      ? Math.max(0, activeSlide - 1) 
+      : Math.min(game.media.length - 1, activeSlide + 1);
+    scrollToSlide(nextIndex);
+  };
 
   // Extract developer & publisher info
   const metaExt = useMemo(() => {
@@ -869,7 +1054,9 @@ export function GameDetailPage() {
               </AltTitleText>
             )}
             <HeaderBadgesRow id="game-detail-badges">
-              <GenreTag id="game-detail-genre">{game.genre}</GenreTag>
+              {game.genre.map((gen, idx) => (
+                <GenreTag key={idx} id={`game-detail-genre-${idx}`}>{gen}</GenreTag>
+              ))}
               {game.regions.map((region) => (
                 <RegionTag key={region} $color={REGION_COLORS[region]} id={`game-detail-region-${region}`}>
                   {region}
@@ -935,14 +1122,86 @@ export function GameDetailPage() {
                         <FiGlobe size={16} />
                       ) : (
                         <i 
-                          className={link.iconClass} 
-                          style={{ color: link.disabled ? 'inherit' : '#ffffff' }} 
+                           className={link.iconClass} 
+                           style={{ color: link.disabled ? 'inherit' : '#ffffff' }} 
                         />
                       )}
                       <span>{link.label}</span>
                     </PreRegButton>
                   ))}
                 </PreRegGrid>
+              </SectionCard>
+            )}
+
+            {game.media && game.media.length > 0 && (
+              <SectionCard id="game-media-carousel-card">
+                <SectionTitle id="game-media-title">
+                  <Film size={18} /> Media & Highlights
+                </SectionTitle>
+                <CarouselContainer id="game-media-carousel-container">
+                  <ScrollableTrack 
+                    id="game-media-scrollable-track"
+                    ref={trackRef}
+                    onScroll={handleScroll}
+                  >
+                    {game.media.map((item, idx) => (
+                      <MediaSlideWrapper key={idx} id={`media-slide-wrapper-${idx}`}>
+                        {item.type === 'video' ? (
+                          <SlideVideoContainer id={`video-container-${idx}`}>
+                            <SlideVideo 
+                              src={`${item.url}?autoplay=0&rel=0&modestbranding=1`}
+                              title={`${game.name} Official Trailer`}
+                              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                              allowFullScreen
+                              id={`video-iframe-${idx}`}
+                            />
+                          </SlideVideoContainer>
+                        ) : (
+                          <SlideImage 
+                            src={item.url} 
+                            alt={`${game.name} Media Slide ${idx + 1}`} 
+                            id={`image-slide-${idx}`}
+                            loading="lazy"
+                          />
+                        )}
+                      </MediaSlideWrapper>
+                    ))}
+                  </ScrollableTrack>
+
+                  {game.media.length > 1 && (
+                    <>
+                      <CarouselNavButton 
+                        $prev 
+                        onClick={() => scrollCarousel('left')}
+                        id="game-media-carousel-prev-btn"
+                        aria-label="Previous Slide"
+                      >
+                        <ChevronLeft size={20} />
+                      </CarouselNavButton>
+                      <CarouselNavButton 
+                        onClick={() => scrollCarousel('right')}
+                        id="game-media-carousel-next-btn"
+                        aria-label="Next Slide"
+                      >
+                        <ChevronRight size={20} />
+                      </CarouselNavButton>
+                    </>
+                  )}
+                </CarouselContainer>
+
+                {game.media.length > 1 && (
+                  <CarouselPagination id="game-media-pagination">
+                    {game.media.map((_, idx) => (
+                      <CarouselDot 
+                        key={idx}
+                        $active={activeSlide === idx}
+                        onClick={() => scrollToSlide(idx)}
+                        id={`game-media-dot-${idx}`}
+                        aria-label={`Go to slide ${idx + 1}`}
+                      />
+                    ))}
+                  </CarouselPagination>
+                )}
               </SectionCard>
             )}
 
@@ -986,7 +1245,7 @@ export function GameDetailPage() {
               <KeyValueList id="game-metadata-keys">
                 <KeyValueRow>
                   <KeyLabel>Category</KeyLabel>
-                  <ValueLabel>{game.genre}</ValueLabel>
+                  <ValueLabel>{game.genre.join(', ')}</ValueLabel>
                 </KeyValueRow>
                 <KeyValueRow>
                   <KeyLabel>Release Status</KeyLabel>

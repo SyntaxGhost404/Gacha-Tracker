@@ -22,11 +22,16 @@ export interface SocialLinks {
   tiktok?: string;
 }
 
+export interface MediaSlide {
+  type: 'video' | 'image';
+  url: string;
+}
+
 export interface GachaGame {
   id: string;
   name: string;
   alternativeName?: string;
-  genre: string;
+  genre: string[];
   regions: Region[];
   status: GameStatus;
   devStatus?: DevStatus;
@@ -42,6 +47,7 @@ export interface GachaGame {
   profileImage?: string;
   preRegistrationLinks?: PreRegistrationLink[];
   socialLinks?: SocialLinks;
+  media?: MediaSlide[];
 }
 
 export const gachaGames: GachaGame[] = [
@@ -49,7 +55,7 @@ export const gachaGames: GachaGame[] = [
     id: 'allfiring',
     name: 'ALLfiring',
     alternativeName: 'Ring of Fire: Prometheus',
-    genre: 'Anime-Style Action RPG',
+    genre: ['Anime-Style', 'Action', 'RPG'],
     regions: ['Global'],
     status: 'Released',
     releaseDate: '2026-05-14',
@@ -73,7 +79,7 @@ export const gachaGames: GachaGame[] = [
     id: 'hololive-dreams',
     name: 'hololive Dreams',
     alternativeName: 'holodori',
-    genre: 'Rhythm Game / RPG / Gacha',
+    genre: ['Rhythm Game', 'RPG', 'Gacha'],
     regions: ['Global'],
     status: 'Pre-registration',
     releaseDate: '2026-08-30',
@@ -116,7 +122,7 @@ export const gachaGames: GachaGame[] = [
     id: 'ananta',
     name: 'ANANTA',
     alternativeName: 'Project Mugen',
-    genre: 'Urban Open-World RPG',
+    genre: ['Urban', 'Open-World', 'RPG'],
     regions: ['Global'],
     status: 'In Development',
     devStatus: 'Technical Test',
@@ -142,7 +148,7 @@ export const gachaGames: GachaGame[] = [
   {
     id: 'azur-promilia',
     name: 'Azur Promilia',
-    genre: 'Fantasy World RPG / Creature Companion Gacha',
+    genre: ['Fantasy', 'Open-World', 'Creature Companion', 'Gacha'],
     regions: ['Global'],
     status: 'In Development',
     devStatus: 'Closed Beta',
@@ -163,7 +169,7 @@ export const gachaGames: GachaGame[] = [
   {
     id: 'chasing-kaleidorider',
     name: 'Chasing Kaleidorider',
-    genre: '3D Action RPG / Gacha',
+    genre: ['3D', 'Action', 'RPG', 'Gacha', 'Motorcycle'],
     regions: ['Global'],
     status: 'In Development',
     devStatus: 'Closed Beta',
@@ -185,7 +191,7 @@ export const gachaGames: GachaGame[] = [
     id: 'codename-bang-bang',
     name: 'Codename: Bang Bang',
     alternativeName: '代号砰砰',
-    genre: 'Otome RPG',
+    genre: ['Otome', 'RPG', 'Mafia'],
     regions: ['CN'],
     status: 'In Development',
     devStatus: 'Closed Beta',
@@ -204,7 +210,7 @@ export const gachaGames: GachaGame[] = [
   {
     id: 'digimon-alysion',
     name: 'DIGIMON ALYSION',
-    genre: 'Digital Trading Card Game (TCG)',
+    genre: ['Digital TCG', 'Card Game', 'Metaverse'],
     regions: ['Global', 'JP'],
     status: 'In Development',
     devStatus: 'Closed Beta',
@@ -226,7 +232,7 @@ export const gachaGames: GachaGame[] = [
   {
     id: 'ete-shattered-skie',
     name: 'E.T.E: Shattered Skie',
-    genre: 'Mecha Girls Battle RPG',
+    genre: ['Mecha', 'Girls Battle', 'RPG', 'Aerial'],
     regions: ['Global', 'SEA'],
     status: 'Pre-registration',
     description:
@@ -255,12 +261,20 @@ export const gachaGames: GachaGame[] = [
         iconClass: 'bi bi-apple',
         disabled: true
       }
+    ],
+    media: [
+      { type: 'video', url: 'https://www.youtube.com/embed/7st_YosUwh8' },
+      { type: 'image', url: '/assets/ete-shattered-skie/1.webp' },
+      { type: 'image', url: '/assets/ete-shattered-skie/2.webp' },
+      { type: 'image', url: '/assets/ete-shattered-skie/3.webp' },
+      { type: 'image', url: '/assets/ete-shattered-skie/4.webp' },
+      { type: 'image', url: '/assets/ete-shattered-skie/5.webp' }
     ]
   },
   {
     id: 'honkai-nexus-anima',
     name: 'Honkai: Nexus Anima',
-    genre: 'Creature-collector adventure strategy / Auto battler',
+    genre: ['Creature-collector', 'Adventure Strategy', 'Auto battler'],
     regions: ['Global'],
     status: 'In Development',
     devStatus: 'Closed Beta',
@@ -285,7 +299,7 @@ export const gachaGames: GachaGame[] = [
   {
     id: 'illusion-connect-re',
     name: 'Illusion Connect: Re',
-    genre: 'Tactical Strategy RPG',
+    genre: ['Tactical', 'Strategy', 'RPG', 'Anime'],
     regions: ['Global', 'SEA', 'NA'],
     status: 'Pre-registration',
     releaseDate: '2026-06-04',
@@ -327,7 +341,7 @@ export const gachaGames: GachaGame[] = [
   {
     id: 'kings-raid-revival',
     name: "King's Raid (Revival)",
-    genre: 'Real-Time Strategy RPG',
+    genre: ['Real-Time', 'Strategy', 'RPG'],
     regions: ['Global'],
     status: 'In Development',
     devStatus: 'Closed Beta',
@@ -349,7 +363,7 @@ export const gachaGames: GachaGame[] = [
   {
     id: 'last-origin-r-plus',
     name: 'LAST ORIGIN R+',
-    genre: 'Tactical Strategy RPG',
+    genre: ['Tactical', 'Strategy', 'RPG', 'Apocalyptic'],
     regions: ['Global', 'NA', 'EU', 'SEA'],
     status: 'Released',
     releaseDate: '2026-05-21',
@@ -369,7 +383,7 @@ export const gachaGames: GachaGame[] = [
   {
     id: 'miresi-invisible-future',
     name: 'MIRESI: Invisible Future',
-    genre: 'Collectible Time-Travel RPG',
+    genre: ['Collectible', 'Time-Travel', 'RPG', 'Tactical'],
     regions: ['Global'],
     status: 'Announced',
     description:
@@ -390,7 +404,7 @@ export const gachaGames: GachaGame[] = [
   {
     id: 'monster-hunter-outlanders',
     name: 'Monster Hunter Outlanders',
-    genre: 'Open-World Survival Action RPG',
+    genre: ['Open-World', 'Survival', 'Action', 'RPG'],
     regions: ['Global'],
     status: 'Announced',
     description:
@@ -411,7 +425,7 @@ export const gachaGames: GachaGame[] = [
   {
     id: 'petit-planet',
     name: 'Petit Planet',
-    genre: 'Cozy Life Simulation',
+    genre: ['Cozy', 'Life Simulation', 'Cosmic-Lifestyle'],
     regions: ['Global'],
     status: 'Announced',
     description:
@@ -433,7 +447,7 @@ export const gachaGames: GachaGame[] = [
   {
     id: 'project-2-3',
     name: 'Project 2/3',
-    genre: 'Open-World Action RPG',
+    genre: ['Open-World', 'Action', 'RPG', 'Dimensional'],
     regions: ['Global', 'JP'],
     status: 'Announced',
     description:
@@ -451,7 +465,7 @@ export const gachaGames: GachaGame[] = [
   {
     id: 'rewinding-cadence',
     name: 'Rewinding Cadence',
-    genre: 'Open-World Action RPG',
+    genre: ['Open-World', 'Action', 'RPG', 'Time-Loop'],
     regions: ['Global', 'CN'],
     status: 'In Development',
     devStatus: 'Closed Beta',
@@ -472,7 +486,7 @@ export const gachaGames: GachaGame[] = [
   {
     id: 'scarlet-tide-zeroera',
     name: 'Scarlet Tide: ZeroERA',
-    genre: '2.5D Open-World RPG',
+    genre: ['2.5D', 'Open-World', 'RPG', 'Bio-sci-fi'],
     regions: ['Global', 'CN'],
     status: 'In Development',
     devStatus: 'Closed Beta',
@@ -493,7 +507,7 @@ export const gachaGames: GachaGame[] = [
   {
     id: 'silver-palace',
     name: 'Silver Palace',
-    genre: 'Open-World Action RPG',
+    genre: ['Open-World', 'Action', 'RPG', 'Steampunk'],
     regions: ['Global'],
     status: 'In Development',
     devStatus: 'Closed Beta',
@@ -515,7 +529,7 @@ export const gachaGames: GachaGame[] = [
   {
     id: 'terbis',
     name: 'Terbis',
-    genre: '2D Anime-style RPG',
+    genre: ['2D', 'Anime-Style', 'RPG', 'Isekai'],
     regions: ['Global', 'KR'],
     status: 'Announced',
     description:
@@ -529,6 +543,29 @@ export const gachaGames: GachaGame[] = [
     socialLinks: {
       website: 'https://terbis.webzen.com/',
       twitter: 'https://x.com/Terbis_kr'
+    }
+  },
+  {
+    id: 'limit-zero-breakers',
+    name: 'Limit Zero Breakers',
+    alternativeName: 'BREAKERS: Unlock the World',
+    genre: ['Anime-Style', 'Action', 'RPG', 'Adventure'],
+    regions: ['Global'],
+    status: 'In Development',
+    devStatus: 'Closed Beta',
+    description:
+      "Explore the shattered floating islands of Seraphia as a Breaker in NCSoft and Vic Game Studios' stylish action RPG, Limit Zero Breakers. Sail the skies on the airship Weaverwhale, recruiting characters with unique combat styles to unleash fast-paced combos, parries, and Break Mode finishes. Cooperate with up to three players in massive boss raids as you chase the legendary Library of the Gods.",
+    platforms: ['PC', 'Android', 'iOS'],
+    engine: 'Proprietary / Unreal Engine',
+    bannerColor: '#0a192f',
+    iconInitials: 'LZB',
+    bannerImage: '/banners/limit-zero-breakers.webp',
+    profileImage: '/profiles/limit-zero-breakers.png',
+    socialLinks: {
+      website: 'https://breakers.plaync.com/en-us/index',
+      twitter: 'https://x.com/intent/follow?screen_name=BREAKERS_EN',
+      youtube: 'https://www.youtube.com/@BREAKERS_EN',
+      discord: 'https://discord.gg/breakers'
     }
   }
 ];
@@ -564,3 +601,41 @@ export const PLATFORM_ICONS: Record<Platform, string> = {
   PS5: '⬡',
   Switch: '◈',
 };
+
+export function getReleaseTargetDate(game: GachaGame): Date | null {
+  if (!game.releaseDate) return null;
+  if (game.releaseDateTime) {
+    return new Date(game.releaseDateTime);
+  } else {
+    const [year, month, day] = game.releaseDate.split('-').map(Number);
+    return new Date(year, month - 1, day, 0, 0, 0, 0);
+  }
+}
+
+export function isGameReleased(game: GachaGame, now: Date = new Date()): boolean {
+  if (game.status === 'Released') return true;
+  if (game.releaseDateConfirmed && game.releaseDate) {
+    const target = getReleaseTargetDate(game);
+    if (target && now.getTime() >= target.getTime()) {
+      return true;
+    }
+  }
+  return false;
+}
+
+export function getEffectiveGameStatus(game: GachaGame, now: Date = new Date()): GameStatus {
+  if (isGameReleased(game, now)) {
+    return 'Released';
+  }
+  return game.status;
+}
+
+export function getRuntimeGachaGames(now: Date = new Date()): GachaGame[] {
+  return gachaGames.map((game) => {
+    const status = getEffectiveGameStatus(game, now);
+    if (status !== game.status) {
+      return { ...game, status };
+    }
+    return game;
+  });
+}

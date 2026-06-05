@@ -2,7 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import { Link, useNavigate } from 'react-router-dom';
 import { FiArrowRight, FiCalendar } from 'react-icons/fi';
-import { gachaGames } from '../../data/gachaGames';
+import { gachaGames, getRuntimeGachaGames } from '../../data/gachaGames';
 import { newsItems, type NewsItem } from '../../data/newsData';
 
 function amplifyColor(hex: string, factor = 7): string {
@@ -706,7 +706,16 @@ const FeedbackBox = styled.div`
 
 export function HomePage() {
   const navigate = useNavigate();
-  const upcomingGames = React.useMemo(() => gachaGames.filter((g) => g.status !== 'Released'), []);
+  const [now, setNow] = React.useState(() => new Date());
+
+  React.useEffect(() => {
+    const timer = setInterval(() => {
+      setNow(new Date());
+    }, 1000);
+    return () => clearInterval(timer);
+  }, []);
+
+  const upcomingGames = React.useMemo(() => getRuntimeGachaGames(now).filter((g) => g.status !== 'Released'), [now]);
   const total = upcomingGames.length;
   const featured = upcomingGames.slice(0, 8);
 
@@ -826,7 +835,7 @@ export function HomePage() {
                       <StatusDot $color={STATUS_COLORS[game.status] ?? '#888'} />
                       {game.status}
                     </MiniStatus>
-                    <MiniGenre>{game.genre}</MiniGenre>
+                    <MiniGenre>{game.genre.join(', ')}</MiniGenre>
                   </TextBlock>
                 </CardContent>
               </FeaturedCard>

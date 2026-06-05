@@ -5,13 +5,13 @@ import { Sun, Moon, Search, X, Bookmark, ArrowRight, Trash2, Check } from 'lucid
 import { AnimatePresence, motion } from 'motion/react';
 import { useTheme } from '../ThemeContext';
 import { useWatchlist } from '../../context/WatchlistContext';
-import { gachaGames, statusColors, type GachaGame } from '../../data/gachaGames';
+import { gachaGames, statusColors, type GachaGame, getRuntimeGachaGames } from '../../data/gachaGames';
 
 const StyledNavbar = styled.nav`
-  position: fixed;
+  position: sticky;
   top: 0;
-  left: 0;
-  right: 0;
+  width: 100%;
+  flex-shrink: 0;
   padding: 0 1.5rem;
   height: 3.5rem;
   background-color: var(--global-primary-bg-tr);
@@ -88,17 +88,14 @@ const NavItem = styled(NavLink)`
   }
 `;
 
-const Spacer = styled.div`
-  flex: 1;
-`;
-
 const RightSection = styled.div`
   display: flex;
   flex-direction: row;
   align-items: center;
   justify-content: flex-end;
   gap: 0.6rem;
-  flex-shrink: 0;
+  flex: 1;
+  min-width: 0;
 `;
 
 const ShortcutHint = styled.span`
@@ -651,10 +648,10 @@ export function GachaNavbar() {
   const watchlistRef = useRef<HTMLDivElement>(null);
 
   const results: GachaGame[] = query.trim()
-    ? gachaGames.filter(
+    ? getRuntimeGachaGames().filter(
         (g) =>
           g.name.toLowerCase().includes(query.toLowerCase()) ||
-          g.genre.toLowerCase().includes(query.toLowerCase()),
+          g.genre.some((gen) => gen.toLowerCase().includes(query.toLowerCase())),
       ).slice(0, 6)
     : [];
 
@@ -719,7 +716,7 @@ export function GachaNavbar() {
     closeSearch();
   };
 
-  const watchlistedGames = gachaGames.filter((g) => localWatchlist.includes(g.id));
+  const watchlistedGames = getRuntimeGachaGames().filter((g) => localWatchlist.includes(g.id));
 
   return (
     <StyledNavbar>
@@ -736,8 +733,6 @@ export function GachaNavbar() {
           <NavItem to='/archive'>Archive</NavItem>
           <NavItem to='/news' id="nav-news-link">Latest News</NavItem>
         </NavLinks>
-
-        <Spacer />
 
         <RightSection>
           {/* Watchlist Section */}
@@ -855,7 +850,9 @@ export function GachaNavbar() {
                               <ResultName>{g.name}</ResultName>
                               <ResultTagRow>
                                 <WatchlistReleaseBadge game={g} />
-                                <MiniBadge>{g.genre}</MiniBadge>
+                                {g.genre.map((gen, idx) => (
+                                  <MiniBadge key={idx}>{gen}</MiniBadge>
+                                ))}
                                 <MiniBadge>
                                   <span
                                     style={{
@@ -943,7 +940,9 @@ export function GachaNavbar() {
                               <MiniBadge>
                                 {g.releaseDate ? g.releaseDate.substring(0, 4) : 'TBA'}
                               </MiniBadge>
-                              <MiniBadge>{g.genre}</MiniBadge>
+                              {g.genre.map((gen, idx) => (
+                                <MiniBadge key={idx}>{gen}</MiniBadge>
+                              ))}
                               <MiniBadge>
                                 <span
                                   style={{

@@ -8,6 +8,7 @@ import {
   type Platform,
   type Region,
   type GameStatus,
+  getRuntimeGachaGames,
 } from '../../data/gachaGames';
 import { GameCard } from '../../components/gacha/GameCard';
 
@@ -367,9 +368,18 @@ export function GamesPage() {
     return () => window.removeEventListener('keydown', handler);
   }, []);
 
-  const upcomingGames = useMemo(() => {
-    return gachaGames.filter((g) => g.status !== 'Released');
+  const [now, setNow] = useState(() => new Date());
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setNow(new Date());
+    }, 1000);
+    return () => clearInterval(timer);
   }, []);
+
+  const upcomingGames = useMemo(() => {
+    return getRuntimeGachaGames(now).filter((g) => g.status !== 'Released');
+  }, [now]);
 
   const isFiltered = query || platform !== 'All' || status !== 'All' || region !== 'All';
 
@@ -387,7 +397,7 @@ export function GamesPage() {
       const matchQ =
         !q ||
         g.name.toLowerCase().includes(q) ||
-        g.genre.toLowerCase().includes(q) ||
+        g.genre.some((gen) => gen.toLowerCase().includes(q)) ||
         (g.alternativeName || '').toLowerCase().includes(q);
       const matchP = platform === 'All' || g.platforms.includes(platform);
       const matchS = status === 'All' || g.status === status;
@@ -406,7 +416,7 @@ export function GamesPage() {
       });
     }
     return list;
-  }, [query, platform, status, region, sort]);
+  }, [upcomingGames, query, platform, status, region, sort]);
 
   const withDates = filtered.filter((g) => g.releaseDate);
   const withoutDates = filtered.filter((g) => !g.releaseDate);

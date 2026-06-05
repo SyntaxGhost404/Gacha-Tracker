@@ -776,7 +776,7 @@ export function ArticleDetailPage() {
                     )}
                     <SidebarGameText>
                       <SidebarGameName>{game.name}</SidebarGameName>
-                      <SidebarGameGenre>{game.genre}</SidebarGameGenre>
+                      <SidebarGameGenre>{game.genre.join(', ')}</SidebarGameGenre>
                     </SidebarGameText>
                   </SidebarGameRow>
                 ))}

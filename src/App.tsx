@@ -39,8 +39,6 @@ const ScrollContainer = styled.div`
   position: relative;
   -webkit-overflow-scrolling: touch;
   scroll-behavior: smooth;
-  margin-top: 3.5rem; /* Start directly beneath the fixed height navbar */
-  height: calc(100vh - 3.5rem);
   
   display: flex;
   flex-direction: column;
@@ -64,24 +62,37 @@ function ScrollToTop() {
   const { pathname, hash } = useLocation();
   useEffect(() => {
     const container = document.getElementById('main-scroll-container');
-    
+    if (!container) return;
+
+    let timerId: any = null;
+    let attempts = 0;
+    const maxAttempts = 50; // 50 * 15ms = 750ms total polling time
+
     if (hash) {
       const id = hash.replace('#', '');
-      const element = document.getElementById(id);
-      if (element && container) {
-        setTimeout(() => {
+      
+      const checkAndScroll = () => {
+        const element = document.getElementById(id);
+        if (element) {
           const topPos = element.getBoundingClientRect().top + container.scrollTop - 90;
           container.scrollTo({ top: topPos, behavior: 'smooth' });
-        }, 120);
-        return;
-      }
+        } else if (attempts < maxAttempts) {
+          attempts++;
+          timerId = setTimeout(checkAndScroll, 15);
+        }
+      };
+
+      // Delay initial check to let page sliding animations (250ms) finish and settle
+      timerId = setTimeout(checkAndScroll, 280);
+    } else {
+      container.scrollTo({ top: 0, behavior: 'instant' as ScrollBehavior });
     }
 
-    if (container) {
-      container.scrollTo({ top: 0, behavior: 'instant' as ScrollBehavior });
-    } else {
-      window.scrollTo({ top: 0, behavior: 'instant' as ScrollBehavior });
-    }
+    return () => {
+      if (timerId) {
+        clearTimeout(timerId);
+      }
+    };
   }, [pathname, hash]);
   return null;
 }

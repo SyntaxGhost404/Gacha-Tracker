@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 import { FiCalendar, FiChevronDown, FiChevronUp, FiBookmark, FiCheck } from 'react-icons/fi';
-import { type GachaGame, STATUS_LABELS, REGION_COLORS, PLATFORM_ICONS } from '../../data/gachaGames';
+import { type GachaGame, STATUS_LABELS, REGION_COLORS, PLATFORM_ICONS, getReleaseTargetDate } from '../../data/gachaGames';
 import { useWatchlist } from '../../context/WatchlistContext';
 import { MoreVertical } from 'lucide-react';
 
@@ -628,9 +628,8 @@ function useCountdown(game: GachaGame) {
 
   if (!game?.releaseDate) return null;
 
-  const target = game.releaseDateTime
-    ? new Date(game.releaseDateTime)
-    : new Date(game.releaseDate + 'T00:00:00Z');
+  const target = getReleaseTargetDate(game);
+  if (!target) return null;
 
   const diff = target.getTime() - now.getTime();
   if (diff <= 0) return null;
@@ -677,16 +676,17 @@ function formatDate(dateStr: string) {
 function getBannerLabel(game: GachaGame): string {
   if (game.status === 'Released') return 'RELEASED';
   if (!game.releaseDate) return 'TBA';
-  const d = new Date(game.releaseDate + 'T00:00:00');
+  const target = getReleaseTargetDate(game);
+  if (!target) return 'TBA';
   const now = new Date();
   const monthDiff =
-    (d.getFullYear() - now.getFullYear()) * 12 +
-    (d.getMonth() - now.getMonth());
+    (target.getFullYear() - now.getFullYear()) * 12 +
+    (target.getMonth() - now.getMonth());
   if (monthDiff <= 0) return 'THIS MONTH';
   if (monthDiff <= 1) return 'NEXT MONTH';
   if (monthDiff <= 3) return 'THIS QUARTER';
-  const q = Math.floor(d.getMonth() / 3) + 1;
-  return `Q${q} ${d.getFullYear()}`;
+  const q = Math.floor(target.getMonth() / 3) + 1;
+  return `Q${q} ${target.getFullYear()}`;
 }
 
 export function GameCard({ game }: { game: GachaGame }) {
@@ -799,7 +799,9 @@ export function GameCard({ game }: { game: GachaGame }) {
         </GameHeader>
 
         <TagRow>
-          <Tag>{game.genre}</Tag>
+          {game.genre.map((gen, idx) => (
+            <Tag key={idx}>{gen}</Tag>
+          ))}
           {game.regions.map((r) => (
             <RegionTag key={r} $color={REGION_COLORS[r]}>
               {r}

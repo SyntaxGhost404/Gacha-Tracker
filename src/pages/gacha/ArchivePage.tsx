@@ -7,6 +7,7 @@ import {
   gachaGames,
   type Platform,
   type Region,
+  getRuntimeGachaGames,
 } from '../../data/gachaGames';
 import { GameCard } from '../../components/gacha/GameCard';
 
@@ -342,9 +343,18 @@ export function ArchivePage() {
     return () => window.removeEventListener('keydown', handler);
   }, []);
 
-  const releasedGames = useMemo(() => {
-    return gachaGames.filter((g) => g.status === 'Released');
+  const [now, setNow] = useState(() => new Date());
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setNow(new Date());
+    }, 1000);
+    return () => clearInterval(timer);
   }, []);
+
+  const releasedGames = useMemo(() => {
+    return getRuntimeGachaGames(now).filter((g) => g.status === 'Released');
+  }, [now]);
 
   const isFiltered = query || platform !== 'All' || region !== 'All';
 
@@ -361,7 +371,7 @@ export function ArchivePage() {
       const matchQ =
         !q ||
         g.name.toLowerCase().includes(q) ||
-        g.genre.toLowerCase().includes(q) ||
+        g.genre.some((gen) => gen.toLowerCase().includes(q)) ||
         (g.alternativeName || '').toLowerCase().includes(q);
       const matchP = platform === 'All' || g.platforms.includes(platform);
       const matchR = region === 'All' || g.regions.includes(region);
