@@ -2,18 +2,14 @@ import { copyFile, mkdir, writeFile } from 'node:fs/promises';
 
 const worker = `const worker = {
   async fetch(request, env) {
-    let response = await env.ASSETS.fetch(request);
+    const url = new URL(request.url);
+    const finalSegment = url.pathname.split('/').pop() ?? '';
 
-    if (response.status === 404 && request.method === 'GET') {
-      const url = new URL(request.url);
-      const finalSegment = url.pathname.split('/').pop() ?? '';
-
-      if (!finalSegment.includes('.')) {
-        response = await env.ASSETS.fetch(new Request(new URL('/index.html', url), request));
-      }
+    if (request.method === 'GET' && !finalSegment.includes('.')) {
+      return env.ASSETS.fetch(new Request(new URL('/index.html', url), request));
     }
 
-    return response;
+    return env.ASSETS.fetch(request);
   },
 };
 
@@ -24,4 +20,3 @@ await mkdir('dist/server', { recursive: true });
 await mkdir('dist/.openai', { recursive: true });
 await writeFile('dist/server/index.js', worker);
 await copyFile('.openai/hosting.json', 'dist/.openai/hosting.json');
-
