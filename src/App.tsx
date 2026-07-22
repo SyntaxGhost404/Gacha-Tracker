@@ -132,12 +132,8 @@ const AnimatedPage = ({ children }: { children: React.ReactNode }) => {
       transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
       style={{
         width: '100%',
-        height: '100%',
         display: 'flex',
         flexDirection: 'column',
-        transformStyle: 'preserve-3d',
-        backfaceVisibility: 'hidden',
-        willChange: 'transform, opacity'
       }}
     >
       {children}

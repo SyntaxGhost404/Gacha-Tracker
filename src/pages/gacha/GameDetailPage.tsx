@@ -1123,7 +1123,7 @@ export function GameDetailPage() {
                       ) : (
                         <i 
                            className={link.iconClass} 
-                           style={{ color: link.disabled ? 'inherit' : '#ffffff' }} 
+                           style={{ color: 'inherit' }} 
                         />
                       )}
                       <span>{link.label}</span>

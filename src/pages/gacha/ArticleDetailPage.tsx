@@ -32,6 +32,8 @@ const PageInner = styled.div`
 
   @media (max-width: 768px) {
     padding: 0 0 3rem;
+    max-width: 100%;
+    overflow-x: hidden;
   }
 `;
 
@@ -45,8 +47,7 @@ const NavigationRow = styled.div`
   width: 100%;
 
   @media (max-width: 768px) {
-    padding: 0.5rem 1rem 0;
-    margin-bottom: 0.75rem;
+    display: none; /* Hide Dashboard and Latest News navigation links on mobile devices */
   }
 `;
 
@@ -55,6 +56,11 @@ const NavLinksGroup = styled.div`
   align-items: center;
   gap: 1rem;
   width: 100%;
+
+  @media (max-width: 600px) {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
 `;
 
 const BackToDashBtn = styled(Link)`
@@ -74,6 +80,11 @@ const BackToDashBtn = styled(Link)`
   transition: all 0.15s ease;
   white-space: nowrap;
   cursor: pointer;
+
+  @media (max-width: 600px) {
+    width: 100%;
+    flex: none;
+  }
 
   svg {
     font-size: 1.1rem;
@@ -103,6 +114,11 @@ const BackToNewsBtn = styled(Link)`
   white-space: nowrap;
   cursor: pointer;
 
+  @media (max-width: 600px) {
+    width: 100%;
+    flex: none;
+  }
+
   svg {
     font-size: 1.1rem;
   }
@@ -119,8 +135,12 @@ const ArticleLayout = styled.div`
   gap: 2.5rem;
 
   @media (max-width: 960px) {
-    grid-template-columns: 1fr;
+    display: flex;
+    flex-direction: column;
     gap: 2rem;
+    width: 100%;
+    max-width: 100%;
+    overflow-x: hidden;
   }
 `;
 
@@ -128,6 +148,9 @@ const MainColumn = styled.div`
   display: flex;
   flex-direction: column;
   min-width: 0;
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
 `;
 
 const MainContent = styled.article`
@@ -136,6 +159,8 @@ const MainContent = styled.article`
   border-radius: 0.6rem;
   overflow: hidden;
   box-shadow: 0 4px 20px var(--global-card-shadow);
+  width: 100%;
+  max-width: 100%;
 
   @media (max-width: 768px) {
     border: none;
@@ -159,6 +184,9 @@ const ArticleTitle = styled.h1`
   line-height: 1.22;
   letter-spacing: -0.03em;
   margin: 0 0 1.25rem;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  word-break: break-word;
 `;
 
 const ArticleMetaTwoLine = styled.div`
@@ -252,6 +280,9 @@ const ArticleHook = styled.p`
   opacity: 0.95;
   border-left: 3px solid var(--primary-accent);
   padding-left: 1rem;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  word-break: break-word;
 `;
 
 const ArticleBody = styled.div`
@@ -259,6 +290,9 @@ const ArticleBody = styled.div`
   line-height: 1.75;
   color: var(--global-text);
   opacity: 0.92;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  word-break: break-word;
 
   p {
     margin: 0 0 1.25rem;
@@ -277,6 +311,9 @@ const ArticleBody = styled.div`
     letter-spacing: -0.02em;
     border-bottom: 1px solid var(--global-border);
     padding-bottom: 0.4rem;
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+    word-break: break-word;
   }
 `;
 
