@@ -6,7 +6,7 @@ const worker = `const worker = {
     const finalSegment = url.pathname.split('/').pop() ?? '';
 
     if (request.method === 'GET' && !finalSegment.includes('.')) {
-      return env.ASSETS.fetch(new Request(new URL('/index.html', url), request));
+      return env.ASSETS.fetch(new Request(new URL('/', url), request));
     }
 
     return env.ASSETS.fetch(request);
