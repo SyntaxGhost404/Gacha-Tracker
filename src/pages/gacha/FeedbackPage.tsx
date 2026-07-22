@@ -10,9 +10,9 @@ const PageWrapper = styled.div`
 `;
 
 const PageInner = styled.div`
-  max-width: 38rem;
+  max-width: 44rem;
   margin: 0 auto;
-  padding: 0.5rem 1.5rem 2.5rem;
+  padding: 1.5rem 1.5rem 3.5rem;
 
   @media (max-width: 600px) {
     padding: 0.25rem 1rem 1.5rem;
@@ -48,15 +48,15 @@ const BackLink = styled(Link)`
 `;
 
 const PageTitle = styled.h1`
-  font-size: clamp(1.6rem, 4vw, 2.2rem);
-  font-weight: 800;
+  font-size: clamp(2rem, 5vw, 3.1rem);
+  font-weight: 850;
   color: var(--global-text);
   letter-spacing: -0.035em;
   margin: 0 0 0.4rem;
 `;
 
 const PageSubtitle = styled.p`
-  font-size: 0.88rem;
+  font-size: 0.96rem;
   color: var(--global-text-muted);
   margin: 0;
   line-height: 1.6;
@@ -65,12 +65,12 @@ const PageSubtitle = styled.p`
 const FormCard = styled.form`
   background: var(--global-card-bg);
   border: 1px solid var(--global-border);
-  border-radius: 0.5rem;
-  padding: 1.75rem;
+  border-radius: var(--radius-xl);
+  padding: 2rem;
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
-  box-shadow: 0 4px 20px var(--global-card-shadow);
+  box-shadow: var(--shadow-lg);
   animation: fadeIn 0.35s ease;
 
   @media (max-width: 600px) {
@@ -104,9 +104,9 @@ const CategoryPill = styled.button<{ $active: boolean }>`
   font-size: 0.78rem;
   font-weight: 600;
   border-radius: 2rem;
-  border: 1px solid ${({ $active }) => ($active ? 'var(--global-text-muted)' : 'var(--global-border)')};
-  background: ${({ $active }) => ($active ? 'var(--global-secondary-bg)' : 'transparent')};
-  color: ${({ $active }) => ($active ? 'var(--global-text)' : 'var(--global-text-muted)')};
+  border: 1px solid ${({ $active }) => ($active ? 'var(--primary-accent)' : 'var(--global-border)')};
+  background: ${({ $active }) => ($active ? 'var(--primary-accent)' : 'transparent')};
+  color: ${({ $active }) => ($active ? '#fff' : 'var(--global-text-muted)')};
   cursor: pointer;
   transition: all 0.15s ease;
 
@@ -119,8 +119,8 @@ const CategoryPill = styled.button<{ $active: boolean }>`
 
 const TextInput = styled.input`
   width: 100%;
-  padding: 0.65rem 0.85rem;
-  border-radius: 0.35rem;
+  padding: 0.78rem 0.9rem;
+  border-radius: 0.75rem;
   border: 1px solid var(--global-border);
   background: var(--global-primary-bg);
   color: var(--global-text);
@@ -144,7 +144,7 @@ const TextInput = styled.input`
 const TextArea = styled.textarea`
   width: 100%;
   padding: 0.75rem 0.85rem;
-  border-radius: 0.35rem;
+  border-radius: 0.75rem;
   border: 1px solid var(--global-border);
   background: var(--global-primary-bg);
   color: var(--global-text);
@@ -197,19 +197,21 @@ const SubmitButton = styled.button`
   justify-content: center;
   gap: 0.5rem;
   width: 100%;
-  padding: 0.75rem;
+  padding: 0.82rem;
   border: none;
-  border-radius: 0.35rem;
-  background: var(--global-text);
-  color: var(--global-primary-bg);
+  border-radius: 0.75rem;
+  background: linear-gradient(135deg, var(--primary-accent), var(--primary-accent-bg));
+  color: #fff;
   font-size: 0.88rem;
   font-weight: 700;
   cursor: pointer;
-  transition: opacity 0.15s ease;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, opacity 0.15s ease;
+  box-shadow: 0 10px 28px color-mix(in srgb, var(--primary-accent) 22%, transparent);
   margin-top: 0.5rem;
 
   &:hover {
-    opacity: 0.88;
+    transform: translateY(-1px);
+    box-shadow: 0 14px 34px color-mix(in srgb, var(--primary-accent) 30%, transparent);
   }
 
   &:disabled {
@@ -221,14 +223,14 @@ const SubmitButton = styled.button`
 const SuccessCard = styled.div`
   background: var(--global-card-bg);
   border: 1px solid var(--global-border);
-  border-radius: 0.5rem;
+  border-radius: var(--radius-xl);
   padding: 2.5rem 1.75rem;
   text-align: center;
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 1.25rem;
-  box-shadow: 0 4px 20px var(--global-card-shadow);
+  box-shadow: var(--shadow-lg);
   animation: popIn 0.3s ease;
 `;
 
@@ -264,7 +266,7 @@ const SecondaryActionBtn = styled.button`
   align-items: center;
   gap: 0.45rem;
   padding: 0.6rem 1.2rem;
-  border-radius: 0.35rem;
+  border-radius: 0.7rem;
   background: transparent;
   color: var(--global-text-muted);
   font-size: 0.82rem;
@@ -285,9 +287,9 @@ const DashboardBtn = styled(Link)`
   align-items: center;
   gap: 0.45rem;
   padding: 0.6rem 1.2rem;
-  border-radius: 0.35rem;
-  background: var(--global-text);
-  color: var(--global-primary-bg);
+  border-radius: 0.7rem;
+  background: var(--primary-accent);
+  color: #fff;
   font-size: 0.82rem;
   font-weight: 700;
   text-decoration: none;
@@ -382,6 +384,7 @@ export function FeedbackPage() {
                     key={cat}
                     type="button"
                     $active={category === cat}
+                    aria-pressed={category === cat}
                     onClick={() => setCategory(cat)}
                   >
                     {cat.replace('_', ' ')}
@@ -427,6 +430,8 @@ export function FeedbackPage() {
                     type="button"
                     $filled={star <= rating}
                     $hovered={star <= hoveredRating}
+                    aria-label={`${star} star${star === 1 ? '' : 's'}`}
+                    aria-pressed={rating === star}
                     onClick={() => setRating(star)}
                     onMouseEnter={() => setHoveredRating(star)}
                     onMouseLeave={() => setHoveredRating(0)}

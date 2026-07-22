@@ -5,62 +5,90 @@ import { Sun, Moon, Search, X, Bookmark, ArrowRight, Trash2, Check } from 'lucid
 import { AnimatePresence, motion } from 'motion/react';
 import { useTheme } from '../ThemeContext';
 import { useWatchlist } from '../../context/WatchlistContext';
-import { gachaGames, statusColors, type GachaGame, getRuntimeGachaGames } from '../../data/gachaGames';
+import { statusColors, type GachaGame, getRuntimeGachaGames } from '../../data/gachaGames';
 
 const StyledNavbar = styled.nav`
   position: sticky;
   top: 0;
   width: 100%;
   flex-shrink: 0;
-  padding: 0 1.5rem;
-  height: 3.5rem;
-  background-color: var(--global-primary-bg-tr);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
+  padding: 0 1.25rem;
+  height: 4.25rem;
+  background-color: var(--nav-bg);
+  backdrop-filter: blur(22px) saturate(145%);
+  -webkit-backdrop-filter: blur(22px) saturate(145%);
   border-bottom: 1px solid var(--global-border);
+  box-shadow: 0 12px 38px rgba(0, 0, 0, 0.08);
   z-index: 100;
   display: flex;
   align-items: center;
   transition: background-color 0.2s ease, border-color 0.2s ease;
 
   @media (max-width: 600px) {
-    padding: 0 0.85rem;
+    height: 3.9rem;
+    padding: 0 0.75rem;
   }
 `;
 
 const NavInner = styled.div`
-  max-width: 105rem;
+  max-width: 90rem;
   width: 100%;
   margin: 0 auto;
   display: flex;
   align-items: center;
-  gap: 1rem;
+  gap: 0.85rem;
 `;
 
 const Logo = styled(Link)`
-  font-size: 1.1rem;
-  font-weight: 850;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  font-size: 0.98rem;
+  font-weight: 900;
   text-decoration: none;
-  letter-spacing: -0.03em;
+  letter-spacing: 0.075em;
   color: var(--global-text);
   white-space: nowrap;
   flex-shrink: 0;
   transition: opacity 0.2s ease;
 
   span {
-    color: var(--primary-accent);
+    background: linear-gradient(135deg, var(--primary-accent), var(--secondary-accent));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  &::before {
+    content: '';
+    width: 0.72rem;
+    height: 0.72rem;
+    border-radius: 0.2rem;
+    background: linear-gradient(135deg, var(--primary-accent), var(--secondary-accent));
+    box-shadow: 0 0 18px var(--primary-accent);
+    transform: rotate(45deg);
+    flex-shrink: 0;
   }
 
   &:hover {
-    opacity: 0.85;
+    opacity: 0.9;
+  }
+
+  @media (max-width: 380px) {
+    gap: 0.4rem;
+    font-size: 0.82rem;
   }
 `;
 
 const NavLinks = styled.div`
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  margin-left: 2rem;
+  gap: 0.18rem;
+  margin-left: 1.25rem;
+  padding: 0.24rem;
+  background: var(--global-primary-skeleton);
+  border: 1px solid var(--global-border);
+  border-radius: 0.9rem;
 
   @media (max-width: 768px) {
     display: none;
@@ -68,8 +96,8 @@ const NavLinks = styled.div`
 `;
 
 const NavItem = styled(NavLink)`
-  padding: 0.35rem 0.85rem;
-  border-radius: var(--global-border-radius, 0.3rem);
+  padding: 0.48rem 0.78rem;
+  border-radius: 0.66rem;
   font-size: 0.82rem;
   font-weight: 650;
   color: var(--global-text-muted);
@@ -83,8 +111,9 @@ const NavItem = styled(NavLink)`
   }
 
   &.active {
-    color: var(--global-text);
-    background: var(--global-secondary-bg);
+    color: var(--primary-accent);
+    background: var(--global-card-bg);
+    box-shadow: 0 4px 12px var(--global-card-shadow);
   }
 `;
 
@@ -93,7 +122,7 @@ const RightSection = styled.div`
   flex-direction: row;
   align-items: center;
   justify-content: flex-end;
-  gap: 0.6rem;
+  gap: 0.5rem;
   flex: 1;
   min-width: 0;
 `;
@@ -119,15 +148,17 @@ const IconButton = styled.button`
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
-  padding: 0.45rem 0.75rem;
-  border-radius: var(--global-border-radius, 0.3rem);
+  min-height: 2.55rem;
+  padding: 0.55rem 0.78rem;
+  border-radius: 0.76rem;
   border: 1px solid var(--global-border);
   background: var(--global-button-bg);
   color: var(--global-text);
   cursor: pointer;
   font-size: 0.8rem;
   font-weight: 600;
-  transition: all 0.15s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 6px 18px transparent;
+  transition: all 0.18s cubic-bezier(0.16, 1, 0.3, 1);
   white-space: nowrap;
 
   svg {
@@ -138,7 +169,9 @@ const IconButton = styled.button`
 
   &:hover {
     background: var(--global-button-hover-bg);
-    border-color: var(--global-text-muted);
+    border-color: var(--global-border-strong);
+    box-shadow: 0 6px 18px var(--global-card-shadow);
+    transform: translateY(-1px);
   }
 `;
 
@@ -150,11 +183,12 @@ const SearchWrapper = styled.div<{ $open: boolean }>`
   @media (max-width: 600px) {
     ${({ $open }) => !$open && 'display: none;'}
     position: fixed;
-    top: 3.5rem;
+    top: 3.9rem;
     left: 0;
     right: 0;
-    padding: 0.6rem;
-    background: var(--global-primary-bg);
+    padding: 0.7rem;
+    background: var(--nav-bg);
+    backdrop-filter: blur(22px);
     z-index: 150;
     border-bottom: 1px solid var(--global-border);
     box-shadow: 0 4px 12px var(--global-card-shadow);
@@ -164,9 +198,9 @@ const SearchWrapper = styled.div<{ $open: boolean }>`
 const SearchInput = styled.input<{ $open: boolean }>`
   width: ${({ $open }) => ($open ? '15rem' : '0')};
   padding: ${({ $open }) => ($open ? '0.45rem 2.2rem 0.45rem 2.2rem' : '0.45rem 0')};
-  border-radius: var(--global-border-radius, 0.3rem);
+  border-radius: 0.76rem;
   border: 1px solid var(--global-border);
-  background: var(--global-secondary-bg);
+  background: var(--global-button-bg);
   color: var(--global-text);
   font-size: 0.8rem;
   outline: none;
@@ -178,18 +212,19 @@ const SearchInput = styled.input<{ $open: boolean }>`
   }
 
   &:focus {
-    border-color: var(--global-text-muted);
+    border-color: var(--primary-accent);
     background: var(--global-card-bg);
+    box-shadow: 0 0 0 3px var(--primary-accent-soft);
   }
 
   @media (min-width: 601px) {
-    width: 17rem;
-    padding: 0.45rem 2.2rem 0.45rem 2rem;
+    width: 16.5rem;
+    padding: 0.58rem 2.2rem 0.58rem 2rem;
   }
 
   @media (max-width: 600px) {
     width: 100%;
-    padding: 0.65rem 2.5rem 0.65rem 2.5rem;
+    padding: 0.72rem 2.5rem;
     font-size: 0.95rem;
   }
 `;
@@ -256,12 +291,12 @@ const SearchDropdownGrid = styled.div`
   position: absolute;
   top: calc(100% + 0.4rem);
   right: 0;
-  width: 22rem;
+  width: 24rem;
   max-width: calc(100vw - 1rem);
   background: var(--global-card-bg);
   border: 1px solid var(--global-border);
-  border-radius: var(--global-border-radius, 0.4rem);
-  box-shadow: 0 10px 30px var(--global-card-shadow);
+  border-radius: 1rem;
+  box-shadow: 0 24px 60px var(--global-card-shadow);
   overflow: hidden;
   z-index: 200;
   animation: slideDropdown 0.2s cubic-bezier(0.16, 1, 0.3, 1);
@@ -279,7 +314,7 @@ const SearchDropdownGrid = styled.div`
 
   @media (max-width: 600px) {
     position: fixed;
-    top: calc(3.5rem + 3.7rem);
+    top: calc(3.9rem + 4rem);
     right: 0.6rem;
     left: 0.6rem;
     width: auto;
@@ -358,7 +393,7 @@ const ImageContainer = styled.div`
   position: relative;
   width: 2.8rem;
   height: 2.8rem;
-  border-radius: 0.4rem;
+  border-radius: 0.68rem;
   overflow: hidden;
   flex-shrink: 0;
   background: var(--global-secondary-bg);
@@ -433,8 +468,8 @@ const ViewAllFooter = styled.button`
 `;
 
 const WatchlistCountBadge = styled.span`
-  background: var(--global-text);
-  color: var(--global-primary-bg);
+  background: var(--primary-accent);
+  color: #fff;
   border-radius: 999px;
   padding: 0rem 0.35rem;
   font-size: 0.65rem;
@@ -456,19 +491,19 @@ const DropdownPanel = styled.div`
   position: absolute;
   top: calc(100% + 0.4rem);
   right: 0;
-  width: 22rem;
+  width: 24rem;
   max-width: calc(100vw - 1rem);
   background: var(--global-card-bg);
   border: 1px solid var(--global-border);
-  border-radius: var(--global-border-radius, 0.4rem);
-  box-shadow: 0 10px 30px var(--global-card-shadow);
+  border-radius: 1rem;
+  box-shadow: 0 24px 60px var(--global-card-shadow);
   overflow: hidden;
   z-index: 200;
   animation: slideDropdown 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 
   @media (max-width: 600px) {
     position: fixed;
-    top: 3.5rem;
+    top: 3.9rem;
     right: 0.6rem;
     left: 0.6rem;
     width: auto;
@@ -558,7 +593,7 @@ function WatchlistReleaseBadge({ game }: { game: GachaGame }) {
       ? new Date(game.releaseDateTime)
       : new Date(game.releaseDate + 'T00:00:00Z');
     
-    if (target.getTime() <= now.getTime()) return;
+    if (target.getTime() <= Date.now()) return;
 
     const timer = setInterval(() => {
       setNow(new Date());
@@ -897,7 +932,7 @@ export function GachaNavbar() {
                 aria-label='Search Games'
               />
               {query && (
-                <SearchClearBtn onClick={() => setQuery('')} tabIndex={-1}>
+                <SearchClearBtn onClick={() => setQuery('')} tabIndex={-1} aria-label='Clear search'>
                   <X />
                 </SearchClearBtn>
               )}

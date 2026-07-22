@@ -1,21 +1,18 @@
-import React, { useState, useMemo } from 'react';
+import { useState, useMemo } from 'react';
 import styled from 'styled-components';
 import { useParams, Link } from 'react-router-dom';
 import { 
   FiArrowLeft, 
   FiCalendar, 
-  FiClock, 
-  FiUser, 
   FiShare2, 
   FiHeart, 
-  FiMessageSquare, 
   FiCheck,
   FiTrendingUp,
   FiCompass,
   FiHome,
   FiFileText
 } from 'react-icons/fi';
-import { newsItems, type NewsItem } from '../../data/newsData';
+import { newsItems } from '../../data/newsData';
 import { gachaGames } from '../../data/gachaGames';
 
 const PageWrapper = styled.div`
@@ -25,10 +22,10 @@ const PageWrapper = styled.div`
 `;
 
 const PageInner = styled.div`
-  max-width: 88rem;
+  max-width: 82rem;
   width: 100%;
   margin: 0 auto;
-  padding: 1rem 1.75rem 4rem;
+  padding: 1.5rem 2rem 4.5rem;
 
   @media (max-width: 768px) {
     padding: 0 0 3rem;
@@ -70,7 +67,7 @@ const BackToDashBtn = styled(Link)`
   justify-content: center;
   gap: 0.5rem;
   padding: 0.6rem 1rem;
-  border-radius: var(--global-border-radius);
+  border-radius: 0.7rem;
   border: 1px solid var(--global-border);
   background: var(--global-button-bg);
   color: var(--global-text);
@@ -103,7 +100,7 @@ const BackToNewsBtn = styled(Link)`
   justify-content: center;
   gap: 0.5rem;
   padding: 0.6rem 1rem;
-  border-radius: var(--global-border-radius);
+  border-radius: 0.7rem;
   border: 1px solid var(--global-border);
   background: var(--global-button-bg);
   color: var(--global-text);
@@ -132,7 +129,7 @@ const BackToNewsBtn = styled(Link)`
 const ArticleLayout = styled.div`
   display: grid;
   grid-template-columns: 1fr 22rem;
-  gap: 2.5rem;
+  gap: 1.5rem;
 
   @media (max-width: 960px) {
     display: flex;
@@ -156,9 +153,9 @@ const MainColumn = styled.div`
 const MainContent = styled.article`
   background: var(--global-card-bg);
   border: 1px solid var(--global-border);
-  border-radius: 0.6rem;
+  border-radius: var(--radius-xl);
   overflow: hidden;
-  box-shadow: 0 4px 20px var(--global-card-shadow);
+  box-shadow: var(--shadow-lg);
   width: 100%;
   max-width: 100%;
 
@@ -171,14 +168,14 @@ const MainContent = styled.article`
 `;
 
 const HeaderPadding = styled.div`
-  padding: 2.5rem 2.5rem 1.5rem;
+  padding: 2.75rem 2.75rem 1.75rem;
   @media (max-width: 768px) {
     padding: 1.5rem 1rem 1rem;
   }
 `;
 
 const ArticleTitle = styled.h1`
-  font-size: clamp(1.8rem, 4.2vw, 2.6rem);
+  font-size: clamp(2rem, 4.7vw, 3.25rem);
   font-weight: 850;
   color: var(--global-text);
   line-height: 1.22;
@@ -231,8 +228,9 @@ const BannerContainer = styled.div`
 
 const BannerImg = styled.img`
   width: 100%;
-  height: auto;
+  height: clamp(15rem, 35vw, 27rem);
   display: block;
+  object-fit: cover;
 `;
 
 const BannerOverlay = styled.div`
@@ -253,7 +251,7 @@ const BannerBadge = styled.span`
   font-weight: 800;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  border-radius: 0.25rem;
+  border-radius: 999px;
   border: 1px solid rgba(255, 255, 255, 0.15);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
 
@@ -264,7 +262,7 @@ const BannerBadge = styled.span`
 `;
 
 const BodyPadding = styled.div`
-  padding: 2.5rem;
+  padding: 2.75rem;
 
   @media (max-width: 768px) {
     padding: 1.25rem 1rem;
@@ -272,7 +270,7 @@ const BodyPadding = styled.div`
 `;
 
 const ArticleHook = styled.p`
-  font-size: 1.08rem;
+  font-size: 1.12rem;
   line-height: 1.6;
   font-weight: 500;
   color: var(--global-text);
@@ -286,7 +284,7 @@ const ArticleHook = styled.p`
 `;
 
 const ArticleBody = styled.div`
-  font-size: 0.93rem;
+  font-size: 0.96rem;
   line-height: 1.75;
   color: var(--global-text);
   opacity: 0.92;
@@ -336,8 +334,9 @@ const StickySidebar = styled.aside`
 const SidebarCard = styled.div`
   background: var(--global-card-bg);
   border: 1px solid var(--global-border);
-  border-radius: 0.5rem;
+  border-radius: var(--radius-lg);
   padding: 1.15rem;
+  box-shadow: var(--shadow-sm);
 `;
 
 const SidebarTitle = styled.h3`
@@ -379,7 +378,7 @@ const RecArticleItem = styled(Link)`
 const RecThumb = styled.img`
   width: 4.25rem;
   height: 3.2rem;
-  border-radius: 0.25rem;
+  border-radius: 0.6rem;
   object-fit: cover;
   flex-shrink: 0;
   background: var(--global-tertiary-bg);
@@ -427,7 +426,7 @@ const SidebarGameRow = styled(Link)`
   gap: 0.75rem;
   text-decoration: none;
   padding: 0.45rem;
-  border-radius: 0.35rem;
+  border-radius: 0.65rem;
   border: 1px solid transparent;
   transition: all 0.15s ease;
 
@@ -440,7 +439,7 @@ const SidebarGameRow = styled(Link)`
 const SidebarGameImg = styled.img`
   width: 2.2rem;
   height: 2.2rem;
-  border-radius: 0.3rem;
+  border-radius: 0.58rem;
   object-fit: cover;
   flex-shrink: 0;
   border: 1px solid rgba(255, 255, 255, 0.1);
@@ -449,7 +448,7 @@ const SidebarGameImg = styled.img`
 const SidebarGameInitials = styled.div<{ $color: string }>`
   width: 2.2rem;
   height: 2.2rem;
-  border-radius: 0.3rem;
+  border-radius: 0.58rem;
   background: ${({ $color }) => $color};
   display: flex;
   align-items: center;
@@ -518,9 +517,9 @@ const ReactionBtn = styled.button<{ $active: boolean }>`
   border-radius: 2rem;
   cursor: pointer;
   transition: all 0.15s ease;
-  background: ${({ $active }) => ($active ? 'var(--primary-accent)18' : 'var(--global-primary-bg)')};
+  background: ${({ $active }) => ($active ? 'color-mix(in srgb, var(--primary-accent) 10%, transparent)' : 'var(--global-primary-bg)')};
   color: ${({ $active }) => ($active ? 'var(--primary-accent)' : 'var(--global-text-muted)')};
-  border: 1px solid ${({ $active }) => ($active ? 'var(--primary-accent)50' : 'var(--global-border)')};
+  border: 1px solid ${({ $active }) => ($active ? 'color-mix(in srgb, var(--primary-accent) 32%, transparent)' : 'var(--global-border)')};
 
   &:hover {
     border-color: var(--global-text-muted);
@@ -556,8 +555,8 @@ const ErrorState = styled.div`
   text-align: center;
   background: var(--global-card-bg);
   border: 1px solid var(--global-border);
-  border-radius: 0.5rem;
-  box-shadow: 0 4px 20px var(--global-card-shadow);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-lg);
   display: flex;
   flex-direction: column;
   align-items: center;

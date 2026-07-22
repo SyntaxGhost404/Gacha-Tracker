@@ -1,8 +1,8 @@
-import React, { useState, useMemo } from 'react';
+import { useState, useMemo } from 'react';
 import styled from 'styled-components';
 import { FiSearch, FiX, FiCalendar, FiArrowLeft, FiFilter, FiChevronDown } from 'react-icons/fi';
 import { Link, useNavigate } from 'react-router-dom';
-import { newsItems, type NewsItem } from '../../data/newsData';
+import { newsItems } from '../../data/newsData';
 
 const PageWrapper = styled.div`
   padding-top: 0;
@@ -11,12 +11,12 @@ const PageWrapper = styled.div`
 `;
 
 const PageInner = styled.div`
-  max-width: 52rem;
+  max-width: 78rem;
   margin: 0 auto;
-  padding: 0.5rem 1rem 2rem;
+  padding: 1.5rem 2rem 3.5rem;
 
-  @media (max-width: 600px) {
-    padding: 0.25rem 0.75rem 1.5rem;
+  @media (max-width: 768px) {
+    padding: 0.75rem 0.85rem 2rem;
   }
 `;
 
@@ -48,15 +48,16 @@ const BackLink = styled(Link)`
 `;
 
 const PageTitle = styled.h1`
-  font-size: clamp(1.5rem, 3.5vw, 2.2rem);
-  font-weight: 800;
+  font-size: clamp(2rem, 5vw, 3.25rem);
+  font-weight: 850;
   color: var(--global-text);
   letter-spacing: -0.035em;
   margin: 0 0 0.4rem;
 `;
 
 const PageSubtitle = styled.p`
-  font-size: 0.88rem;
+  max-width: 44rem;
+  font-size: 0.96rem;
   color: var(--global-text-muted);
   margin: 0 0 0.85rem;
   line-height: 1.6;
@@ -79,22 +80,24 @@ const SearchIcon = styled.div`
 
 const SearchInput = styled.input`
   width: 100%;
-  padding: 0.65rem 2.5rem 0.65rem 2.4rem;
-  border-radius: 0.4rem;
+  padding: 0.82rem 2.75rem 0.82rem 2.5rem;
+  border-radius: 0.8rem;
   border: 1px solid var(--global-border);
   background: var(--global-card-bg);
   color: var(--global-text);
   font-size: 0.88rem;
   outline: none;
   box-sizing: border-box;
-  transition: border-color 0.15s ease;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  box-shadow: var(--shadow-sm);
 
   &::placeholder {
     color: var(--global-text-muted);
   }
 
   &:focus {
-    border-color: var(--global-text-muted);
+    border-color: color-mix(in srgb, var(--primary-accent) 65%, var(--global-border));
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary-accent) 12%, transparent);
   }
 `;
 
@@ -127,8 +130,8 @@ const ControlBtn = styled.button<{ $active?: boolean }>`
   display: inline-flex;
   align-items: center;
   gap: 0.4rem;
-  padding: 0.45rem 0.9rem;
-  border-radius: 0.35rem;
+  padding: 0.55rem 0.95rem;
+  border-radius: 0.7rem;
   border: 1px solid ${({ $active }) => ($active ? 'var(--global-text-muted)' : 'var(--global-border)')};
   background: ${({ $active }) => ($active ? 'var(--global-secondary-bg)' : 'var(--global-card-bg)')};
   color: var(--global-text-muted);
@@ -147,8 +150,8 @@ const ControlBtn = styled.button<{ $active?: boolean }>`
 const FilterPanel = styled.div`
   background: var(--global-card-bg);
   border: 1px solid var(--global-border);
-  border-radius: 0.4rem;
-  padding: 0.85rem 1rem;
+  border-radius: var(--radius-md);
+  padding: 1rem 1.1rem;
   margin-bottom: 1rem;
   display: flex;
   flex-direction: column;
@@ -187,9 +190,9 @@ const Pill = styled.button<{ $active: boolean }>`
   font-weight: 600;
   cursor: pointer;
   transition: all 0.12s ease;
-  border: 1px solid ${({ $active }) => ($active ? 'var(--global-text)' : 'var(--global-border)')};
-  background: ${({ $active }) => ($active ? 'var(--global-text)' : 'transparent')};
-  color: ${({ $active }) => ($active ? 'var(--global-primary-bg)' : 'var(--global-text-muted)')};
+  border: 1px solid ${({ $active }) => ($active ? 'var(--primary-accent)' : 'var(--global-border)')};
+  background: ${({ $active }) => ($active ? 'var(--primary-accent)' : 'transparent')};
+  color: ${({ $active }) => ($active ? '#fff' : 'var(--global-text-muted)')};
 
   &:hover {
     border-color: var(--global-text-muted);
@@ -231,30 +234,42 @@ const ResetBtn = styled.button`
 
 const NewsGrid = styled.div`
   display: grid;
-  grid-template-columns: 1fr;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 1.25rem;
   margin-bottom: 2rem;
+
+  @media (max-width: 820px) {
+    grid-template-columns: 1fr;
+  }
 `;
 
 const NewsCard = styled.article`
   background: var(--global-card-bg);
-  border-radius: 0.5rem;
+  border-radius: var(--radius-lg);
   overflow: hidden;
   border: 1px solid var(--global-border);
-  transition: transform 0.2s ease, border-color 0.25s ease;
+  transition: transform 0.22s ease, border-color 0.22s ease, box-shadow 0.22s ease;
   display: flex;
   flex-direction: column;
   cursor: pointer;
+  min-height: 100%;
+  box-shadow: var(--shadow-sm);
 
   &:hover {
-    transform: translateY(-1px);
-    border-color: rgba(255, 255, 255, 0.25);
+    transform: translateY(-4px);
+    border-color: color-mix(in srgb, var(--primary-accent) 42%, var(--global-border));
+    box-shadow: var(--shadow-lg), var(--glow-primary);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--primary-accent);
+    outline-offset: 3px;
   }
 `;
 
 const NewsBanner = styled.div<{ $color: string; $image?: string }>`
   position: relative;
-  height: 11rem;
+  height: 13rem;
   background-color: ${({ $color }) => $color};
   ${({ $image }) =>
     $image &&
@@ -264,11 +279,11 @@ const NewsBanner = styled.div<{ $color: string; $image?: string }>`
     background-position: center top;
   `}
   overflow: hidden;
-  filter: grayscale(1) brightness(0.85);
+  filter: saturate(0.65) brightness(0.86);
   transition: filter 0.4s ease;
 
   ${NewsCard}:hover & {
-    filter: grayscale(0) brightness(1);
+    filter: saturate(1.05) brightness(1);
   }
 
   @media (max-width: 600px) {
@@ -279,7 +294,7 @@ const NewsBanner = styled.div<{ $color: string; $image?: string }>`
 const NewsBannerOverlay = styled.div`
   position: absolute;
   inset: 0;
-  background: linear-gradient(to bottom, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0.55) 100%);
+  background: linear-gradient(to bottom, rgba(0,0,0,0.04) 30%, rgba(4,5,12,0.7) 100%);
 `;
 
 const NewsBannerBadgesLeft = styled.div`
@@ -300,7 +315,7 @@ const NewsBannerBadgesRight = styled.div`
 
 const NewsBannerBadge = styled.span<{ $accent?: string }>`
   padding: 0.2rem 0.5rem;
-  border-radius: 0.25rem;
+  border-radius: 999px;
   font-size: 0.65rem;
   font-weight: 700;
   letter-spacing: 0.06em;
@@ -316,6 +331,7 @@ const NewsCardBody = styled.div`
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
+  flex: 1;
 `;
 
 const NewsHeader = styled.div`
@@ -361,7 +377,7 @@ const NewsTagRow = styled.div`
 
 const NewsBadgeTag = styled.span`
   padding: 0.18rem 0.55rem;
-  border-radius: 0.25rem;
+  border-radius: 999px;
   font-size: 0.72rem;
   font-weight: 600;
   background: var(--global-secondary-bg);
@@ -371,12 +387,12 @@ const NewsBadgeTag = styled.span`
 
 const NewsCategoryTag = styled.span`
   padding: 0.18rem 0.55rem;
-  border-radius: 0.25rem;
+  border-radius: 999px;
   font-size: 0.72rem;
   font-weight: 700;
-  background: var(--primary-accent)18;
+  background: color-mix(in srgb, var(--primary-accent) 10%, transparent);
   color: var(--primary-accent);
-  border: 1px solid var(--primary-accent)30;
+  border: 1px solid color-mix(in srgb, var(--primary-accent) 22%, transparent);
 `;
 
 const NewsDescBlock = styled.div`
@@ -403,6 +419,7 @@ const NewsActionRow = styled.div`
   align-items: center;
   justify-content: space-between;
   gap: 1rem;
+  margin-top: auto;
 `;
 
 const NewsAuthor = styled.span`
@@ -416,7 +433,7 @@ const NewsCTAButton = styled.button`
   align-items: center;
   gap: 0.35rem;
   padding: 0.35rem 0.85rem;
-  border-radius: 0.3rem;
+  border-radius: 0.65rem;
   border: 1px solid var(--global-border);
   background: transparent;
   color: var(--global-text-muted);
@@ -437,7 +454,7 @@ const NoResults = styled.div`
   text-align: center;
   background: var(--global-card-bg);
   border: 1px solid var(--global-border);
-  border-radius: 0.5rem;
+  border-radius: var(--radius-lg);
   color: var(--global-text-muted);
   font-size: 0.9rem;
   display: flex;
@@ -447,132 +464,10 @@ const NoResults = styled.div`
 `;
 
 // Detail Modal Styles
-const ModalBackdrop = styled.div`
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.85);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 1000;
-  padding: 1rem;
-  animation: fadeIn 0.2s ease;
-`;
-
-const ModalContainer = styled.div`
-  position: relative;
-  background: var(--global-card-bg);
-  border: 1px solid var(--global-border);
-  border-radius: 0.8rem;
-  width: 100%;
-  max-width: 32rem;
-  overflow: hidden;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-  display: flex;
-  flex-direction: column;
-  animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-`;
-
-const ModalCloseBtn = styled.button`
-  position: absolute;
-  top: 0.75rem;
-  right: 0.75rem;
-  background: rgba(0, 0, 0, 0.6);
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  color: #fff;
-  width: 2rem;
-  height: 2rem;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  z-index: 10;
-  transition: all 0.15s ease;
-
-  &:hover {
-    background: rgba(0, 0, 0, 0.85);
-    transform: scale(1.05);
-    border-color: rgba(255, 255, 255, 0.3);
-  }
-`;
-
-const ModalHeaderBanner = styled.div<{ $image: string }>`
-  height: 10rem;
-  background-image: url(${({ $image }) => $image});
-  background-size: cover;
-  background-position: center;
-  position: relative;
-`;
-
-const ModalHeaderOverlay = styled.div`
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(to bottom, rgba(0, 0, 0, 0.2) 0%, rgba(0, 0, 0, 0.95) 100%);
-`;
-
-const ModalHeaderContent = styled.div`
-  position: absolute;
-  bottom: 0.85rem;
-  left: 1rem;
-  right: 1rem;
-  display: flex;
-  align-items: flex-end;
-  gap: 0.85rem;
-`;
-
-const ModalMetaBlock = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 0.15rem;
-  min-width: 0;
-`;
-
-const ModalCategoryTag = styled.span`
-  font-size: 0.62rem;
-  font-weight: 800;
-  color: var(--primary-accent);
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-`;
-
-const ModalDate = styled.span`
-  font-size: 0.68rem;
-  color: rgba(255, 255, 255, 0.6);
-`;
-
-const ModalBody = styled.div`
-  padding: 1.25rem 1.5rem;
-  display: flex;
-  flex-direction: column;
-  gap: 0.85rem;
-  overflow-y: auto;
-  max-height: 22rem;
-`;
-
-const ModalTitle = styled.h3`
-  font-size: 1.15rem;
-  font-weight: 800;
-  color: var(--global-text);
-  line-height: 1.35;
-  margin: 0;
-  letter-spacing: -0.01em;
-`;
-
-const ModalText = styled.p`
-  font-size: 0.84rem;
-  color: var(--global-text-muted);
-  line-height: 1.65;
-  margin: 0;
-  white-space: pre-line;
-`;
-
 const FeedbackBox = styled.div`
-  padding: 0.75rem 1rem;
-  background: var(--global-card-bg);
-  border-radius: 0.4rem;
+  padding: 0.9rem 1rem;
+  background: linear-gradient(135deg, color-mix(in srgb, var(--secondary-accent) 8%, var(--global-card-bg)), var(--global-card-bg));
+  border-radius: var(--radius-md);
   border: 1px solid var(--global-border);
   font-size: 0.82rem;
   color: var(--global-text-muted);
@@ -785,6 +680,15 @@ export function NewsPage() {
               <NewsCard
                 key={item.id}
                 onClick={() => navigate(`/news/${item.id}`)}
+                onKeyDown={(event) => {
+                  if (event.key === 'Enter' || event.key === ' ') {
+                    event.preventDefault();
+                    navigate(`/news/${item.id}`);
+                  }
+                }}
+                role="link"
+                tabIndex={0}
+                aria-label={`Read ${item.title}`}
               >
                 <NewsBanner $color={item.bannerColor} $image={item.bannerImage}>
                   <NewsBannerOverlay />

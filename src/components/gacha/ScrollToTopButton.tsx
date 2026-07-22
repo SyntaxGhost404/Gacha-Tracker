@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { ArrowUp } from 'lucide-react';
 
@@ -16,10 +16,10 @@ const FloatingButton = styled.button<{ $visible: boolean; $showBottomNav: boolea
   background: var(--global-card-bg);
   color: var(--global-text);
   border: 1px solid var(--global-border);
-  box-shadow: 0 4px 20px var(--global-card-shadow);
+  box-shadow: var(--shadow-sm);
   cursor: pointer;
   
-  border-radius: var(--global-border-radius, 0.4rem);
+  border-radius: 999px;
   padding: 0.75rem;
 
   /* Transition and Visibility states */

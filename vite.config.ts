@@ -13,7 +13,8 @@ export default ({ mode }: ConfigEnv): UserConfigExport => {
 
     build: {
       chunkSizeWarningLimit: 2000, // Control the size before showing a warning for chunk size
-      outDir: 'dist', // Specify your desired output directory
+      outDir: 'dist/client', // Keep static assets separate from the Sites worker bundle
+      emptyOutDir: true,
       rollupOptions: {
         output: {
           manualChunks: {

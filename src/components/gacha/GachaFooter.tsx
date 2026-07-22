@@ -6,6 +6,9 @@ import { FaDiscord } from 'react-icons/fa';
 const FooterWrapper = styled.footer`
   margin-top: 4rem;
   border-top: 1px solid var(--global-border);
+  background:
+    radial-gradient(circle at 12% 10%, var(--primary-accent-soft), transparent 34rem),
+    color-mix(in srgb, var(--global-card-bg) 70%, transparent);
 
   @media (max-width: 768px) {
     padding-bottom: 5.25rem; /* Make room for MobileBottomNavbar on mobile */
@@ -13,9 +16,9 @@ const FooterWrapper = styled.footer`
 `;
 
 const FooterInner = styled.div`
-  max-width: 105rem;
+  max-width: 90rem;
   margin: 0 auto;
-  padding: 2rem 1.5rem;
+  padding: 2.75rem 2rem 2rem;
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
@@ -36,7 +39,7 @@ const FooterLeft = styled.div`
 `;
 
 const FooterLogo = styled.span`
-  font-size: 1rem;
+  font-size: 1.08rem;
   font-weight: 800;
   letter-spacing: -0.02em;
   color: var(--global-text);
@@ -85,7 +88,7 @@ const FooterLink = styled.a`
   transition: color 0.15s ease;
 
   &:hover {
-    color: var(--global-text);
+    color: var(--primary-accent);
   }
 `;
 
@@ -96,12 +99,12 @@ const FooterRouterLink = styled(Link)`
   transition: color 0.15s ease;
 
   &:hover {
-    color: var(--global-text);
+    color: var(--primary-accent);
   }
 `;
 
 const SubFooter = styled.div`
-  max-width: 105rem;
+  max-width: 90rem;
   margin: 0 auto;
   padding: 1rem 1.5rem;
   border-top: 1px solid var(--global-border);
@@ -136,7 +139,7 @@ const SocialIcon = styled.a`
   align-items: center;
 
   &:hover {
-    color: var(--global-text);
+    color: var(--primary-accent);
     transform: scale(1.15);
   }
 `;
@@ -146,7 +149,7 @@ const Disclaimer = styled.p`
   color: var(--global-text-muted);
   line-height: 1.5;
   margin: 0;
-  max-width: 105rem;
+  max-width: 90rem;
   margin: 0 auto;
   padding: 0.75rem 1.5rem 1.25rem;
   opacity: 0.7;

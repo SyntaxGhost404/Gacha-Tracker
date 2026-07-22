@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 import { FiArrowLeft, FiClock, FiPlusCircle, FiTrendingUp, FiCheckCircle, FiInfo, FiSliders } from 'react-icons/fi';
@@ -11,9 +11,9 @@ const PageWrapper = styled.div`
 `;
 
 const PageInner = styled.div`
-  max-width: 44rem;
+  max-width: 52rem;
   margin: 0 auto;
-  padding: 0.5rem 1.5rem 3rem;
+  padding: 1.5rem 1.5rem 3.5rem;
 
   @media (max-width: 600px) {
     padding: 0.25rem 1rem 2rem;
@@ -50,8 +50,8 @@ const BackLink = styled(Link)`
 `;
 
 const PageTitle = styled.h1`
-  font-size: clamp(1.8rem, 4.5vw, 2.4rem);
-  font-weight: 800;
+  font-size: clamp(2rem, 5vw, 3.1rem);
+  font-weight: 850;
   color: var(--global-text);
   letter-spacing: -0.035em;
   margin: 0 0 0.4rem;
@@ -69,8 +69,10 @@ const FilterTabs = styled.div`
   flex-wrap: wrap;
   gap: 0.5rem;
   margin-bottom: 2.25rem;
-  padding-bottom: 1rem;
-  border-bottom: 1px solid var(--global-border);
+  padding: 0.55rem;
+  border: 1px solid var(--global-border);
+  border-radius: 0.9rem;
+  background: var(--global-card-bg);
   animation: fadeIn 0.3s ease;
 `;
 
@@ -80,9 +82,9 @@ const FilterButton = styled.button<{ $active: boolean }>`
   padding: 0.4rem 0.85rem;
   border-radius: 2rem;
   cursor: pointer;
-  border: 1px solid ${({ $active }) => ($active ? 'var(--global-text-muted)' : 'var(--global-border)')};
-  background: ${({ $active }) => ($active ? 'var(--global-secondary-bg)' : 'transparent')};
-  color: ${({ $active }) => ($active ? 'var(--global-text)' : 'var(--global-text-muted)')};
+  border: 1px solid ${({ $active }) => ($active ? 'var(--primary-accent)' : 'transparent')};
+  background: ${({ $active }) => ($active ? 'var(--primary-accent)' : 'transparent')};
+  color: ${({ $active }) => ($active ? '#fff' : 'var(--global-text-muted)')};
   transition: all 0.15s ease;
 
   &:hover {
@@ -105,7 +107,7 @@ const Timeline = styled.div`
     bottom: 1rem;
     left: 0.625rem; /* Center the vertical line under the timeline dot */
     width: 2px;
-    background: var(--global-border);
+    background: linear-gradient(to bottom, var(--primary-accent), var(--global-border));
     transform: translateX(-50%);
   }
 `;
@@ -159,7 +161,7 @@ const VersionTag = styled.span`
   font-size: 0.68rem;
   font-weight: 700;
   padding: 0.15rem 0.45rem;
-  border-radius: 0.25rem;
+  border-radius: 999px;
   background: var(--primary-accent-bg);
   color: white;
   text-transform: uppercase;
@@ -185,13 +187,15 @@ const ItemTitle = styled.h3`
 const VersionCard = styled.div`
   background: var(--global-card-bg);
   border: 1px solid var(--global-border);
-  border-radius: 0.5rem;
+  border-radius: var(--radius-lg);
   padding: 1.5rem;
-  box-shadow: 0 4px 12px var(--global-card-shadow);
-  transition: transform 0.2s ease, border-color 0.2s ease;
+  box-shadow: var(--shadow-sm);
+  transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
 
   &:hover {
-    border-color: var(--global-text-muted);
+    transform: translateY(-2px);
+    border-color: color-mix(in srgb, var(--primary-accent) 35%, var(--global-border));
+    box-shadow: var(--shadow-lg);
   }
 
   @media (max-width: 600px) {
@@ -249,7 +253,7 @@ const InfoCard = styled.div`
   margin-top: 3rem;
   background: var(--global-tertiary-bg);
   border: 1px solid var(--global-border);
-  border-radius: 0.5rem;
+  border-radius: var(--radius-lg);
   padding: 1.15rem 1.25rem;
   display: flex;
   gap: 0.75rem;

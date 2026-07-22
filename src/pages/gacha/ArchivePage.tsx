@@ -1,10 +1,9 @@
-import React, { useState, useMemo, useRef, useEffect } from 'react';
+import { useState, useMemo, useRef, useEffect } from 'react';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 import { FiSearch, FiX, FiFilter, FiChevronDown, FiArrowLeft } from 'react-icons/fi';
 import { Calendar } from 'lucide-react';
 import {
-  gachaGames,
   type Platform,
   type Region,
   getRuntimeGachaGames,
@@ -18,17 +17,17 @@ const PageWrapper = styled.div`
 `;
 
 const PageInner = styled.div`
-  max-width: 52rem;
+  max-width: 78rem;
   margin: 0 auto;
-  padding: 0.5rem 1rem 2rem;
+  padding: 1.5rem 2rem 3.5rem;
 
-  @media (max-width: 600px) {
-    padding: 0.25rem 0.75rem 1.5rem;
+  @media (max-width: 768px) {
+    padding: 0.75rem 0.85rem 2rem;
   }
 `;
 
 const PageHeader = styled.div`
-  margin-bottom: 1.5rem;
+  margin-bottom: 1.75rem;
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
@@ -55,24 +54,25 @@ const BackLink = styled(Link)`
 `;
 
 const PageTitle = styled.h1`
-  font-size: clamp(1.5rem, 3.5vw, 2.2rem);
-  font-weight: 800;
+  font-size: clamp(2rem, 5vw, 3.25rem);
+  font-weight: 850;
   color: var(--global-text);
   letter-spacing: -0.035em;
   margin: 0 0 0.4rem;
 `;
 
 const PageSubtitle = styled.p`
-  font-size: 0.88rem;
+  max-width: 46rem;
+  font-size: 0.96rem;
   color: var(--global-text-muted);
   margin: 0 0 0.85rem;
   line-height: 1.6;
 `;
 
 const HeaderBox = styled.div`
-  padding: 0.75rem 1rem;
-  background: var(--global-card-bg);
-  border-radius: 0.4rem;
+  padding: 0.9rem 1rem;
+  background: linear-gradient(135deg, color-mix(in srgb, var(--secondary-accent) 8%, var(--global-card-bg)), var(--global-card-bg));
+  border-radius: var(--radius-md);
   border: 1px solid var(--global-border);
   font-size: 0.82rem;
   color: var(--global-text-muted);
@@ -91,7 +91,7 @@ const HeaderBox = styled.div`
 
 const SearchRow = styled.div`
   position: relative;
-  margin-bottom: 0.75rem;
+  margin-bottom: 0.65rem;
 `;
 
 const SearchIcon = styled.div`
@@ -106,22 +106,24 @@ const SearchIcon = styled.div`
 
 const SearchInput = styled.input`
   width: 100%;
-  padding: 0.65rem 2.5rem 0.65rem 2.4rem;
-  border-radius: 0.4rem;
+  padding: 0.82rem 2.75rem 0.82rem 2.5rem;
+  border-radius: 0.8rem;
   border: 1px solid var(--global-border);
   background: var(--global-card-bg);
   color: var(--global-text);
   font-size: 0.88rem;
   outline: none;
   box-sizing: border-box;
-  transition: border-color 0.15s ease;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  box-shadow: var(--shadow-sm);
 
   &::placeholder {
     color: var(--global-text-muted);
   }
 
   &:focus {
-    border-color: var(--global-text-muted);
+    border-color: color-mix(in srgb, var(--primary-accent) 65%, var(--global-border));
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary-accent) 12%, transparent);
   }
 `;
 
@@ -154,8 +156,8 @@ const ControlBtn = styled.button<{ $active?: boolean }>`
   display: inline-flex;
   align-items: center;
   gap: 0.4rem;
-  padding: 0.45rem 0.9rem;
-  border-radius: 0.35rem;
+  padding: 0.55rem 0.95rem;
+  border-radius: 0.7rem;
   border: 1px solid ${({ $active }) => ($active ? 'var(--global-text-muted)' : 'var(--global-border)')};
   background: ${({ $active }) => ($active ? 'var(--global-secondary-bg)' : 'var(--global-card-bg)')};
   color: var(--global-text-muted);
@@ -174,8 +176,8 @@ const ControlBtn = styled.button<{ $active?: boolean }>`
 const FilterPanel = styled.div`
   background: var(--global-card-bg);
   border: 1px solid var(--global-border);
-  border-radius: 0.4rem;
-  padding: 0.85rem 1rem;
+  border-radius: var(--radius-md);
+  padding: 1rem 1.1rem;
   margin-bottom: 1rem;
   display: flex;
   flex-direction: column;
@@ -214,9 +216,9 @@ const Pill = styled.button<{ $active: boolean }>`
   font-weight: 600;
   cursor: pointer;
   transition: all 0.12s ease;
-  border: 1px solid ${({ $active }) => ($active ? 'var(--global-text)' : 'var(--global-border)')};
-  background: ${({ $active }) => ($active ? 'var(--global-text)' : 'transparent')};
-  color: ${({ $active }) => ($active ? 'var(--global-primary-bg)' : 'var(--global-text-muted)')};
+  border: 1px solid ${({ $active }) => ($active ? 'var(--primary-accent)' : 'var(--global-border)')};
+  background: ${({ $active }) => ($active ? 'var(--primary-accent)' : 'transparent')};
+  color: ${({ $active }) => ($active ? '#fff' : 'var(--global-text-muted)')};
 
   &:hover {
     border-color: var(--global-text-muted);
@@ -257,7 +259,7 @@ const ResetBtn = styled.button`
 `;
 
 const SectionBlock = styled.section`
-  margin-bottom: 2rem;
+  margin-bottom: 2.5rem;
 `;
 
 const SectionHeader = styled.div<{ $accent: string }>`
@@ -268,9 +270,9 @@ const SectionHeader = styled.div<{ $accent: string }>`
 `;
 
 const SectionIconBox = styled.div<{ $accent: string }>`
-  width: 1.8rem;
-  height: 1.8rem;
-  border-radius: 0.3rem;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 0.65rem;
   background: ${({ $accent }) => $accent}22;
   border: 1px solid ${({ $accent }) => $accent}44;
   color: ${({ $accent }) => $accent};
@@ -282,7 +284,7 @@ const SectionIconBox = styled.div<{ $accent: string }>`
 `;
 
 const SectionTitle = styled.h2`
-  font-size: 1.05rem;
+  font-size: 1.18rem;
   font-weight: 700;
   color: var(--global-text);
   margin: 0;
@@ -290,7 +292,7 @@ const SectionTitle = styled.h2`
 
 const SectionBadge = styled.span<{ $accent: string }>`
   padding: 0.15rem 0.55rem;
-  border-radius: 0.25rem;
+  border-radius: 999px;
   font-size: 0.75rem;
   font-weight: 700;
   background: ${({ $accent }) => $accent}22;
@@ -299,9 +301,17 @@ const SectionBadge = styled.span<{ $accent: string }>`
 `;
 
 const GameList = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+
+  > article:only-child {
+    grid-column: 1 / -1;
+  }
+
+  @media (max-width: 900px) {
+    grid-template-columns: 1fr;
+  }
 `;
 
 const EmptyState = styled.div`
@@ -309,6 +319,9 @@ const EmptyState = styled.div`
   padding: 3.5rem 1rem;
   color: var(--global-text-muted);
   font-size: 0.88rem;
+  border: 1px dashed var(--global-border);
+  border-radius: var(--radius-lg);
+  background: var(--global-card-bg);
 `;
 
 const PLATFORMS: (Platform | 'All')[] = ['All', 'Android', 'iOS', 'PC', 'PS5', 'Switch'];

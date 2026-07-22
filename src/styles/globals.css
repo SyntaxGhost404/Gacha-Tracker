@@ -17,6 +17,8 @@ html, body, #root {
 
 body {
   font-family:
+    Inter,
+    "SF Pro Display",
     ui-sans-serif,
     system-ui,
     sans-serif,
@@ -24,19 +26,43 @@ body {
     Segoe UI Emoji,
     Segoe UI Symbol,
     Noto Color Emoji;
-  background-color: var(
-    --global-primary-bg
-  ); /* Background color from variable */
-  color: var(--global-text); /* Text color from variable */
-  transition: background-color 0.2s ease, color 0.2s ease; /* Smooth transition for color changes only */
+  background-color: var(--global-primary-bg);
+  color: var(--global-text);
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
+
+button,
+a {
+  -webkit-tap-highlight-color: transparent;
+}
+
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible {
+  outline: 2px solid var(--primary-accent);
+  outline-offset: 3px;
+}
+
+img {
+  max-width: 100%;
 }
 
 /* Text Selection Color */
 ::selection {
-  background-color: var(
-    --primary-accent-bg
-  ); /* Background color when text is selected */
-  color: var(--primary-accent); /* Text color when selected */
+  background-color: var(--primary-accent-bg);
+  color: #fff;
 }
 
 /* Custom Scrollbar Styles (Applied only to sub-containers, excluding main website body/viewport and primary scroll container) */
@@ -59,4 +85,15 @@ body {
 /* Handle color on hover */
 :not(html):not(body):not(#main-scroll-container)::-webkit-scrollbar-thumb:hover {
   background: #555; /* Darker gray when hovering */
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+  }
 }

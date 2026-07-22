@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 import { FiCalendar, FiChevronDown, FiChevronUp, FiBookmark, FiCheck } from 'react-icons/fi';
-import { type GachaGame, STATUS_LABELS, REGION_COLORS, PLATFORM_ICONS, getReleaseTargetDate } from '../../data/gachaGames';
+import { type GachaGame, STATUS_LABELS, REGION_COLORS, getReleaseTargetDate } from '../../data/gachaGames';
 import { useWatchlist } from '../../context/WatchlistContext';
 import { MoreVertical } from 'lucide-react';
 
@@ -145,19 +145,26 @@ const getEngineIcon = (engine: string) => {
 
 const Card = styled.article`
   background: var(--global-card-bg);
-  border-radius: 0.5rem;
+  border: 1px solid var(--global-border);
+  border-radius: var(--radius-lg);
   overflow: hidden;
   animation: slideUp 0.35s ease;
-  transition: transform 0.2s ease;
+  transition: transform 0.22s ease, border-color 0.22s ease, box-shadow 0.22s ease;
+  box-shadow: var(--shadow-sm);
+  height: 100%;
+  display: flex;
+  flex-direction: column;
 
   &:hover {
-    transform: translateY(-1px);
+    transform: translateY(-4px);
+    border-color: color-mix(in srgb, var(--primary-accent) 42%, var(--global-border));
+    box-shadow: var(--shadow-lg), var(--glow-primary);
   }
 `;
 
 const Banner = styled(Link)<{ $color: string; $image?: string }>`
   position: relative;
-  height: 10rem;
+  height: 11.5rem;
   background-color: ${({ $color }) => $color};
   ${({ $image }) => $image && `
     background-image: url(${$image});
@@ -167,6 +174,14 @@ const Banner = styled(Link)<{ $color: string; $image?: string }>`
   overflow: hidden;
   display: block;
   text-decoration: none;
+
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    pointer-events: none;
+  }
 
   @media (max-width: 600px) {
     height: 8rem;
@@ -197,7 +212,9 @@ const GameNameLink = styled(Link)`
 const BannerOverlay = styled.div`
   position: absolute;
   inset: 0;
-  background: linear-gradient(to bottom, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0.55) 100%);
+  background:
+    linear-gradient(135deg, rgba(9, 10, 20, 0.02), rgba(9, 10, 20, 0.28)),
+    linear-gradient(to bottom, rgba(0,0,0,0.06) 35%, rgba(4,5,12,0.72) 100%);
 `;
 
 const BannerBadgesLeft = styled.div`
@@ -217,8 +234,8 @@ const BannerBadgesRight = styled.div`
 `;
 
 const BannerBadge = styled.span`
-  padding: 0.2rem 0.5rem;
-  border-radius: 0.25rem;
+  padding: 0.24rem 0.58rem;
+  border-radius: 999px;
   font-size: 0.65rem;
   font-weight: 700;
   letter-spacing: 0.06em;
@@ -230,10 +247,11 @@ const BannerBadge = styled.span`
 `;
 
 const CardBody = styled.div`
-  padding: 0.9rem 1rem;
+  padding: 1rem 1.1rem 1.1rem;
   display: flex;
   flex-direction: column;
-  gap: 0.65rem;
+  gap: 0.72rem;
+  flex: 1;
 `;
 
 const GameHeader = styled.div`
@@ -243,9 +261,9 @@ const GameHeader = styled.div`
 `;
 
 const GameIcon = styled.div<{ $color: string }>`
-  width: 3.25rem;
-  height: 3.25rem;
-  border-radius: 0.6rem;
+  width: 3.5rem;
+  height: 3.5rem;
+  border-radius: 0.85rem;
   background: ${({ $color }) => $color};
   border: 1px solid rgba(255, 255, 255, 0.1);
   display: flex;
@@ -264,9 +282,9 @@ const GameIcon = styled.div<{ $color: string }>`
 `;
 
 const GameIconImg = styled.img`
-  width: 3.25rem;
-  height: 3.25rem;
-  border-radius: 0.6rem;
+  width: 3.5rem;
+  height: 3.5rem;
+  border-radius: 0.85rem;
   object-fit: cover;
   flex-shrink: 0;
   border: 1px solid rgba(255, 255, 255, 0.1);
@@ -281,8 +299,8 @@ const GameMeta = styled.div`
 
 const GameName = styled.h3`
   margin: 0;
-  font-size: 1.05rem;
-  font-weight: 700;
+  font-size: 1.08rem;
+  font-weight: 750;
   color: var(--global-text);
   white-space: nowrap;
   overflow: hidden;
@@ -311,7 +329,7 @@ const TagRow = styled.div`
 
 const Tag = styled.span`
   padding: 0.18rem 0.55rem;
-  border-radius: 0.25rem;
+  border-radius: 999px;
   font-size: 0.72rem;
   font-weight: 600;
   background: var(--global-secondary-bg);
@@ -321,7 +339,7 @@ const Tag = styled.span`
 
 const RegionTag = styled.span<{ $color: string }>`
   padding: 0.18rem 0.55rem;
-  border-radius: 0.25rem;
+  border-radius: 999px;
   font-size: 0.72rem;
   font-weight: 700;
   background: ${({ $color }) => $color}18;
@@ -396,7 +414,7 @@ const UnconfirmedBadge = styled.span`
   align-items: center;
   gap: 0.3rem;
   padding: 0.15rem 0.55rem;
-  border-radius: 0.25rem;
+  border-radius: 999px;
   font-size: 0.68rem;
   font-weight: 700;
   letter-spacing: 0.04em;
@@ -416,7 +434,7 @@ const UnconfirmedBadge = styled.span`
 
 const CountdownBadge = styled.span`
   padding: 0.18rem 0.5rem;
-  border-radius: 0.25rem;
+  border-radius: 999px;
   font-size: 0.68rem;
   font-weight: 700;
   font-family: monospace;
@@ -474,7 +492,7 @@ const PlatformBadge = styled.span`
   align-items: center;
   gap: 0.35rem;
   padding: 0.2rem 0.55rem;
-  border-radius: 0.25rem;
+  border-radius: 999px;
   font-size: 0.72rem;
   font-weight: 600;
   background: var(--global-secondary-bg);
@@ -498,7 +516,7 @@ const EngineBadge = styled.span`
   align-items: center;
   gap: 0.35rem;
   padding: 0.2rem 0.55rem;
-  border-radius: 0.25rem;
+  border-radius: 999px;
   font-size: 0.72rem;
   font-weight: 600;
   background: var(--global-secondary-bg);
@@ -511,6 +529,7 @@ const FollowRow = styled.div`
   align-items: center;
   justify-content: space-between;
   gap: 0.75rem;
+  margin-top: auto;
 `;
 
 const FollowLabel = styled.span`
@@ -541,7 +560,7 @@ const SocialLink = styled.a<{ $hoverColor: string }>`
   justify-content: center;
   width: 1.85rem;
   height: 1.85rem;
-  border-radius: 0.35rem;
+  border-radius: 0.62rem;
   border: 1px solid var(--global-border);
   background: var(--global-card-bg);
   color: var(--global-text-muted);
@@ -572,7 +591,7 @@ const MobileOnlyMoreLink = styled(Link)`
   justify-content: center;
   width: 1.85rem;
   height: 1.85rem;
-  border-radius: 0.35rem;
+  border-radius: 0.62rem;
   border: 1px solid var(--global-border);
   background: var(--global-card-bg);
   color: var(--global-text-muted);
@@ -584,7 +603,7 @@ const MobileOnlyMoreLink = styled(Link)`
 
   &:hover {
     color: var(--global-text);
-    border-color: var(--global-text)dd;
+    border-color: color-mix(in srgb, var(--global-text) 84%, transparent);
     background: var(--global-secondary-bg);
     transform: translateY(-1px);
   }
@@ -599,12 +618,13 @@ const FollowBtn = styled.button<{ $active: boolean }>`
   align-items: center;
   gap: 0.35rem;
   padding: 0.3rem 0.75rem;
-  border-radius: 0.3rem;
-  border: 1px solid var(--global-border);
+  border-radius: 0.65rem;
+  border: 1px solid ${({ $active }) =>
+    $active ? 'color-mix(in srgb, var(--primary-accent) 55%, transparent)' : 'var(--global-border)'};
   background: ${({ $active }) =>
-    $active ? 'var(--global-tertiary-bg)' : 'transparent'};
+    $active ? 'color-mix(in srgb, var(--primary-accent) 16%, var(--global-card-bg))' : 'transparent'};
   color: ${({ $active }) =>
-    $active ? 'var(--global-text)' : 'var(--global-text-muted)'};
+    $active ? 'var(--primary-accent)' : 'var(--global-text-muted)'};
   font-size: 0.75rem;
   font-weight: 600;
   cursor: pointer;

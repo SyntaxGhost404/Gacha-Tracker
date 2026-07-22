@@ -27,9 +27,13 @@ const MainLayout = styled.div`
   display: flex;
   flex-direction: column;
   height: 100vh;
+  height: 100dvh;
   width: 100%;
   overflow: hidden;
-  background-color: var(--global-primary-bg);
+  background:
+    radial-gradient(circle at 8% -12%, var(--surface-glow), transparent 34rem),
+    radial-gradient(circle at 96% 12%, var(--secondary-accent-soft), transparent 28rem),
+    var(--global-primary-bg);
 `;
 
 const ScrollContainer = styled.div`
@@ -39,6 +43,7 @@ const ScrollContainer = styled.div`
   position: relative;
   -webkit-overflow-scrolling: touch;
   scroll-behavior: smooth;
+  scrollbar-gutter: stable;
   
   display: flex;
   flex-direction: column;
@@ -46,15 +51,15 @@ const ScrollContainer = styled.div`
 
 const ContentWrapper = styled.div`
   width: 100%;
-  max-width: 105rem;
+  max-width: 94rem;
   margin: 0 auto;
-  padding: 1rem 1rem 1.5rem;
+  padding: 0 1.25rem 2rem;
   flex: 1;
   display: flex;
   flex-direction: column;
 
   @media (max-width: 31.25rem) {
-    padding: 0.5rem 0.5rem 0.5rem;
+    padding: 0 0.65rem 5.5rem;
   }
 `;
 

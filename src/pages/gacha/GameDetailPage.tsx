@@ -3,26 +3,16 @@ import styled from 'styled-components';
 import { useParams, Link } from 'react-router-dom';
 import { 
   ArrowLeft, 
-  Calendar, 
-  Layout, 
-  Settings, 
-  ExternalLink,
   Bookmark,
   Check,
   ShieldAlert,
-  HelpCircle,
   Clock,
-  Briefcase,
-  Layers,
-  Sparkles,
   Film,
-  Play,
   ChevronLeft,
   ChevronRight
 } from 'lucide-react';
-import { FiGlobe, FiTwitter, FiYoutube } from 'react-icons/fi';
+import { FiGlobe } from 'react-icons/fi';
 import { 
-  gachaGames, 
   type GachaGame, 
   STATUS_LABELS, 
   REGION_COLORS,
@@ -204,10 +194,10 @@ const PageWrapper = styled.div`
 `;
 
 const PageInner = styled.div`
-  max-width: 68rem;
+  max-width: 76rem;
   width: 100%;
   margin: 0 auto;
-  padding: 0 1.5rem 4rem;
+  padding: 0 2rem 4.5rem;
 
   @media (max-width: 768px) {
     padding: 0 0.75rem 3rem;
@@ -215,7 +205,7 @@ const PageInner = styled.div`
 `;
 
 const TopNavContainer = styled.div`
-  max-width: 68rem;
+  max-width: 76rem;
   width: 100%;
   margin: 0 auto;
   padding: 1rem 1.5rem 0rem;
@@ -242,7 +232,7 @@ const BackToDashBtn = styled(Link)`
   align-items: center;
   gap: 0.5rem;
   padding: 0.55rem 0.95rem;
-  border-radius: var(--global-border-radius, 0.4rem);
+  border-radius: 0.7rem;
   border: 1px solid var(--global-border);
   background: var(--global-button-bg, var(--global-card-bg));
   color: var(--global-text-muted);
@@ -264,7 +254,6 @@ const BannerContainer = styled.div<{ $color: string }>`
   width: 100%;
   background-color: ${({ $color }) => $color};
   overflow: hidden;
-  border-bottom: 1px solid var(--global-border);
   display: block;
 `;
 
@@ -273,7 +262,9 @@ const BannerImg = styled.img`
   height: auto;
   display: block;
   object-fit: cover;
-  max-height: 28rem; /* Set an elegant max-height for large screens so it doesn't span too long vertically */
+  height: clamp(17rem, 35vw, 31rem);
+  max-height: 31rem;
+  object-position: center 26%;
   
   @media (max-width: 768px) {
     min-height: 11rem;
@@ -298,8 +289,8 @@ const BannerOverlay = styled.div`
   background: linear-gradient(
     to bottom, 
     rgba(0, 0, 0, 0) 0%, 
-    rgba(0, 0, 0, 0.15) 45%, 
-    rgba(0, 0, 0, 0.6) 80%, 
+    rgba(7, 8, 18, 0.1) 35%,
+    rgba(7, 8, 18, 0.62) 78%,
     var(--global-primary-bg) 100%
   );
   pointer-events: none;
@@ -321,7 +312,7 @@ const BannerBadgesLeft = styled.div`
 
 const BannerBadge = styled.span`
   padding: 0.25rem 0.65rem;
-  border-radius: 0.25rem;
+  border-radius: 999px;
   font-size: 0.68rem;
   font-weight: 800;
   letter-spacing: 0.08em;
@@ -336,7 +327,7 @@ const ProfileSection = styled.div`
   display: flex;
   align-items: flex-end;
   gap: 1.5rem;
-  margin-top: -4.5rem;
+  margin-top: -5rem;
   padding: 0 1rem;
   position: relative;
   z-index: 5;
@@ -353,11 +344,11 @@ const ProfileSection = styled.div`
 const BigProfileImage = styled.img`
   width: 9rem;
   height: 9rem;
-  border-radius: 1.25rem;
+  border-radius: 1.4rem;
   object-fit: cover;
   border: 4px solid var(--global-card-bg);
   background: var(--global-card-bg);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+  box-shadow: 0 18px 55px rgba(0, 0, 0, 0.38), var(--glow-primary);
   flex-shrink: 0;
 
   @media (max-width: 768px) {
@@ -370,7 +361,7 @@ const BigProfileImage = styled.img`
 const FallbackProfileInitials = styled.div<{ $color: string }>`
   width: 9rem;
   height: 9rem;
-  border-radius: 1.25rem;
+  border-radius: 1.4rem;
   background: ${({ $color }) => $color};
   border: 4px solid var(--global-card-bg);
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
@@ -397,7 +388,7 @@ const HeaderTitles = styled.div`
 `;
 
 const GameTitleText = styled.h1`
-  font-size: clamp(1.8rem, 4vw, 2.5rem);
+  font-size: clamp(2rem, 5vw, 3.35rem);
   font-weight: 850;
   color: var(--global-text);
   line-height: 1.2;
@@ -425,7 +416,7 @@ const HeaderBadgesRow = styled.div`
 
 const GenreTag = styled.span`
   padding: 0.22rem 0.65rem;
-  border-radius: 0.3rem;
+  border-radius: 999px;
   font-size: 0.76rem;
   font-weight: 700;
   background: var(--global-secondary-bg);
@@ -435,7 +426,7 @@ const GenreTag = styled.span`
 
 const RegionTag = styled.span<{ $color: string }>`
   padding: 0.22rem 0.65rem;
-  border-radius: 0.3rem;
+  border-radius: 999px;
   font-size: 0.76rem;
   font-weight: 700;
   background: ${({ $color }) => $color}18;
@@ -445,8 +436,8 @@ const RegionTag = styled.span<{ $color: string }>`
 
 const DetailGrid = styled.div`
   display: grid;
-  grid-template-columns: 1fr 20rem;
-  gap: 2rem;
+  grid-template-columns: minmax(0, 1fr) 21rem;
+  gap: 1.5rem;
   margin-top: 2.2rem;
 
   @media (max-width: 960px) {
@@ -464,9 +455,9 @@ const MainVolume = styled.div`
 const SectionCard = styled.div`
   background: var(--global-card-bg);
   border: 1px solid var(--global-border);
-  border-radius: 0.6rem;
+  border-radius: var(--radius-lg);
   padding: 1.5rem;
-  box-shadow: 0 4px 12px var(--global-card-shadow, rgba(0, 0, 0, 0.02));
+  box-shadow: var(--shadow-sm);
 `;
 
 const SectionTitle = styled.h2`
@@ -501,6 +492,12 @@ const SidebarVolume = styled.aside`
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
+
+  @media (min-width: 961px) {
+    position: sticky;
+    top: 5.4rem;
+    align-self: start;
+  }
 `;
 
 const KeyValueList = styled.div`
@@ -559,7 +556,7 @@ const UnconfirmedBadge = styled.span`
   align-items: center;
   gap: 0.3rem;
   padding: 0.15rem 0.55rem;
-  border-radius: 0.25rem;
+  border-radius: 999px;
   font-size: 0.68rem;
   font-weight: 700;
   letter-spacing: 0.04em;
@@ -608,7 +605,7 @@ const PlatformMicroBadge = styled.span`
   align-items: center;
   gap: 0.35rem;
   padding: 0.15rem 0.45rem;
-  border-radius: 0.25rem;
+  border-radius: 999px;
   font-size: 0.7rem;
   font-weight: 700;
   background: var(--global-secondary-bg);
@@ -629,22 +626,22 @@ const FollowBtn = styled.button<{ $active: boolean }>`
   justify-content: center;
   gap: 0.5rem;
   padding: 0.7rem 1.2rem;
-  border-radius: 0.4rem;
-  border: 1px solid var(--global-border);
+  border-radius: 0.75rem;
+  border: 1px solid ${({ $active }) => $active ? 'var(--primary-accent)' : 'var(--primary-accent)'};
   background: ${({ $active }) =>
-    $active ? 'var(--global-tertiary-bg, rgba(255, 255, 255, 0.05))' : 'var(--global-text)'};
+    $active ? 'var(--primary-accent-soft)' : 'linear-gradient(135deg, var(--primary-accent), var(--primary-accent-bg))'};
   color: ${({ $active }) =>
-    $active ? 'var(--global-text)' : 'var(--global-primary-bg)'};
+    $active ? 'var(--primary-accent)' : '#fff'};
   font-size: 0.88rem;
   font-weight: 700;
   cursor: pointer;
   transition: all 0.15s ease;
 
   &:hover {
-    opacity: 0.95;
+    transform: translateY(-1px);
     background: ${({ $active }) =>
-      $active ? 'var(--global-secondary-bg)' : 'var(--global-text)'};
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      $active ? 'var(--primary-accent-soft)' : 'linear-gradient(135deg, var(--primary-accent), var(--primary-accent-bg))'};
+    box-shadow: var(--glow-primary);
   }
 `;
 
@@ -693,7 +690,7 @@ const PreRegButton = styled.a<{ $disabled?: boolean }>`
   justify-content: center;
   gap: 0.6rem;
   padding: 0.8rem 1.25rem;
-  border-radius: var(--global-border-radius, 0.4rem);
+  border-radius: 0.75rem;
   border: 1px solid var(--global-border);
   background: ${props => props.$disabled ? 'rgba(255, 255, 255, 0.03)' : 'var(--global-button-bg, var(--global-secondary-bg))'};
   color: ${props => props.$disabled ? 'var(--global-text-muted, rgba(255, 255, 255, 0.35))' : 'var(--global-text)'};
@@ -752,7 +749,7 @@ const MediaSlideWrapper = styled.div`
   flex: 0 0 calc(90% - 0.5rem);
   scroll-snap-align: center;
   aspect-ratio: 16 / 9;
-  border-radius: 0.5rem;
+  border-radius: var(--radius-md);
   overflow: hidden;
   background: #05070a;
   position: relative;
@@ -853,8 +850,8 @@ const ErrorState = styled.div`
   text-align: center;
   background: var(--global-card-bg);
   border: 1px solid var(--global-border);
-  border-radius: 0.6rem;
-  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.15);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-lg);
   display: flex;
   flex-direction: column;
   align-items: center;

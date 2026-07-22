@@ -1,26 +1,28 @@
-import React, { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import styled from 'styled-components';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Home, Gamepad2, Newspaper, MoreHorizontal, Clock, MessageSquare, Settings } from 'lucide-react';
 
 const BottomBarContainer = styled.nav<{ $visible: boolean }>`
   position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 4.2rem;
-  background-color: var(--global-card-bg);
-  border-top: 1px solid var(--global-border);
-  box-shadow: 0 -4px 20px var(--global-card-shadow);
+  bottom: calc(0.65rem + env(safe-area-inset-bottom, 0px));
+  left: 50%;
+  width: min(32rem, calc(100% - 1.25rem));
+  height: 4.35rem;
+  background-color: var(--nav-bg);
+  backdrop-filter: blur(22px) saturate(150%);
+  -webkit-backdrop-filter: blur(22px) saturate(150%);
+  border: 1px solid var(--global-border-strong);
+  border-radius: 1.2rem;
+  box-shadow: 0 18px 50px rgba(0, 0, 0, 0.32);
   z-index: 90;
   display: flex;
   align-items: center;
   justify-content: space-around;
-  padding: 0 0.5rem;
-  padding-bottom: env(safe-area-inset-bottom, 0);
+  padding: 0.38rem;
 
   /* Scroll Hide transition */
-  transform: translateY(${({ $visible }) => ($visible ? '0' : '101%')});
+  transform: translate(-50%, ${({ $visible }) => ($visible ? '0' : 'calc(120% + 1rem)')});
   transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.2s, border-color 0.2s;
 
   @media (min-width: 769px) {
@@ -29,26 +31,27 @@ const BottomBarContainer = styled.nav<{ $visible: boolean }>`
 `;
 
 const TabButton = styled.button<{ $active: boolean }>`
-  background: none;
-  border: none;
+  background: ${({ $active }) => ($active ? 'var(--primary-accent-soft)' : 'transparent')};
+  border: 1px solid ${({ $active }) => ($active ? 'rgba(155, 140, 255, 0.18)' : 'transparent')};
+  border-radius: 0.9rem;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 0.25rem;
+  gap: 0.22rem;
   color: ${({ $active }) => ($active ? 'var(--primary-accent)' : 'var(--global-text-muted)')};
   font-size: 0.68rem;
   font-weight: ${({ $active }) => ($active ? '800' : '600')};
   cursor: pointer;
   width: 25%;
   height: 100%;
-  transition: color 0.15s ease, transform 0.1s ease;
+  transition: color 0.15s ease, transform 0.1s ease, background-color 0.18s ease, border-color 0.18s ease;
   user-select: none;
   -webkit-tap-highlight-color: transparent;
 
   svg {
-    width: 1.25rem;
-    height: 1.25rem;
+    width: 1.2rem;
+    height: 1.2rem;
     transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     transform: scale(${({ $active }) => ($active ? '1.1' : '1')});
   }
@@ -64,14 +67,14 @@ const TabButton = styled.button<{ $active: boolean }>`
 
 const PopupMenu = styled.div<{ $visible: boolean }>`
   position: absolute;
-  bottom: calc(100% + 0.6rem);
-  right: 0.75rem;
-  width: 11.5rem;
+  bottom: calc(100% + 0.75rem);
+  right: 0.1rem;
+  width: 12rem;
   background-color: var(--global-card-bg);
   border: 1px solid var(--global-border);
-  border-radius: var(--global-border-radius, 0.4rem);
-  box-shadow: 0 8px 24px var(--global-card-shadow);
-  padding: 0.35rem;
+  border-radius: 1rem;
+  box-shadow: 0 18px 48px var(--global-card-shadow);
+  padding: 0.42rem;
   display: flex;
   flex-direction: column;
   gap: 0.2rem;
@@ -89,7 +92,7 @@ const PopupMenu = styled.div<{ $visible: boolean }>`
     content: '';
     position: absolute;
     bottom: -6px;
-    right: 1.45rem;
+    right: 1.8rem;
     width: 10px;
     height: 10px;
     background-color: var(--global-card-bg);
@@ -105,7 +108,7 @@ const PopupItem = styled.button<{ $active?: boolean; $disabled?: boolean }>`
   border: none;
   width: 100%;
   padding: 0.65rem 0.75rem;
-  border-radius: var(--global-border-radius, 0.3rem);
+  border-radius: 0.72rem;
   display: flex;
   align-items: center;
   gap: 0.65rem;
@@ -170,20 +173,20 @@ export function MobileBottomNavbar({
 
   const isPopupOpen = controlledPopupOpen !== undefined ? controlledPopupOpen : localPopupOpen;
 
-  const setPopupOpen = (open: boolean) => {
+  const setPopupOpen = useCallback((open: boolean) => {
     if (onPopupOpenChange) {
       onPopupOpenChange(open);
     } else {
       setLocalPopupOpen(open);
     }
-  };
+  }, [onPopupOpenChange]);
 
   const activeTab = location.pathname;
 
   // Auto-close others menu on route change
   useEffect(() => {
     setPopupOpen(false);
-  }, [location.pathname]);
+  }, [location.pathname, setPopupOpen]);
 
   // Click outside to close the popup menu
   useEffect(() => {
@@ -196,7 +199,7 @@ export function MobileBottomNavbar({
     return () => {
       document.removeEventListener('mousedown', handleOutsideClick);
     };
-  }, []);
+  }, [setPopupOpen]);
 
   const handleTabClick = (path: string) => {
     setPopupOpen(false);
