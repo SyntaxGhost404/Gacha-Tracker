@@ -8,7 +8,7 @@ const BottomBarContainer = styled.nav<{ $visible: boolean }>`
   bottom: 0;
   left: 0;
   right: 0;
-  height: 4.2rem;
+  height: calc(4.2rem + env(safe-area-inset-bottom, 0px));
   background-color: var(--global-card-bg);
   border-top: 1px solid var(--global-border);
   box-shadow: 0 -4px 20px var(--global-card-shadow);
@@ -17,7 +17,7 @@ const BottomBarContainer = styled.nav<{ $visible: boolean }>`
   align-items: center;
   justify-content: space-around;
   padding: 0 0.5rem;
-  padding-bottom: env(safe-area-inset-bottom, 0);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
 
   /* Scroll Hide transition */
   transform: translateY(${({ $visible }) => ($visible ? '0' : '101%')});

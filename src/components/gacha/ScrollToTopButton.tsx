@@ -4,7 +4,10 @@ import { ArrowUp } from 'lucide-react';
 
 const FloatingButton = styled.button<{ $visible: boolean; $showBottomNav: boolean }>`
   position: fixed;
-  bottom: ${({ $showBottomNav }) => ($showBottomNav ? '5.75rem' : '1.5rem')};
+  bottom: ${({ $showBottomNav }) =>
+    $showBottomNav
+      ? 'calc(5.75rem + env(safe-area-inset-bottom, 0px))'
+      : 'calc(1.5rem + env(safe-area-inset-bottom, 0px))'};
   right: 1.5rem;
   z-index: 80;
   

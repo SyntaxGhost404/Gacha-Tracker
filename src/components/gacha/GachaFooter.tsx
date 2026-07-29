@@ -8,7 +8,7 @@ const FooterWrapper = styled.footer`
   border-top: 1px solid var(--global-border);
 
   @media (max-width: 768px) {
-    padding-bottom: 5.25rem; /* Make room for MobileBottomNavbar on mobile */
+    padding-bottom: calc(8.5rem + env(safe-area-inset-bottom, 0px)); /* Make room for MobileBottomNavbar on mobile */
   }
 `;
 
@@ -145,10 +145,9 @@ const Disclaimer = styled.p`
   font-size: 0.7rem;
   color: var(--global-text-muted);
   line-height: 1.5;
-  margin: 0;
   max-width: 105rem;
   margin: 0 auto;
-  padding: 0.75rem 1.5rem 1.25rem;
+  padding: 0.75rem 1.5rem 1.75rem;
   opacity: 0.7;
 `;
 

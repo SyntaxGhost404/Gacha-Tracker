@@ -6,7 +6,7 @@ import { changelogData, ChangelogItem } from '../../data/changelogData';
 
 const PageWrapper = styled.div`
   padding-top: 0;
-  min-height: 100vh;
+  min-height: 100%;
   background: var(--global-primary-bg);
 `;
 

@@ -13,7 +13,7 @@ import { GameCard } from '../../components/gacha/GameCard';
 
 const PageWrapper = styled.div`
   padding-top: 0;
-  min-height: 100vh;
+  min-height: 100%;
   background: var(--global-primary-bg);
 `;
 
@@ -148,11 +148,13 @@ const ControlRow = styled.div`
   display: flex;
   gap: 0.5rem;
   margin-bottom: 1.5rem;
+  width: 100%;
 `;
 
 const ControlBtn = styled.button<{ $active?: boolean }>`
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 0.4rem;
   padding: 0.45rem 0.9rem;
   border-radius: 0.35rem;
@@ -163,6 +165,12 @@ const ControlBtn = styled.button<{ $active?: boolean }>`
   font-weight: 600;
   cursor: pointer;
   transition: all 0.15s ease;
+  white-space: nowrap;
+
+  @media (max-width: 640px) {
+    flex: 1 1 auto;
+    min-width: 0;
+  }
 
   &:hover {
     border-color: var(--global-text-muted);

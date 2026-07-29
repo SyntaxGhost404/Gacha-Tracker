@@ -26,7 +26,8 @@ import { MobileBottomNavbar } from './components/gacha/MobileBottomNavbar';
 const MainLayout = styled.div`
   display: flex;
   flex-direction: column;
-  height: 100vh;
+  height: 100%;
+  height: 100dvh;
   width: 100%;
   overflow: hidden;
   background-color: var(--global-primary-bg);
@@ -142,7 +143,7 @@ const AnimatedPage = ({ children }: { children: React.ReactNode }) => {
 };
 
 function AppRoutes() {
-  const [showBottomNav, setShowBottomNav] = useState(true);
+  const [showBottomNav, setShowBottomNav] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const lastScrollTop = useRef(0);
@@ -152,36 +153,60 @@ function AppRoutes() {
     const container = scrollContainerRef.current;
     if (!container) return;
 
+    lastScrollTop.current = container.scrollTop;
+
     const handleScroll = () => {
       const currentScrollTop = container.scrollTop;
+      const isHomePage = location.pathname === '/';
       
       // Auto-collapse mobile others menu on scroll to keep the viewport clean
       setIsMobileMenuOpen(false);
 
-      // Near top of container, always keep visible
-      if (currentScrollTop <= 50) {
-        setShowBottomNav(true);
-        lastScrollTop.current = currentScrollTop;
-        return;
-      }
+      if (isHomePage) {
+        // Home page hero hiding logic: hide bottom navbar at top hero section (<= 40px)
+        if (currentScrollTop <= 40) {
+          setShowBottomNav(false);
+          lastScrollTop.current = currentScrollTop;
+          return;
+        }
 
-      const diff = currentScrollTop - lastScrollTop.current;
-      
-      // We only toggle if the scroll deviation exceeds 12px to avoid jitteriness
-      if (diff > 12) {
-        // scrolling down -> Hide bottom navbar
-        setShowBottomNav(false);
-        lastScrollTop.current = currentScrollTop;
-      } else if (diff < -12) {
-        // scrolling up -> Show bottom navbar
-        setShowBottomNav(true);
-        lastScrollTop.current = currentScrollTop;
+        // On Home page past hero section: reveal on scroll down, hide on scroll up
+        const diff = currentScrollTop - lastScrollTop.current;
+        if (diff > 12) {
+          setShowBottomNav(true);
+          lastScrollTop.current = currentScrollTop;
+        } else if (diff < -12) {
+          setShowBottomNav(false);
+          lastScrollTop.current = currentScrollTop;
+        }
+      } else {
+        // Subpages: Keep bottom navbar visible at page top (<= 40px)
+        if (currentScrollTop <= 40) {
+          setShowBottomNav(true);
+          lastScrollTop.current = currentScrollTop;
+          return;
+        }
+
+        // Directional scroll-hide/show behavior on subpages
+        const diff = currentScrollTop - lastScrollTop.current;
+        if (diff > 12) {
+          // Scrolling down -> reveals bottom navbar
+          setShowBottomNav(true);
+          lastScrollTop.current = currentScrollTop;
+        } else if (diff < -12) {
+          // Scrolling up -> hides bottom navbar
+          setShowBottomNav(false);
+          lastScrollTop.current = currentScrollTop;
+        }
       }
     };
 
+    // Check initial position on mount or route change
+    handleScroll();
+
     container.addEventListener('scroll', handleScroll, { passive: true });
     return () => container.removeEventListener('scroll', handleScroll);
-  }, []);
+  }, [location.pathname]);
 
   return (
     <MainLayout>

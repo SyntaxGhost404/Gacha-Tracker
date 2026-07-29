@@ -15,7 +15,7 @@ function amplifyColor(hex: string, factor = 7): string {
 
 const PageWrapper = styled.div`
   padding-top: 3.5rem;
-  min-height: 100vh;
+  min-height: 100%;
   background: var(--global-primary-bg);
 `;
 

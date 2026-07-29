@@ -59,11 +59,10 @@ export const gachaGames: GachaGame[] = [
     regions: ['Global'],
     status: 'Released',
     releaseDate: '2026-05-14',
-    releaseDateConfirmed: true,
+    releaseDateConfirmed: false,
     description:
-      'ALLfiring, formerly known as Ring of Fire: Prometheus, delivers a visually striking side-scrolling action RPG experience set on a crumbling post-apocalyptic canvas. Players explore voxel sandbox environments, master real-time three-character combat formations, and confront anomalous threats to carry the flame of human hope. The game features stylized anime rendering paired with deep mechanical personalization.',
-    platforms: ['Android', 'iOS'],
-    engine: 'Proprietary / Unity',
+      'ALLfiring is a side-scrolling action RPG with an anime-style aesthetic set in a dark, post-apocalyptic world. The player is the last keeper of a fading flame in a shattered realm, exploring voxel-styled landscapes from frozen wilderness to ancient forests to uncover secrets. Gameplay involves real-time combat with up to three characters; players switch between allies, combining skills to defeat foes. Each companion has unique abilities and backstories, and players traverse interconnected environments, solve environmental puzzles, and unearth hidden paths as they fight to restore hope to humanity.',
+    platforms: ['Android', 'iOS', 'PC'],
     bannerColor: '#1a1208',
     iconInitials: 'AF',
     bannerImage: '/banners/allfiring.png',
@@ -81,37 +80,17 @@ export const gachaGames: GachaGame[] = [
     alternativeName: 'holodori',
     genre: ['Rhythm Game', 'RPG', 'Gacha'],
     regions: ['Global'],
-    status: 'Pre-registration',
-    releaseDate: '2026-08-30',
-    releaseDateConfirmed: false,
-    releaseDateTime: '2026-08-30T00:00:00Z',
+    status: 'Released',
+    releaseDate: '2026-07-23',
+    releaseDateConfirmed: true,
     description:
-      'hololive Dreams is the first-party rhythm RPG developed by Cover Corporation and QualiArts. Launching tentatively in August 2026, it features over fifty active hololive VTubers as collectible characters and more than 150 songs at launch. Players build intricate skill trees, collect high-tier support cards, and acquire premium cosmetic outfits, all driven by intense, immersive parasocial fan devotion.',
+      'hololive Dreams is a rhythm-action mobile RPG starring VTubers from the hololive group. Set on a developing theme park, players tap along to official songs and mini-games to gather resources and unlock more characters. The game features 50+ hololive talents as playable characters and includes over 150 licensed tracks at launch. Between rhythm sessions, players complete quests and mini-games to expand their theme park and recruit additional idols. It blends beat-matching rhythm gameplay with character collection and park-building elements.',
     platforms: ['iOS', 'Android'],
     engine: 'Unity',
     bannerColor: '#121a10',
     iconInitials: 'HD',
     bannerImage: '/banners/hololive-dreams.jpg',
     profileImage: '/profiles/hololive-dreams.webp',
-    preRegistrationLinks: [
-      {
-        label: 'Official Website',
-        url: 'https://hololive-dreams.com/en',
-        iconType: 'globe'
-      },
-      {
-        label: 'Google Play',
-        url: 'https://play.google.com/store/apps/details?id=game.qualiarts.hololive.dreams.com',
-        iconType: 'bootstrap',
-        iconClass: 'bi bi-google-play'
-      },
-      {
-        label: 'App Store',
-        url: 'https://apps.apple.com/us/app/hololive-dreams/id6756641249',
-        iconType: 'bootstrap',
-        iconClass: 'bi bi-apple'
-      }
-    ],
     socialLinks: {
       website: 'https://hololive-dreams.com/en',
       twitter: 'https://x.com/holo_dreams_en',
@@ -124,10 +103,9 @@ export const gachaGames: GachaGame[] = [
     alternativeName: 'Project Mugen',
     genre: ['Urban', 'Open-World', 'RPG'],
     regions: ['Global'],
-    status: 'In Development',
-    devStatus: 'Technical Test',
+    status: 'Pre-registration',
     description:
-      "Set in the procedurally generated city of Nova Inception Urbs, Ananta casts players as an elite supernatural investigator called the Infinite Trigger. Players master a unique zero-stamina traversal system featuring rooftops parkour and grappling to battle the anomalous force of Chaos. NetEase's ambitious RPG departs from traditional gacha by unlocking all characters through main gameplay progression.",
+      'ANANTA is a free-to-play open-world action RPG set in a sprawling city called Nova Inception Urbs. The player is an "Infinite Trigger," a psychic investigator fighting an aberrant force known as Chaos. Traversal is fast-paced and stamina-free, letting characters run, climb, parkour, ride bikes or grapple between skyscrapers. Combat is team-based: during key battles, the player can switch among a party of four characters, each with unique stats and skills. All playable characters unlock through gameplay rather than random draws. The game focuses on exploration and cooperative combat against supernatural anomalies.',
     platforms: ['Android', 'iOS', 'PC', 'PS5'],
     engine: 'Unity',
     bannerColor: '#0e1520',
@@ -135,7 +113,7 @@ export const gachaGames: GachaGame[] = [
     bannerImage: '/banners/ananta.png',
     profileImage: '/profiles/ananta.png',
     socialLinks: {
-      website: 'https://www.anantagame.com/en/m/',
+      website: 'https://www.anantagame.com/',
       twitter: 'https://x.com/Ananta_EN',
       youtube: 'https://www.youtube.com/@Ananta_Game',
       reddit: 'https://www.reddit.com/r/AnantaOfficial/',
@@ -150,10 +128,10 @@ export const gachaGames: GachaGame[] = [
     name: 'Azur Promilia',
     genre: ['Fantasy', 'Open-World', 'Creature Companion', 'Gacha'],
     regions: ['Global'],
-    status: 'In Development',
+    status: 'Pre-registration',
     devStatus: 'Closed Beta',
     description:
-      "Azur Promilia is a stunning, fantasy open-world RPG developed by Manjuu Co. that blends action combat with creature taming. Players traverse lush, vibrant ecosystems, capturing and training magical beasts known as Kipipis to aid them in battle and exploration. Leveraging deep character attachment and interactive mechanics, the game offers a rich, comforting live-service adventure.",
+      'Azur Promilia is a fantasy open-world action RPG set in a vibrant world of lush forests, caves, and towns. A core mechanic is creature companionship: players befriend and tame magical beasts called Kipipis, each with unique abilities that aid in combat and exploration. Combat is real-time and allows switching between different playable characters, each with distinct skills and elemental affinities for combo-based battles. Developed by the creators of Azur Lane, the game blends exploration and strategy with creature-collection mechanics in a rich, story-driven world.',
     platforms: ['PC', 'PS5', 'Android', 'iOS'],
     engine: 'Unity',
     bannerColor: '#0a1520',
@@ -161,7 +139,7 @@ export const gachaGames: GachaGame[] = [
     bannerImage: '/banners/azur-promilia.jpeg',
     profileImage: '/profiles/azur-promilia.jpg',
     socialLinks: {
-      website: 'https://azurpromilia.com/en/',
+      website: 'https://azurpromilia.jimi-global.com/',
       twitter: 'https://x.com/AzurPromilia',
       youtube: 'https://www.youtube.com/@azurpromilia'
     }
@@ -169,14 +147,13 @@ export const gachaGames: GachaGame[] = [
   {
     id: 'chasing-kaleidorider',
     name: 'Chasing Kaleidorider',
-    genre: ['3D', 'Action', 'RPG', 'Gacha', 'Motorcycle'],
+    genre: ['3D', 'Romance', 'RPG', 'RIDER Girls'],
     regions: ['Global'],
     status: 'In Development',
     devStatus: 'Closed Beta',
     description:
-      "Chasing Kaleidorider is a futuristic 3D romance RPG set in the vibrant neon metropolis of Terminus. As a Navigator, players guide super-powered girls who ride high-tech motorcycles, combatting malevolent Hysteria entities threatening society. The card-driven tactical battle system integrates customizable bikes directly into skill animations, offering a thrilling fusion of mecha and racing.",
+      'Chasing Kaleidorider is a futuristic 3D romance RPG set in the neon-lit city of Terminus. The player is the "Navigator" who guides a team of super-powered Rider girls who travel on high-tech motorcycles. Together, they fight against mysterious entities known as Hysteria. Battles use a semi-real-time card-based combat system: players play cards to trigger each Rider\'s skills and bike-enhanced combo attacks. The game blends anime-style action with tactical card mechanics and relationship-building.',
     platforms: ['Android', 'iOS'],
-    engine: 'Proprietary',
     bannerColor: '#18101a',
     iconInitials: 'CK',
     bannerImage: '/banners/chasing-kaleidorider.jpeg',
@@ -184,23 +161,24 @@ export const gachaGames: GachaGame[] = [
     socialLinks: {
       website: 'https://kaleidorider.com/',
       twitter: 'https://x.com/KaleidoRIDER_EN',
-      youtube: 'https://www.youtube.com/@ChasingKaleidorider'
+      youtube: 'https://www.youtube.com/@KaleidoRIDER_EN',
+      facebook: 'https://www.facebook.com/KaleidoRIDER'
     }
   },
   {
     id: 'codename-bang-bang',
-    name: 'Codename: Bang Bang',
-    alternativeName: '代号砰砰',
+    name: '夜幕之下',
+    alternativeName: 'Codename: Bang Bang / 代号砰砰',
     genre: ['Otome', 'RPG', 'Mafia'],
     regions: ['CN'],
-    status: 'In Development',
-    devStatus: 'Closed Beta',
+    status: 'Released',
+    releaseDate: '2026-06-05',
+    releaseDateConfirmed: true,
     description:
-      "Codename: Bang Bang is a dark, mature otome RPG set in a fictional mafia-ruled kingdom. Stepping into the shoes of the ruthless female First Duke of Milan, players orchestrate strategy and revenge to rebuild a collapsed family empire. Seduce, manipulate, and coordinate deep power plays with a customizable host of male targets, breaking away from traditional lighthearted dating simulations.",
-    platforms: ['Android', 'iOS'],
-    engine: 'Proprietary',
+      'Codename: Bang Bang is a dark strategy RPG set in a fictional, mafia-ruled kingdom. The player becomes the newly crowned female Boss (First Duke) of Milan\'s underworld. In side-scrolling battles, a four-member squad automatically advances along city streets; the player taps skills at precise moments to break the enemies\' formation. Each party member has distinct strengths and roles, making team composition and timing crucial to victory. The game\'s story centers on power struggles and revenge among crime families, blending strategy with mature narrative.',
+    platforms: ['Android', 'iOS', 'PC'],
     bannerColor: '#1a0e0e',
-    iconInitials: 'BB',
+    iconInitials: 'YM',
     bannerImage: '/banners/codename-bang-bang.jpeg',
     profileImage: '/profiles/codename-bang-bang.png',
     socialLinks: {
@@ -210,14 +188,13 @@ export const gachaGames: GachaGame[] = [
   {
     id: 'digimon-alysion',
     name: 'DIGIMON ALYSION',
-    genre: ['Digital TCG', 'Card Game', 'Metaverse'],
+    genre: ['Online Card Game', 'Digital TCG'],
     regions: ['Global', 'JP'],
     status: 'In Development',
     devStatus: 'Closed Beta',
     description:
-      "DIGIMON ALYSION brings the physical Digimon Trading Card Game to mobile devices in a highly polished digital environment. Set within the futuristic metaverse of LACUNA and tying into the Digimon Liberator web comic narrative, players collect cards, challenge rival duelists, and explore digital zones. Featuring a theme song by VTuber Enna Alouette, it bridges vintage charm with modern action.",
+      'DIGIMON ALYSION is a mobile card game that digitizes the Digimon Trading Card Game. Players collect cards, build decks, and duel opponents using turn-based card mechanics, including managing a shared "memory" resource. The game adds a single-player campaign set in a sci-fi metaverse called LACUNA: the player\'s avatar and partner Digimon enter virtual arenas to compete in tournaments. The digital version includes animated Digivolution sequences and new cards unique to the app, blending classic card-play with story-driven exploration of a futuristic digital world.',
     platforms: ['iOS', 'Android'],
-    engine: 'Proprietary',
     bannerColor: '#0e1020',
     iconInitials: 'DA',
     bannerImage: '/banners/digimon-alysion.jpg',
@@ -232,36 +209,23 @@ export const gachaGames: GachaGame[] = [
   {
     id: 'ete-shattered-skie',
     name: 'E.T.E: Shattered Skie',
-    genre: ['Mecha', 'Girls Battle', 'RPG', 'Aerial'],
+    genre: ['Mecha', 'Girls Battle', 'RPG', 'Action'],
     regions: ['Global', 'SEA'],
-    status: 'Pre-registration',
+    status: 'Released',
     description:
-      "E.T.E: Shattered Skie is an immersive 3D mecha action RPG set in a dark post-apocalyptic future ruled by powerful corporate chaebols. As an executive Nexecutor commanding custom tactical E.T.E exoskeletons, players deploy elite Syncer pilots across dynamic land, sea, and aerial battlefields. Powered by Unity, the game blends intense tri-environmental combat with deep, personalized simulator dormitory life.",
-    platforms: ['Android', 'iOS', 'PC'],
-    engine: 'Proprietary',
+      'E.T.E: Shattered Skie is a post-apocalyptic mecha RPG set in a world torn by corporate warfare. A powerful corporation discovered an alien "Delta" particle and built advanced tactical exoskeleton suits (E.T.E. suits), sparking conflict with rival chaebols. As a Nexecutor, the player leads a team of elite pilots (called Syncers) each operating a customizable E.T.E. mech in 3D combat. Players fight through waves of mechanized enemies in dynamic battles, timing special attacks and abilities across land, sea, and air. Outside combat, players can also customize a shared dormitory space for their pilot team.',
+    platforms: ['Android', 'PC'],
     bannerColor: '#10141a',
     iconInitials: 'ET',
     bannerImage: '/banners/ete-shattered-skie.webp',
     profileImage: '/profiles/ete-shattered-skie.webp',
-    preRegistrationLinks: [
-      {
-        label: 'Official Website',
-        iconType: 'globe',
-        disabled: true
-      },
-      {
-        label: 'Google Play',
-        url: 'https://play.google.com/store/apps/details?id=com.kr.chens.ete2024',
-        iconType: 'bootstrap',
-        iconClass: 'bi bi-google-play'
-      },
-      {
-        label: 'App Store',
-        iconType: 'bootstrap',
-        iconClass: 'bi bi-apple',
-        disabled: true
-      }
-    ],
+    socialLinks: {
+      website: 'https://play.google.com/store/apps/details?id=com.kr.chens.ete2024',
+      twitter: 'https://x.com/ETE_Shattered',
+      youtube: 'https://www.youtube.com/@ETE_ShatteredSkie',
+      facebook: 'https://www.facebook.com/ETEShatteredSkie',
+      discord: 'https://discord.gg/ete'
+    },
     media: [
       { type: 'video', url: 'https://www.youtube.com/embed/7st_YosUwh8' },
       { type: 'image', url: '/assets/ete-shattered-skie/1.webp' },
@@ -277,11 +241,11 @@ export const gachaGames: GachaGame[] = [
     genre: ['Creature-collector', 'Adventure Strategy', 'Auto battler'],
     regions: ['Global'],
     status: 'In Development',
-    devStatus: 'Closed Beta',
+    devStatus: 'Technical Test',
     description:
-      "Honkai: Nexus Anima is HoYoverse's bold foray into the creature-collection genre. Operating within the expansive Honkai universe, the game lets players bond with Animas—mystical spirits embodying paired dualities like Light and Darkness. Players customize their heroes and venture through a fractured, beautiful world to repair the severed bonds of Nexus in deep, real-time tactical combat.",
+      'Honkai: Nexus Anima is a creature-collection strategy RPG set in the Honkai universe. A cosmic event called the Rupture has shattered the world\'s "Nexus," creating mystical spirits called Animas that embody dualities like Light and Darkness. Players travel across fragmented realms to collect and bond with these Anima companions. Combat is grid-based and tactical (similar to auto-chess): players place Anima on a battlefield and leverage their unique abilities and synergies in battles. The game blends open-world exploration, puzzle-solving, and character customization with real-time tactical battles to restore balance to the Nexus.',
     platforms: ['PC', 'iOS', 'Android'],
-    engine: 'Proprietary / Unity',
+    engine: 'Unity',
     bannerColor: '#0c1020',
     iconInitials: 'HN',
     bannerImage: '/banners/honkai-nexus-anima.jpg',
@@ -301,14 +265,12 @@ export const gachaGames: GachaGame[] = [
     name: 'Illusion Connect: Re',
     genre: ['Tactical', 'Strategy', 'RPG', 'Anime'],
     regions: ['Global', 'SEA', 'NA'],
-    status: 'Pre-registration',
+    status: 'Released',
     releaseDate: '2026-06-04',
     releaseDateConfirmed: true,
-    releaseDateTime: '2026-06-04T11:00:00+08:00',
     description:
-      "Illusion Connect: Re resurrects the classic anime strategy RPG experience on mobile platforms. Spearheaded by Sugargame, players command high-fidelity Radiants in real-time tactical grid battles against malevolent Nightmares. It brings back popular Live2D interactions, custom base decorative elements, and the beloved original voice cast featuring Ai Kayano, Yui Ishikawa, and Saori Hayami.",
-    platforms: ['Android', 'iOS'],
-    engine: 'Proprietary',
+      'Illusion Connect: Re is a real-time tactical RPG where players command teams of anime-style heroines called Radiants against invading Nightmare creatures. Battles occur on a dynamic grid-based battlefield (live 2D animated) where positioning and skill timing matter. Outside of combat, players return to a "dream home" to customize a base and deepen bonds with each Radiant through interactive dialogue and activities. Strengthening these relationships grants additional abilities and powers in battle. The game revives features from the original, combining narrative interactions with strategic 3D combat.',
+    platforms: ['Android', 'iOS', 'PC'],
     bannerColor: '#1a1015',
     iconInitials: 'IC',
     bannerImage: '/banners/illusion-connect-re.jpg',
@@ -316,24 +278,24 @@ export const gachaGames: GachaGame[] = [
     preRegistrationLinks: [
       {
         label: 'Official Website',
-        url: 'https://www.illusionconnectgame.com',
+        url: 'https://mjlj.sugargame.hk/',
         iconType: 'globe'
       },
       {
         label: 'Google Play',
-        url: 'https://play.google.com/store',
+        url: 'https://play.google.com/store/apps/details?id=com.sugargame.mjlj.gp',
         iconType: 'bootstrap',
         iconClass: 'bi bi-google-play'
       },
       {
         label: 'App Store',
-        url: 'https://apps.apple.com',
+        url: 'https://apps.apple.com/us/app/illusion-connect-re/id6758970424',
         iconType: 'bootstrap',
         iconClass: 'bi bi-apple'
       }
     ],
     socialLinks: {
-      website: 'https://www.sugargame.hk/',
+      website: 'https://mjlj.sugargame.hk/',
       discord: 'https://discord.gg/hXfJJcKGu2',
       facebook: 'https://www.facebook.com/IllusionConnectRe'
     }
@@ -346,9 +308,8 @@ export const gachaGames: GachaGame[] = [
     status: 'In Development',
     devStatus: 'Closed Beta',
     description:
-      "King's Raid (Revival) brings back the legendary real-time 3D mobile battle RPG under new publisher Masangsoft. Renowned for its friendly, gacha-free direct character acquisition framework, this corporate resurrection expands cooperative gameplay. Players challenge giant bosses in reworked, modern raids, optimizing hero lineups across fully synchronized PC and mobile cross-play avenues.",
+      'King\'s Raid (Revival) is a 3D fantasy action RPG offering real-time strategic battles. Players assemble a roster of heroes, each with unique skills, and combine them in party-based combat against monsters and raid bosses. The game features a fully explorable world and supports simultaneous play on PC and mobile. True to the series, characters are unlocked directly through gameplay and in-game currency rather than random draws, allowing players to recruit any hero of their choice. The design emphasizes cooperative raids and cross-platform PvP, blending action with deep RPG progression.',
     platforms: ['Android', 'iOS', 'PC'],
-    engine: 'Proprietary',
     bannerColor: '#1a1208',
     iconInitials: 'KR',
     bannerImage: '/banners/kings-raid-revival.jpg',
@@ -364,19 +325,19 @@ export const gachaGames: GachaGame[] = [
     id: 'last-origin-r-plus',
     name: 'LAST ORIGIN R+',
     genre: ['Tactical', 'Strategy', 'RPG', 'Apocalyptic'],
-    regions: ['Global', 'NA', 'EU', 'SEA'],
+    regions: ['Global'],
     status: 'Released',
     releaseDate: '2026-05-21',
     releaseDateConfirmed: true,
     description:
-      "LAST ORIGIN R+ presents a highly strategic, turn-based squad RPG set in a bleak apocalyptic future. After parasitizing mechanical insects eradicate human existence, players become the final commander of a bioengineered female task force known as Bioroids. Optimize tactical grid formations, activate powerful skills, and build specialized squads to reclaim Earth in deep apocalyptic combat.",
+      'LAST ORIGIN R+ is a squad-based strategy RPG set in a bleak post-apocalyptic future. The player commands a team of bioengineered female soldiers called Bioroids to fight mechanical insect-like monsters that have ravaged Earth. Battles are turn-based on a tactical grid: players position their units, activate powerful skills, and work in formation to defeat enemies and reclaim territory. The game\'s narrative follows humanity\'s last survivors battling for Earth\'s future through strategic squad combat.',
     platforms: ['Android', 'iOS', 'PC'],
-    engine: 'Proprietary',
     bannerColor: '#0e1818',
     iconInitials: 'LO',
     bannerImage: '/banners/last-origin-r.webp',
     profileImage: '/profiles/last-origin-r.webp',
     socialLinks: {
+      website: 'https://lastorigin.vfun.com/',
       twitter: 'https://x.com/lastorigin_info'
     }
   },
@@ -385,11 +346,10 @@ export const gachaGames: GachaGame[] = [
     name: 'MIRESI: Invisible Future',
     genre: ['Collectible', 'Time-Travel', 'RPG', 'Tactical'],
     regions: ['Global'],
-    status: 'Announced',
+    status: 'Pre-registration',
     description:
-      "MIRESI: Invisible Future is a captivating time-travel tactical RPG published by Smilegate. To save a collapsing future, players navigate changing eras to restore causality. Boasting character designs by famed artist Hyung-seop Kim (Nikke), it merges beautiful subculture aesthetics with real-time strategic combat that demands strict, positional skill planning for absolute battlefield control.",
+      'MIRESI: Invisible Future is a planned time-travel tactical RPG. Players will navigate changing eras to alter history and prevent a catastrophic future. Gameplay likely involves real-time squad tactics and positional skill use, as hinted by previews.',
     platforms: ['Android', 'iOS', 'PC'],
-    engine: 'Proprietary',
     bannerColor: '#120e1a',
     iconInitials: 'MI',
     bannerImage: '/banners/miresi-invisible-future.jpeg',
@@ -406,11 +366,11 @@ export const gachaGames: GachaGame[] = [
     name: 'Monster Hunter Outlanders',
     genre: ['Open-World', 'Survival', 'Action', 'RPG'],
     regions: ['Global'],
-    status: 'Announced',
+    status: 'In Development',
+    devStatus: 'Closed Beta',
     description:
-      "Monster Hunter Outlanders is an open-world survival RPG co-developed by Tencent's TiMi Studio and Capcom. Set on the uncharted continent of AESOLAND, players hunt massive Radiant beasts—monsters frenzied by aggressive native minerals. Players gather materials, craft survival facilities, and utilize iconic weapons like the Lance in fluid, beautifully optimized mobile action environments.",
+      'Monster Hunter Outlanders is an upcoming open-world survival RPG co-developed by TiMi (Tencent) and Capcom. Set on the wild continent of Aesoland, players hunt gigantic "Radiant" monsters mutated by aggressive minerals. They gather materials from defeated monsters and environments to craft weapons, armor, and facilities. The gameplay features fluid third-person action with iconic Monster Hunter weapons like the Lance, as players track and battle huge creatures. Crafting and survival elements (building camps, cooking, etc.) support exploration in beautiful, optimized mobile open environments.',
     platforms: ['Android', 'iOS'],
-    engine: 'Unreal Engine 4',
     bannerColor: '#14100a',
     iconInitials: 'MH',
     bannerImage: '/banners/monster-hunter-outlanders.jpg',
@@ -427,11 +387,10 @@ export const gachaGames: GachaGame[] = [
     name: 'Petit Planet',
     genre: ['Cozy', 'Life Simulation', 'Cosmic-Lifestyle'],
     regions: ['Global'],
-    status: 'Announced',
+    status: 'Pre-registration',
     description:
-      "Petit Planet is HoYoverse's comforting cosmic lifestyle simulation. Playing as a dedicated Loomi Co. employee, players cultivate a cozy, customizable planetoid alongside charming animal neighbors. The peaceful loop involves farming, cooking, fishing, and beachcombing sync'd to a real-world clock, encouraging authentic daily habits rather than intense, stressful character combat grinding.",
-    platforms: ['iOS', 'Android', 'PC', 'Switch'],
-    engine: 'Proprietary',
+      'Petit Planet is a cozy cosmic life-simulation game. Players cultivate their own tiny planetoid with help from charming animal-like Neighbors. Daily activities include planting and harvesting crops, fishing, beachcombing, cooking, crafting, and mining in a relaxing loop. As the planet grows, players befriend fuzzy companions: inviting them to live on the planet, holding conversations, exchanging gifts, and deepening relationships. Players can also travel to nearby islets on a vehicle with their Neighbors to discover rare creatures and recipes. The focus is on creativity, social bonds, and authentic day-to-day life rather than combat.',
+    platforms: ['Android', 'iOS', 'PC'],
     bannerColor: '#0a0e1a',
     iconInitials: 'PP',
     bannerImage: '/banners/petit-planet.jpg',
@@ -451,9 +410,8 @@ export const gachaGames: GachaGame[] = [
     regions: ['Global', 'JP'],
     status: 'Announced',
     description:
-      "Project 2/3 is a striking open-world ARPG independently crafted by Diversity Game Studio. Guided by a companion named Theseus, players travel across diverse historical eras and dimensions. The visual highlight features seamless transitions between 2D and 3D perspective shifts, requiring smart tactical planning and reality manipulation to rewrite dark, catastrophic events across timelines.",
+      'Project 2/3 is an anime-style open-world action RPG. Players journey through time and alternate dimensions alongside a guide named Theseus. The game transitions seamlessly between 2D and 3D perspectives as the player travels across diverse historical eras and parallel worlds. Along the way, they meet companions, explore varied environments, and work to rewrite chaotic events in the past. The game emphasizes smart tactical planning and reality manipulation to change history, with an art style blending comic-like panels and 3D exploration.',
     platforms: ['iOS', 'Android', 'PC'],
-    engine: 'Proprietary / Unconfirmed',
     bannerColor: '#0e1418',
     iconInitials: 'P2',
     bannerImage: '/banners/project-2-3.jpg',
@@ -468,11 +426,9 @@ export const gachaGames: GachaGame[] = [
     genre: ['Open-World', 'Action', 'RPG', 'Time-Loop'],
     regions: ['Global', 'CN'],
     status: 'In Development',
-    devStatus: 'Closed Beta',
     description:
-      "Rewinding Cadence is a gorgeous open-world action RPG developed by Saroasis Studios. As the Recursor, players navigate a strict, repeating 42-day time-loop to avert the catastrophic Sunblight Tide alongside their spirit companion Ori. Utilizing Unity for outstanding visual rendering, the game features a tabletop-inspired D20 dice system to influence branching narrative choices and tragedies.",
+      'Rewinding Cadence is an open-world action RPG built around a repeating time-loop. Players control the Recursor, who relives a strict 42-day cycle to avert a cataclysm, accompanied by their spirit guide Ori. The world is presented in stylized 2D art with real-time traversal (gliding, flying, hoverboarding). Battles involve leveling spirit companions and combining their powers. Notably, narrative decisions are resolved using a tabletop-style D20 dice-roll system, so story outcomes can change based on these randomized rolls. The game blends anime visuals with branching, time-loop storytelling.',
     platforms: ['Android', 'PC', 'PS5'],
-    engine: 'Unreal Engine 5',
     bannerColor: '#14100e',
     iconInitials: 'RC',
     bannerImage: '/banners/rewinding-cadence.png',
@@ -488,12 +444,10 @@ export const gachaGames: GachaGame[] = [
     name: 'Scarlet Tide: ZeroERA',
     genre: ['2.5D', 'Open-World', 'RPG', 'Bio-sci-fi'],
     regions: ['Global', 'CN'],
-    status: 'In Development',
-    devStatus: 'Closed Beta',
+    status: 'Pre-registration',
     description:
-      "Scarlet Tide: ZeroERA is a 2.5D open-world RPG developed by YoMioBeYoung in the Art of War: Red Tides universe. Set in a ruined world where the mystical Scarlet Tide has permanently arrested human aging, it features an aesthetic character roster. Players command real-time tactical combat battles, manage responsive base-building environments, and construct deep social bonds via dynamic dialogue.",
+      'Scarlet Tide: ZeroERA is a 2.5D side-scrolling anime RPG with turn-based combat. It features richly illustrated environments and a strong narrative focus described as a "youth adventure". Players guide their characters through story-driven battles against enemies, moving along a horizontal plane. The game emphasizes cinematic storytelling and character interactions, with a setting in a ruined world of eternal youth (the Scarlet Tide) though detailed lore is still emerging.',
     platforms: ['Android', 'iOS', 'PC'],
-    engine: 'Proprietary / Unconfirmed',
     bannerColor: '#1a0c0c',
     iconInitials: 'ST',
     bannerImage: '/banners/scarlet-tide-zeroera.jpg',
@@ -509,10 +463,10 @@ export const gachaGames: GachaGame[] = [
     name: 'Silver Palace',
     genre: ['Open-World', 'Action', 'RPG', 'Steampunk'],
     regions: ['Global'],
-    status: 'In Development',
+    status: 'Pre-registration',
     devStatus: 'Closed Beta',
     description:
-      "Silver Palace is a detective-themed action RPG developed by Elementa and powered by Unreal Engine 5. In the industrialized Victorian metropolis of Silvernia, players act as an elite investigator tracking criminal clues under corporate shadows. The gameplay loop combines narrative investigations with high-octane action, employing QTE combat combos and seamless real-time character swapping.",
+      'Silver Palace is a detective-themed action RPG. It takes place in Silvernia, a richly drawn Victorian-industrial metropolis powered by a mysterious resource called Silverium. The player is an elite investigator solving cases in a steampunk cityscape. Gameplay alternates between investigation and real-time combat: the player explores the city, gathers leads, and then confronts foes in responsive action battles. This blends a dark, story-rich detective narrative with fast-paced 3D combat in a gaslamp-punk setting.',
     platforms: ['PC', 'Android', 'iOS'],
     engine: 'Unreal Engine 5',
     bannerColor: '#141210',
@@ -529,19 +483,19 @@ export const gachaGames: GachaGame[] = [
   {
     id: 'terbis',
     name: 'Terbis',
-    genre: ['2D', 'Anime-Style', 'RPG', 'Isekai'],
+    genre: ['2D', 'Anime-Style', 'Collectible RPG'],
     regions: ['Global', 'KR'],
-    status: 'Announced',
+    status: 'In Development',
+    devStatus: 'Closed Beta',
     description:
-      "Terbis is a side-scrolling, semi-automatic 2D anime real-time strategy game developed by Webzen. Transporting players to a magical isekai environment facing absolute degradation, characters execute auto-attacks whilst players manage skill trigger timings. Boasting cinematic anime promotions, it offers high-quality action cutscenes juxtaposed with tactical team-synergy optimization.",
+      'Terbis is a 2D side-scrolling action RPG set in a magical "isekai" world. Characters automatically attack, and the player\'s role is to time and trigger each character\'s skill when needed. The game uses a semi-automatic battle system: players assemble a team of heroes and optimize their skill usage to defeat waves of enemies. It blends anime-style visuals with tactical team-synergy gameplay.',
     platforms: ['Android', 'iOS', 'PC'],
-    engine: 'Proprietary / Spine Animation',
     bannerColor: '#0e1410',
     iconInitials: 'TB',
     bannerImage: '/banners/terbis.jpg',
     profileImage: '/profiles/terbis.jpg',
     socialLinks: {
-      website: 'https://terbis.webzen.com/',
+      website: 'https://brand-terbis.webzen.com/',
       twitter: 'https://x.com/Terbis_kr'
     }
   },
@@ -554,16 +508,15 @@ export const gachaGames: GachaGame[] = [
     status: 'In Development',
     devStatus: 'Closed Beta',
     description:
-      "Explore the shattered floating islands of Seraphia as a Breaker in NCSoft and Vic Game Studios' stylish action RPG, Limit Zero Breakers. Sail the skies on the airship Weaverwhale, recruiting characters with unique combat styles to unleash fast-paced combos, parries, and Break Mode finishes. Cooperate with up to three players in massive boss raids as you chase the legendary Library of the Gods.",
+      'Limit Zero Breakers (formerly BREAKERS: Unlock the World) is an anime-style real-time action RPG. Players explore the shattered floating islands of the world called Seraphia as a "Breaker" aboard the airship Weaverwhale. The game features party-based combat: players build a team of characters with different fighting styles and unleash stylish, combo-driven attacks on ancient dungeon bosses and massive monsters. There are also 3-player cooperative raids where friends team up to tackle colossal enemies. The narrative follows the Breakers\' quest to find the legendary Library of the Gods, fulfilling wishes among the ruins of a sky-floating civilization.',
     platforms: ['PC', 'Android', 'iOS'],
-    engine: 'Proprietary / Unreal Engine',
     bannerColor: '#0a192f',
     iconInitials: 'LZB',
     bannerImage: '/banners/limit-zero-breakers.webp',
     profileImage: '/profiles/limit-zero-breakers.png',
     socialLinks: {
       website: 'https://breakers.plaync.com/en-us/index',
-      twitter: 'https://x.com/intent/follow?screen_name=BREAKERS_EN',
+      twitter: 'https://x.com/Breakers_EN',
       youtube: 'https://www.youtube.com/@BREAKERS_EN',
       discord: 'https://discord.gg/breakers'
     }

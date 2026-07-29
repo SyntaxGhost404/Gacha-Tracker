@@ -5,7 +5,7 @@ import { FiArrowLeft, FiSend, FiCheckCircle, FiStar } from 'react-icons/fi';
 
 const PageWrapper = styled.div`
   padding-top: 0;
-  min-height: 100vh;
+  min-height: 100%;
   background: var(--global-primary-bg);
 `;
 
