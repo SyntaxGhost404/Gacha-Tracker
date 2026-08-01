@@ -10,22 +10,17 @@ type ProductCardProps = {
   product: Product;
   navigate: (path: string) => void;
   addToCart: (productId: string) => void;
+  verifyProduct: (productId: string) => void;
   compact?: boolean;
 };
 
-export default function ProductCard({ product, navigate, addToCart, compact = false }: ProductCardProps) {
+export default function ProductCard({ product, navigate, addToCart, verifyProduct, compact = false }: ProductCardProps) {
   const [expanded, setExpanded] = useState(false);
   const productPath = `/product/${product.id}`;
-  const verifyPath = "/journal/how-we-check-authenticity";
 
   const follow = (event: React.MouseEvent<HTMLAnchorElement>) => {
     event.preventDefault();
     navigate(productPath);
-  };
-
-  const verify = (event: React.MouseEvent<HTMLAnchorElement>) => {
-    event.preventDefault();
-    navigate(verifyPath);
   };
 
   return (
@@ -95,15 +90,15 @@ export default function ProductCard({ product, navigate, addToCart, compact = fa
             {product.compareAt && <span>{formatPrice(product.compareAt)}</span>}
           </div>
           <div className="card-actions">
-            <a
+            <button
               className="outline-button card-action-button verify-button"
-              href={verifyPath}
-              onClick={verify}
-              aria-label={`Verify how ORAVÈ checks ${product.name}`}
+              type="button"
+              onClick={() => verifyProduct(product.id)}
+              aria-label={`Open authenticity verification for ${product.name}`}
             >
               <Icon name="shield" />
               <span className="action-label">Verify</span>
-            </a>
+            </button>
             <button
               className="solid-button card-action-button"
               type="button"

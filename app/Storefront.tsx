@@ -4,6 +4,7 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Icon } from "./Icon";
+import ProductVerificationModal, { PRODUCT_VERIFICATION_DRAWER_ID } from "./ProductVerificationModal";
 import {
   AccountPage,
   ArticleDetailPage,
@@ -48,6 +49,7 @@ export default function Storefront({
   const [searchQuery, setSearchQuery] = useState("");
   const [moreOpen, setMoreOpen] = useState(false);
   const [accountOpen, setAccountOpen] = useState(false);
+  const [verificationProductId, setVerificationProductId] = useState<string | null>(null);
   const [bottomVisible, setBottomVisible] = useState(path !== "/");
   const [showScrollTop, setShowScrollTop] = useState(false);
   const [toast, setToast] = useState("");
@@ -56,6 +58,33 @@ export default function Storefront({
   const headerRef = useRef<HTMLElement>(null);
   const bottomRef = useRef<HTMLElement>(null);
   const toastTimerRef = useRef<number | null>(null);
+  const verificationScrollTopRef = useRef(0);
+  const verificationTriggerRef = useRef<HTMLElement | null>(null);
+
+  const closeVerification = useCallback(() => {
+    const savedScrollTop = verificationScrollTopRef.current;
+    const trigger = verificationTriggerRef.current;
+    setVerificationProductId(null);
+    window.requestAnimationFrame(() => {
+      scrollRef.current?.scrollTo({ top: savedScrollTop, behavior: "instant" });
+      trigger?.focus({ preventScroll: true });
+      verificationTriggerRef.current = null;
+    });
+  }, []);
+
+  const verifyProduct = useCallback((productId: string) => {
+    if (!products.some((product) => product.id === productId)) return;
+    verificationScrollTopRef.current = scrollRef.current?.scrollTop ?? 0;
+    verificationTriggerRef.current = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+    setMenuOpen(false);
+    setSearchOpen(false);
+    setSearchActive(false);
+    setCartOpen(false);
+    setMoreOpen(false);
+    setAccountOpen(false);
+    setToast("");
+    setVerificationProductId(productId);
+  }, []);
 
   useEffect(() => {
     const timer = window.setTimeout(() => {
@@ -88,6 +117,7 @@ export default function Storefront({
       setCartOpen(false);
       setMoreOpen(false);
       setAccountOpen(false);
+      setVerificationProductId(null);
     };
     window.addEventListener("popstate", onPopState);
     return () => window.removeEventListener("popstate", onPopState);
@@ -95,7 +125,7 @@ export default function Storefront({
 
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
-      if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === "k") {
+      if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === "k" && !verificationProductId) {
         event.preventDefault();
         setMenuOpen(false);
         setMoreOpen(false);
@@ -105,6 +135,11 @@ export default function Storefront({
         window.setTimeout(() => searchInputRef.current?.focus(), 60);
       }
       if (event.key === "Escape") {
+        if (verificationProductId) {
+          event.preventDefault();
+          closeVerification();
+          return;
+        }
         setSearchOpen(false);
         setSearchActive(false);
         setCartOpen(false);
@@ -115,7 +150,7 @@ export default function Storefront({
     };
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
-  }, []);
+  }, [closeVerification, verificationProductId]);
 
   useEffect(() => {
     const onOutside = (event: MouseEvent) => {
@@ -175,6 +210,7 @@ export default function Storefront({
     setMenuOpen(false);
     setMoreOpen(false);
     setAccountOpen(false);
+    setVerificationProductId(null);
   }, [path]);
 
   const toggleTheme = () => {
@@ -210,6 +246,7 @@ export default function Storefront({
   };
 
   const cartLines = products.filter((product) => (cart[product.id] ?? 0) > 0).map((product) => ({ product, quantity: cart[product.id] }));
+  const verificationProduct = products.find((product) => product.id === verificationProductId) ?? null;
   const cartCount = cartLines.reduce((total, line) => total + line.quantity, 0);
   const cartTotal = cartLines.reduce((total, line) => total + line.product.price * line.quantity, 0);
   const searchResults = useMemo(() => {
@@ -224,13 +261,17 @@ export default function Storefront({
   }, [cartLines, cartTotal]);
 
   return (
-    <div className={`app-shell ${menuOpen ? "menu-open" : ""}`}>
+    <div className={`app-shell ${menuOpen ? "menu-open" : ""} ${verificationProduct ? "verification-open" : ""}`}>
       <header className="top-navbar" ref={headerRef}>
         <div className="nav-inner">
           <button
-            className={`nav-icon-button menu-toggle ${menuOpen ? "is-open" : ""}`}
+            className={`nav-icon-button menu-toggle ${menuOpen || verificationProduct ? "is-open" : ""}`}
             type="button"
             onClick={() => {
+              if (verificationProduct) {
+                closeVerification();
+                return;
+              }
               setMenuOpen((value) => !value);
               setCartOpen(false);
               setSearchOpen(false);
@@ -238,9 +279,9 @@ export default function Storefront({
               setMoreOpen(false);
               setAccountOpen(false);
             }}
-            aria-label={menuOpen ? "Close navigation menu" : "Open navigation menu"}
-            aria-expanded={menuOpen}
-            aria-controls="site-navigation-drawer"
+            aria-label={verificationProduct ? `Close authenticity verification for ${verificationProduct.name}` : menuOpen ? "Close navigation menu" : "Open navigation menu"}
+            aria-expanded={Boolean(menuOpen || verificationProduct)}
+            aria-controls={verificationProduct ? PRODUCT_VERIFICATION_DRAWER_ID : "site-navigation-drawer"}
           >
             <span className="menu-glyph" aria-hidden="true"><i /><i /><i /></span>
           </button>
@@ -262,6 +303,7 @@ export default function Storefront({
               <input
                 ref={searchInputRef}
                 value={searchQuery}
+                disabled={Boolean(verificationProduct)}
                 onChange={(event) => { setSearchQuery(event.target.value); setSearchActive(true); }}
                 onFocus={() => setSearchActive(true)}
                 placeholder="Search ORAVÈ products"
@@ -283,12 +325,12 @@ export default function Storefront({
               )}
             </div>
 
-            <button className="nav-icon-button mobile-search-button" type="button" onClick={() => { setSearchOpen((value) => !value); setCartOpen(false); setMenuOpen(false); window.setTimeout(() => searchInputRef.current?.focus(), 60); }} aria-label={searchOpen ? "Close search" : "Open search"}>
+            <button className="nav-icon-button mobile-search-button" type="button" disabled={Boolean(verificationProduct)} onClick={() => { setSearchOpen((value) => !value); setCartOpen(false); setMenuOpen(false); window.setTimeout(() => searchInputRef.current?.focus(), 60); }} aria-label={searchOpen ? "Close search" : "Open search"}>
               <Icon name={searchOpen ? "x" : "search"} />
             </button>
 
             <div className="cart-anchor">
-              <button className={`nav-icon-button bag-button ${cartOpen ? "is-active" : ""}`} type="button" onClick={() => { setCartOpen((value) => !value); setSearchOpen(false); setSearchActive(false); setMenuOpen(false); }} aria-label={`Shopping bag with ${cartCount} items`} aria-expanded={cartOpen}>
+              <button className={`nav-icon-button bag-button ${cartOpen ? "is-active" : ""}`} type="button" disabled={Boolean(verificationProduct)} onClick={() => { setCartOpen((value) => !value); setSearchOpen(false); setSearchActive(false); setMenuOpen(false); }} aria-label={`Shopping bag with ${cartCount} items`} aria-expanded={cartOpen}>
                 <Icon name="bag" /><span className="bag-label">Bag</span>{cartCount > 0 && <b>{cartCount}</b>}
               </button>
               {cartOpen && <CartPanel lines={cartLines} total={cartTotal} updateQuantity={updateQuantity} clear={() => setCart({})} orderMessage={orderMessage} navigate={navigate} />}
@@ -330,30 +372,36 @@ export default function Storefront({
         </aside>
       </div>
 
-      <div id="main-scroll-container" className="main-scroll-container" ref={scrollRef}>
-        <div className="content-wrapper"><main><PageRouter path={path} navigate={navigate} addToCart={addToCart} user={user} accountSignInPath={accountSignInPath} signOutPath={signOutPath} /></main></div>
+      {verificationProduct && <ProductVerificationModal product={verificationProduct} onClose={closeVerification} />}
+
+      <div id="main-scroll-container" className="main-scroll-container" ref={scrollRef} aria-hidden={Boolean(verificationProduct)} inert={Boolean(verificationProduct)}>
+        <div className="content-wrapper"><main><PageRouter path={path} navigate={navigate} addToCart={addToCart} verifyProduct={verifyProduct} user={user} accountSignInPath={accountSignInPath} signOutPath={signOutPath} /></main></div>
         <SiteFooter navigate={navigate} />
       </div>
 
-      <button className={`scroll-top-button ${showScrollTop ? "is-visible" : ""} ${bottomVisible ? "with-bottom-nav" : ""}`} type="button" onClick={() => scrollRef.current?.scrollTo({ top: 0, behavior: "smooth" })} aria-label="Scroll to top">
-        <Icon name="arrow-up" /><span>Top</span>
-      </button>
+      {!verificationProduct && (
+        <button className={`scroll-top-button ${showScrollTop ? "is-visible" : ""} ${bottomVisible ? "with-bottom-nav" : ""}`} type="button" onClick={() => scrollRef.current?.scrollTo({ top: 0, behavior: "smooth" })} aria-label="Scroll to top">
+          <Icon name="arrow-up" /><span>Top</span>
+        </button>
+      )}
 
-      <MobileBottomNav
-        path={path}
-        navigate={navigate}
-        visible={bottomVisible}
-        user={user}
-        accountOpen={accountOpen}
-        setAccountOpen={setAccountOpen}
-        moreOpen={moreOpen}
-        setMoreOpen={setMoreOpen}
-        mobileSignInPath={mobileSignInPath}
-        signOutPath={signOutPath}
-        bottomRef={bottomRef}
-      />
+      {!verificationProduct && (
+        <MobileBottomNav
+          path={path}
+          navigate={navigate}
+          visible={bottomVisible}
+          user={user}
+          accountOpen={accountOpen}
+          setAccountOpen={setAccountOpen}
+          moreOpen={moreOpen}
+          setMoreOpen={setMoreOpen}
+          mobileSignInPath={mobileSignInPath}
+          signOutPath={signOutPath}
+          bottomRef={bottomRef}
+        />
+      )}
 
-      <div className={`toast ${toast ? "is-visible" : ""}`} role="status"><Icon name="check" />{toast}</div>
+      {!verificationProduct && <div className={`toast ${toast ? "is-visible" : ""}`} role="status"><Icon name="check" />{toast}</div>}
     </div>
   );
 }
@@ -362,6 +410,7 @@ function PageRouter({
   path,
   navigate,
   addToCart,
+  verifyProduct,
   user,
   accountSignInPath,
   signOutPath,
@@ -369,11 +418,12 @@ function PageRouter({
   path: string;
   navigate: (path: string) => void;
   addToCart: (productId: string) => void;
+  verifyProduct: (productId: string) => void;
   user: ChatGPTUser | null;
   accountSignInPath: string;
   signOutPath: string;
 }) {
-  const shared = { navigate, addToCart };
+  const shared = { navigate, addToCart, verifyProduct };
   const shopRoute = shopCategories.find((category) => category.path === path);
   if (path === "/") return <HomePage {...shared} />;
   if (shopRoute) return <ShopPage {...shared} activeCategory={shopRoute.label} />;

@@ -37,6 +37,20 @@ export type Product = {
   benefits: string[];
   ingredients: string;
   usage: string;
+  verification: {
+    recordId: string;
+    batchNumber: string;
+    sourceRoute: string;
+    supplierDocument: string;
+    certificateId: string;
+    certificateType: string;
+    certificateStatus: string;
+    receivedDate: string;
+    verifiedDate: string;
+    bestBefore: string;
+    checks: string[];
+    note: string;
+  };
   featured?: boolean;
 };
 
@@ -65,6 +79,24 @@ export const products: Product[] = [
     benefits: ["Cleanses without stripping", "Supports a calm-feeling barrier", "Rinses without residue"],
     ingredients: "Amino-acid surfactants, panthenol, beta-glucan, glycerin",
     usage: "Massage one pump over damp skin for 30–45 seconds, then rinse with lukewarm water.",
+    verification: {
+      recordId: "ORV-KR-260714-01",
+      batchNumber: "DVA-KR-26K041",
+      sourceRoute: "Reviewed South Korean exporter → ORAVÈ online fulfilment, Dhaka",
+      supplierDocument: "Commercial invoice KR-0714 · packing list 04",
+      certificateId: "SAD-KR-DVA-260714",
+      certificateType: "Supplier authenticity declaration",
+      certificateStatus: "Reviewed and matched to this batch",
+      receivedDate: "14 Jul 2026",
+      verifiedDate: "15 Jul 2026",
+      bestBefore: "Apr 2029",
+      checks: [
+        "Supplier identity and invoice matched to the ordered cleanser",
+        "Pump collar, outer seal and printed lot code inspected on arrival",
+        "Volume, origin and label-print details compared with the source file",
+      ],
+      note: "This received batch passed ORAVÈ's document, packaging and condition review before being listed online.",
+    },
     featured: true,
   },
   {
@@ -91,6 +123,24 @@ export const products: Product[] = [
     benefits: ["Adds weightless hydration", "Softens the look of texture", "Layers without stickiness"],
     ingredients: "Fermented rice filtrate, glycerin, betaine, allantoin",
     usage: "After cleansing, press one or two layers into the face and neck with clean palms.",
+    verification: {
+      recordId: "ORV-JP-260709-02",
+      batchNumber: "RCTE-JP-6F18",
+      sourceRoute: "Reviewed Japanese supplier → ORAVÈ online fulfilment, Dhaka",
+      supplierDocument: "Supplier invoice JP-0709 · export carton record 18",
+      certificateId: "SAD-JP-RCTE-260709",
+      certificateType: "Supplier distribution and authenticity record",
+      certificateStatus: "Reviewed and matched to this batch",
+      receivedDate: "09 Jul 2026",
+      verifiedDate: "10 Jul 2026",
+      bestBefore: "May 2029",
+      checks: [
+        "Supplier item code and invoice quantity matched to the essence",
+        "Bottle cap, shrink seal and base lot marking inspected on arrival",
+        "Japanese label details and declared volume compared with the source file",
+      ],
+      note: "The bottle and shipping records for this batch were reviewed together before online availability was approved.",
+    },
     featured: true,
   },
   {
@@ -118,6 +168,24 @@ export const products: Product[] = [
     benefits: ["Boosts visible radiance", "Supports a more even-looking tone", "Layers under sunscreen"],
     ingredients: "15% vitamin C complex, vitamin E, ferulic acid, hyaluronic acid",
     usage: "Apply two to three drops to dry skin in the morning. Follow with moisturizer and broad-spectrum sunscreen.",
+    verification: {
+      recordId: "ORV-US-260706-01",
+      batchNumber: "CB15-US-26051",
+      sourceRoute: "Reviewed USA distributor → ORAVÈ online fulfilment, Dhaka",
+      supplierDocument: "Distributor invoice US-0706 · export packing record C15",
+      certificateId: "DAD-US-CB15-260706",
+      certificateType: "Distributor authenticity declaration",
+      certificateStatus: "Reviewed and matched to this batch",
+      receivedDate: "06 Jul 2026",
+      verifiedDate: "07 Jul 2026",
+      bestBefore: "Feb 2028",
+      checks: [
+        "Distributor account and item code matched to the serum order",
+        "Dropper seal, tamper ring and amber bottle condition inspected",
+        "Batch print and concentration label compared with the distributor file",
+      ],
+      note: "This serum batch cleared ORAVÈ's document match and arrival-condition check before listing.",
+    },
     featured: true,
   },
   {
@@ -144,6 +212,24 @@ export const products: Product[] = [
     benefits: ["Comforts dry skin", "Helps reinforce the moisture barrier", "Soft satin finish"],
     ingredients: "Ceramide complex, squalane, cholesterol, centella extract",
     usage: "Smooth a small amount over face and neck as the final moisturizer step, morning or evening.",
+    verification: {
+      recordId: "ORV-KR-260718-03",
+      batchNumber: "CSBC-KR-26H22",
+      sourceRoute: "Reviewed South Korean exporter → ORAVÈ online fulfilment, Dhaka",
+      supplierDocument: "Commercial invoice KR-0718 · carton manifest 22",
+      certificateId: "SAD-KR-CSBC-260718",
+      certificateType: "Supplier authenticity declaration",
+      certificateStatus: "Reviewed and matched to this batch",
+      receivedDate: "18 Jul 2026",
+      verifiedDate: "19 Jul 2026",
+      bestBefore: "Jun 2029",
+      checks: [
+        "Supplier invoice and cream item code matched to the import record",
+        "Jar liner, carton seal and base lot code inspected on arrival",
+        "Weight marking, origin line and packaging finish compared with the source file",
+      ],
+      note: "The jar, outer carton and supplier paperwork were reviewed as one batch-level record.",
+    },
     featured: true,
   },
   {
@@ -170,6 +256,24 @@ export const products: Product[] = [
     benefits: ["High everyday protection", "Quick-set natural finish", "Comfortable beneath makeup"],
     ingredients: "Modern UV filters, glycerin, green-tea extract, vitamin E",
     usage: "Apply generously as the final morning step, 15 minutes before sun exposure. Reapply as needed.",
+    verification: {
+      recordId: "ORV-JP-260721-01",
+      batchNumber: "WUV-JP-6G03",
+      sourceRoute: "Reviewed Japanese supplier → ORAVÈ online fulfilment, Dhaka",
+      supplierDocument: "Supplier invoice JP-0721 · export case record UV03",
+      certificateId: "SAD-JP-WUV-260721",
+      certificateType: "Supplier authenticity and distribution record",
+      certificateStatus: "Reviewed and matched to this batch",
+      receivedDate: "21 Jul 2026",
+      verifiedDate: "22 Jul 2026",
+      bestBefore: "Mar 2029",
+      checks: [
+        "Supplier account and sunscreen item code matched to the order",
+        "Cap seal, bottle print and base lot marking inspected on arrival",
+        "SPF label, declared volume and Japanese origin statement compared with the source file",
+      ],
+      note: "This sunscreen batch was released for online sale only after its source record and packaging checks aligned.",
+    },
     featured: true,
   },
   {
@@ -196,6 +300,24 @@ export const products: Product[] = [
     benefits: ["Buildable muted color", "Soft-focus satin finish", "Comfortable flexible wear"],
     ingredients: "Emollient esters, jojoba derivative, vitamin E, flexible color pigments",
     usage: "Apply to the center of the lips and blend outward, or layer evenly for fuller color.",
+    verification: {
+      recordId: "ORV-KR-260724-02",
+      batchNumber: "PVLT-KR-26C117",
+      sourceRoute: "Reviewed South Korean exporter → ORAVÈ online fulfilment, Dhaka",
+      supplierDocument: "Commercial invoice KR-0724 · shade manifest R17",
+      certificateId: "SAD-KR-PVLT-260724",
+      certificateType: "Supplier authenticity declaration",
+      certificateStatus: "Reviewed and matched to this shade batch",
+      receivedDate: "24 Jul 2026",
+      verifiedDate: "25 Jul 2026",
+      bestBefore: "May 2029",
+      checks: [
+        "Shade code, unit quantity and supplier invoice matched",
+        "Tube seal, applicator closure and base batch print inspected",
+        "Color-name label and South Korean origin marking compared with the source file",
+      ],
+      note: "The shade manifest is stored with this lot so the selected color can be traced to its reviewed supplier record.",
+    },
     featured: true,
   },
   {
@@ -222,6 +344,24 @@ export const products: Product[] = [
     benefits: ["Buildable coverage", "Skin-like satin finish", "Portable touch-ups"],
     ingredients: "Flexible film formers, niacinamide, humectants, mineral pigments",
     usage: "Press the puff lightly into the cushion and pat from the center of the face outward.",
+    verification: {
+      recordId: "ORV-KR-260726-01",
+      batchNumber: "SSC-KR-26S35",
+      sourceRoute: "Reviewed South Korean exporter → ORAVÈ online fulfilment, Dhaka",
+      supplierDocument: "Commercial invoice KR-0726 · shade and refill list S35",
+      certificateId: "SAD-KR-SSC-260726",
+      certificateType: "Supplier authenticity declaration",
+      certificateStatus: "Reviewed and matched to this shade batch",
+      receivedDate: "26 Jul 2026",
+      verifiedDate: "27 Jul 2026",
+      bestBefore: "Jun 2029",
+      checks: [
+        "Shade, refill format and supplier item code matched to the order",
+        "Compact clasp, inner foil and refill seal inspected on arrival",
+        "SPF, weight and base lot details compared with the source file",
+      ],
+      note: "This compact's shade and refill references were checked against the same supplier file before listing.",
+    },
   },
   {
     id: "camellia-melt-cleansing-balm",
@@ -247,6 +387,24 @@ export const products: Product[] = [
     benefits: ["Dissolves long-wear layers", "Emulsifies cleanly", "Soft, non-gritty texture"],
     ingredients: "Camellia oil, lightweight esters, rice-bran oil, vitamin E",
     usage: "Massage onto dry skin, add water to emulsify, then rinse. Follow with a water-based cleanser if desired.",
+    verification: {
+      recordId: "ORV-JP-260712-01",
+      batchNumber: "CMCB-JP-6B09",
+      sourceRoute: "Reviewed Japanese supplier → ORAVÈ online fulfilment, Dhaka",
+      supplierDocument: "Supplier invoice JP-0712 · export carton record B09",
+      certificateId: "SAD-JP-CMCB-260712",
+      certificateType: "Supplier distribution and authenticity record",
+      certificateStatus: "Reviewed and matched to this batch",
+      receivedDate: "12 Jul 2026",
+      verifiedDate: "13 Jul 2026",
+      bestBefore: "Apr 2029",
+      checks: [
+        "Supplier item code and balm quantity matched to the shipping record",
+        "Jar seal, lid fit and base lot marking inspected on arrival",
+        "Net weight, Japanese origin and label layout compared with the source file",
+      ],
+      note: "This balm lot passed a combined supplier-document, seal and packaging-condition review.",
+    },
   },
   {
     id: "glass-dew-mask-set",
@@ -272,6 +430,24 @@ export const products: Product[] = [
     benefits: ["Immediate moisture boost", "Soft cellulose fit", "Simple occasional treatment"],
     ingredients: "Glycerin, beta-glucan, panthenol, sodium hyaluronate",
     usage: "Apply to clean skin for 10–15 minutes. Remove and press in the remaining essence; do not rinse.",
+    verification: {
+      recordId: "ORV-CN-PRE-260729-01",
+      batchNumber: "GDMS-CN-2606A",
+      sourceRoute: "Reviewed Chinese supplier → scheduled ORAVÈ arrival review, Dhaka",
+      supplierDocument: "Pro-forma invoice CN-0729 · five-piece set packing list 6A",
+      certificateId: "SAD-CN-GDMS-260729",
+      certificateType: "Supplier authenticity declaration",
+      certificateStatus: "Source file reviewed · arrival check pending",
+      receivedDate: "Expected Aug 2026",
+      verifiedDate: "Source review completed 29 Jul 2026",
+      bestBefore: "To be confirmed on arrival",
+      checks: [
+        "Supplier identity, set configuration and pro-forma invoice matched",
+        "Five-sachet pack code and export packing details reviewed",
+        "Sachet seals, printed lot and physical condition will be checked before relisting",
+      ],
+      note: "This incoming batch is not yet available. ORAVÈ will complete the physical arrival inspection before accepting online orders.",
+    },
   },
 ];
 

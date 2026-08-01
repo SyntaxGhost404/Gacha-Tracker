@@ -20,6 +20,7 @@ import {
 type SharedPageProps = {
   navigate: (path: string) => void;
   addToCart: (productId: string) => void;
+  verifyProduct: (productId: string) => void;
 };
 
 function InternalLink({
@@ -271,7 +272,7 @@ const categories = shopCategories.map((category) => category.label);
 const origins = ["All", "South Korea", "Japan", "USA", "China"];
 const skinTypes = ["All", "Sensitive", "Dry", "Combination", "Dehydrated", "All skin"];
 
-export function ShopPage({ navigate, addToCart, activeCategory }: SharedPageProps & { activeCategory: ShopCategory }) {
+export function ShopPage({ navigate, addToCart, verifyProduct, activeCategory }: SharedPageProps & { activeCategory: ShopCategory }) {
   const [query, setQuery] = useState("");
   const [origin, setOrigin] = useState("All");
   const [skinType, setSkinType] = useState("All");
@@ -415,13 +416,13 @@ export function ShopPage({ navigate, addToCart, activeCategory }: SharedPageProp
             {available.length > 0 && (
               <section className="result-section">
                 <SectionHeader title="Available now" count={available.length} />
-                <div className={`product-list ${viewMode === "compact" ? "is-compact" : "is-standard"}`}>{available.map((product) => <ProductCard key={product.id} product={product} navigate={navigate} addToCart={addToCart} compact={viewMode === "compact"} />)}</div>
+                <div className={`product-list ${viewMode === "compact" ? "is-compact" : "is-standard"}`}>{available.map((product) => <ProductCard key={product.id} product={product} navigate={navigate} addToCart={addToCart} verifyProduct={verifyProduct} compact={viewMode === "compact"} />)}</div>
               </section>
             )}
             {restocking.length > 0 && (
               <section className="result-section">
                 <SectionHeader title="Returning soon" count={restocking.length} />
-                <div className={`product-list ${viewMode === "compact" ? "is-compact" : "is-standard"}`}>{restocking.map((product) => <ProductCard key={product.id} product={product} navigate={navigate} addToCart={addToCart} compact={viewMode === "compact"} />)}</div>
+                <div className={`product-list ${viewMode === "compact" ? "is-compact" : "is-standard"}`}>{restocking.map((product) => <ProductCard key={product.id} product={product} navigate={navigate} addToCart={addToCart} verifyProduct={verifyProduct} compact={viewMode === "compact"} />)}</div>
               </section>
             )}
           </>
@@ -453,7 +454,7 @@ function EmptyState({ title, copy, action, onAction }: { title: string; copy: st
   );
 }
 
-export function BestSellersPage({ navigate, addToCart }: SharedPageProps) {
+export function BestSellersPage({ navigate, addToCart, verifyProduct }: SharedPageProps) {
   const bestSellers = products.filter((product) => product.status === "Bestseller");
   return (
     <div className="route-page standard-route">
@@ -467,7 +468,7 @@ export function BestSellersPage({ navigate, addToCart }: SharedPageProps) {
         </div>
         <section className="result-section">
           <SectionHeader title="Most loved" count={bestSellers.length} />
-          <div className="product-list">{bestSellers.map((product) => <ProductCard key={product.id} product={product} navigate={navigate} addToCart={addToCart} />)}</div>
+          <div className="product-list">{bestSellers.map((product) => <ProductCard key={product.id} product={product} navigate={navigate} addToCart={addToCart} verifyProduct={verifyProduct} />)}</div>
         </section>
       </div>
     </div>
