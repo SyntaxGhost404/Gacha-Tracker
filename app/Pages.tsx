@@ -205,7 +205,159 @@ function HeroProductCarousel({ items, navigate }: { items: Product[]; navigate: 
   );
 }
 
-export function HomePage({ navigate }: SharedPageProps) {
+const SHOW_LEGACY_HOME_SECTIONS = false;
+const HOME_CATEGORY_CARDS_MINIMUM = 6;
+const homeCategoryDefinitions = shopCategories.filter((category) => category.label !== "All Products");
+const categoryPreviewSteps: { icon: IconName; title: string; copy: string; badge: string }[] = [
+  { icon: "shield", title: "Authenticity review", copy: "Supplier and origin records are being reviewed before anything is listed online.", badge: "In review" },
+  { icon: "truck", title: "Arrival planning", copy: "The next import is being prepared for Bangladesh-wide home delivery.", badge: "Coming online" },
+  { icon: "sparkles", title: "Collection in progress", copy: "A focused edit is being assembled for this category without rushing the selection.", badge: "Curating" },
+];
+
+function CategoryPreviewCard({
+  category,
+  navigate,
+  variant,
+}: {
+  category: (typeof homeCategoryDefinitions)[number];
+  navigate: (path: string) => void;
+  variant: number;
+}) {
+  const preview = categoryPreviewSteps[variant % categoryPreviewSteps.length];
+
+  return (
+    <article className="product-card is-compact category-preview-card">
+      <div className="product-cover category-preview-cover">
+        <span className="category-preview-icon"><Icon name={preview.icon} /></span>
+        <span className="cover-badge">{preview.badge}</span>
+        <span className="cover-badge cover-origin">Online only</span>
+        <span className="cover-shade" />
+      </div>
+      <div className="product-card-body">
+        <div className="identity-copy">
+          <h3>{preview.title}</h3>
+          <span className="identity-subline">ORAVÈ category preview</span>
+        </div>
+        <div className="tag-row"><span className="tag tag-accent">{category.label}</span></div>
+        <p className="category-preview-copy">{preview.copy}</p>
+        <InternalLink href={category.path} navigate={navigate} className="outline-button category-preview-link">
+          Explore category <Icon name="arrow-right" />
+        </InternalLink>
+      </div>
+    </article>
+  );
+}
+
+function CategoryMarquee({
+  category,
+  items,
+  sectionIndex,
+  navigate,
+  addToCart,
+  verifyProduct,
+}: SharedPageProps & {
+  category: (typeof homeCategoryDefinitions)[number];
+  items: Product[];
+  sectionIndex: number;
+}) {
+  const [touchPaused, setTouchPaused] = useState(false);
+  const sourceCount = items.length || categoryPreviewSteps.length;
+  const loopLength = Math.max(
+    HOME_CATEGORY_CARDS_MINIMUM,
+    Math.ceil(HOME_CATEGORY_CARDS_MINIMUM / sourceCount) * sourceCount,
+  );
+  const loopItems = Array.from({ length: loopLength }, (_, index) => items.length ? items[index % items.length] : null);
+  const accessibleCount = items.length || categoryPreviewSteps.length;
+
+  useEffect(() => {
+    if (!touchPaused) return;
+    const resume = () => setTouchPaused(false);
+    window.addEventListener("pointerup", resume, { passive: true });
+    window.addEventListener("pointercancel", resume, { passive: true });
+    return () => {
+      window.removeEventListener("pointerup", resume);
+      window.removeEventListener("pointercancel", resume);
+    };
+  }, [touchPaused]);
+
+  const renderCard = (product: Product | null, itemIndex: number, groupIndex: number) => {
+    const visualClone = groupIndex > 0 || itemIndex >= accessibleCount;
+    return (
+      <div
+        className="category-marquee-card"
+        key={`${groupIndex}-${product?.id ?? "preview"}-${itemIndex}`}
+        aria-hidden={visualClone}
+        inert={visualClone}
+      >
+        {product ? (
+          <ProductCard
+            product={product}
+            navigate={navigate}
+            addToCart={addToCart}
+            verifyProduct={verifyProduct}
+            compact
+          />
+        ) : (
+          <CategoryPreviewCard category={category} navigate={navigate} variant={itemIndex} />
+        )}
+      </div>
+    );
+  };
+
+  return (
+    <section className="home-category-section" aria-label={`${category.label} products`}>
+      <SectionHeader
+        title={category.label}
+        count={items.length || undefined}
+        action={<InternalLink href={category.path} navigate={navigate} className="view-all-link">View category <Icon name="arrow-right" /></InternalLink>}
+      />
+      <div
+        className={`category-marquee ${touchPaused ? "is-paused" : ""}`}
+        aria-label={`${category.label} continuously moving product carousel`}
+        onPointerDown={(event) => {
+          if (event.pointerType !== "mouse") setTouchPaused(true);
+        }}
+        style={{
+          "--category-marquee-duration": `${loopLength * 7.5}s`,
+          "--category-marquee-delay": `${sectionIndex * -3.75}s`,
+        } as React.CSSProperties}
+      >
+        <div className="category-marquee-track">
+          {[0, 1].map((groupIndex) => (
+            <div className="category-marquee-group" key={groupIndex} aria-hidden={groupIndex > 0} inert={groupIndex > 0}>
+              {loopItems.map((product, itemIndex) => renderCard(product, itemIndex, groupIndex))}
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function LegacyHomeSections({ featured, navigate }: { featured: Product[]; navigate: (path: string) => void }) {
+  return (
+    <div className="legacy-home-sections">
+      <SectionHeader
+        title="From the beauty journal"
+        action={<InternalLink href="/journal" navigate={navigate} className="view-all-link">View all <Icon name="arrow-right" /></InternalLink>}
+      />
+      <div className="journal-list home-journal-list">
+        {journalEntries.map((entry) => <JournalCard key={entry.id} entry={entry} navigate={navigate} compact />)}
+      </div>
+
+      <SectionHeader
+        title="The current edit"
+        count={featured.length}
+        action={<InternalLink href="/shop" navigate={navigate} className="view-all-link">Shop all <Icon name="arrow-right" /></InternalLink>}
+      />
+      <div className="featured-ribbon-list">
+        {featured.map((product) => <ProductRibbon key={product.id} product={product} navigate={navigate} />)}
+      </div>
+    </div>
+  );
+}
+
+export function HomePage({ navigate, addToCart, verifyProduct }: SharedPageProps) {
   const featured = products.filter((product) => product.featured).slice(0, 8);
   const heroProducts = featured.slice(0, 6);
 
@@ -238,30 +390,20 @@ export function HomePage({ navigate }: SharedPageProps) {
       </section>
 
       <div className="standard-content home-content">
-        <SectionHeader
-          title="From the beauty journal"
-          action={<InternalLink href="/journal" navigate={navigate} className="view-all-link">View all <Icon name="arrow-right" /></InternalLink>}
-        />
-        <div className="journal-list home-journal-list">
-          {journalEntries.map((entry) => <JournalCard key={entry.id} entry={entry} navigate={navigate} compact />)}
-        </div>
+        {SHOW_LEGACY_HOME_SECTIONS && <LegacyHomeSections featured={featured} navigate={navigate} />}
 
-        <SectionHeader
-          title="The current edit"
-          count={featured.length}
-          action={<InternalLink href="/shop" navigate={navigate} className="view-all-link">Shop all <Icon name="arrow-right" /></InternalLink>}
-        />
-        <div className="featured-ribbon-list">
-          {featured.map((product) => <ProductRibbon key={product.id} product={product} navigate={navigate} />)}
-        </div>
-
-        <div className="home-contact-note">
-          <span className="note-icon"><Icon name="sparkles" /></span>
-          <div>
-            <strong>Not sure where to begin?</strong>
-            <p>Tell us about your routine and preferences. We will help you narrow the edit without overcomplicating it.</p>
-          </div>
-          <InternalLink href="/contact" navigate={navigate} className="quiet-button">Ask ORAVÈ</InternalLink>
+        <div className="home-category-directory">
+          {homeCategoryDefinitions.map((category, sectionIndex) => (
+            <CategoryMarquee
+              key={category.path}
+              category={category}
+              items={products.filter((product) => product.shopCategory === category.label)}
+              sectionIndex={sectionIndex}
+              navigate={navigate}
+              addToCart={addToCart}
+              verifyProduct={verifyProduct}
+            />
+          ))}
         </div>
       </div>
     </div>

@@ -572,6 +572,57 @@ html[data-theme="dark"] .home-hero-shade {
 .hero-carousel-dots button { width: .38rem; height: .38rem; padding: 0; border: 0; border-radius: 50%; background: color-mix(in srgb, var(--global-text-muted) 35%, transparent); cursor: pointer; transition: width .25s ease, border-radius .25s ease, background .25s ease; }
 .hero-carousel-dots button.is-active { width: 1rem; border-radius: .2rem; background: var(--primary-accent); }
 .home-content { width: min(calc(100% - (var(--page-gutter) + var(--page-gutter))), var(--content-home)); padding: clamp(1.75rem, 4vw, 3rem) 0; }
+.home-category-directory { min-width: 0; display: flex; flex-direction: column; }
+.home-category-section { min-width: 0; }
+.home-category-section + .home-category-section { margin-top: clamp(2.4rem, 5vw, 4rem); }
+.home-category-section .section-header { margin-bottom: .8rem; }
+.category-marquee {
+  --category-card-width: clamp(11.75rem, 18vw, 13.5rem);
+  --category-card-height: clamp(18.75rem, 27vw, 20rem);
+  position: relative;
+  min-width: 0;
+  width: 100%;
+  overflow: hidden;
+  touch-action: pan-y;
+  -webkit-mask-image: linear-gradient(to right, transparent 0, #000 1.4rem, #000 calc(100% - 1.4rem), transparent 100%);
+  mask-image: linear-gradient(to right, transparent 0, #000 1.4rem, #000 calc(100% - 1.4rem), transparent 100%);
+}
+.category-marquee-track {
+  width: max-content;
+  display: flex;
+  animation: category-marquee-scroll var(--category-marquee-duration, 45s) linear infinite;
+  animation-delay: var(--category-marquee-delay, 0s);
+  will-change: transform;
+}
+.category-marquee.is-paused .category-marquee-track { animation-play-state: paused; }
+@media (hover: hover) and (pointer: fine) {
+  .category-marquee:hover .category-marquee-track,
+  .category-marquee:focus-within .category-marquee-track { animation-play-state: paused; }
+}
+.category-marquee-group { display: flex; align-items: stretch; gap: .65rem; padding-right: .65rem; }
+.category-marquee-card { width: var(--category-card-width); height: var(--category-card-height); flex: 0 0 var(--category-card-width); display: flex; }
+.category-marquee-card > .product-card { height: 100%; }
+.category-marquee .product-card.is-compact { animation: none; }
+.category-preview-card { cursor: default; }
+.category-preview-cover {
+  isolation: isolate;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background:
+    radial-gradient(circle at 70% 24%, color-mix(in srgb, var(--primary-accent) 26%, transparent), transparent 30%),
+    linear-gradient(145deg, color-mix(in srgb, var(--global-secondary-bg) 82%, var(--global-card-bg)), color-mix(in srgb, var(--primary-accent-bg) 65%, var(--global-card-bg)));
+}
+.category-preview-cover::before { content: ""; position: absolute; inset: 12% 15%; border: 1px solid color-mix(in srgb, var(--primary-accent) 20%, var(--global-border)); transform: rotate(-5deg); }
+.category-preview-icon { position: relative; z-index: 1; width: 3.5rem; height: 3.5rem; border: 1px solid color-mix(in srgb, var(--primary-accent) 34%, var(--global-border)); border-radius: var(--global-border-radius); background: color-mix(in srgb, var(--global-card-bg) 78%, transparent); color: var(--primary-accent); box-shadow: 0 10px 24px var(--global-shadow); display: flex; align-items: center; justify-content: center; transform: rotate(5deg); }
+.category-preview-icon svg { width: 1.45rem; }
+.category-preview-card .identity-copy h3 { margin: 0; overflow: hidden; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; font-family: Georgia, "Times New Roman", serif; font-size: .9rem; font-weight: 600; line-height: 1.2; }
+.category-preview-card .tag-accent { max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.category-preview-copy { margin: 0; overflow: hidden; color: var(--global-text-muted); display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 3; font-size: .64rem; line-height: 1.5; }
+.category-preview-link { width: 100%; min-height: 2.25rem; margin-top: auto; padding: .45rem .55rem; font-size: .64rem; }
+.category-preview-link svg { width: .72rem; }
+
+@keyframes category-marquee-scroll { from { transform: translate3d(0, 0, 0); } to { transform: translate3d(-50%, 0, 0); } }
 
 .solid-button, .outline-button, .quiet-button {
   border-radius: var(--global-border-radius);
@@ -990,6 +1041,13 @@ html[data-theme="dark"] .home-hero-shade {
 }
 
 @media (max-width: 768px) {
+  .category-marquee {
+    --category-card-width: clamp(10.5rem, 45vw, 11.5rem);
+    --category-card-height: clamp(17.5rem, 74vw, 18.75rem);
+    -webkit-mask-image: linear-gradient(to right, transparent 0, #000 .65rem, #000 calc(100% - .65rem), transparent 100%);
+    mask-image: linear-gradient(to right, transparent 0, #000 .65rem, #000 calc(100% - .65rem), transparent 100%);
+  }
+  .home-category-section + .home-category-section { margin-top: 2.5rem; }
   .verification-overlay { inset: 3.5rem 0 0; padding: 0; background: var(--global-primary-bg); backdrop-filter: none; -webkit-backdrop-filter: none; align-items: stretch; }
   .verification-dialog { width: 100%; height: 100%; max-height: none; border: 0; border-radius: 0; box-shadow: none; display: block; overflow-x: hidden; overflow-y: auto; overscroll-behavior: contain; -webkit-overflow-scrolling: touch; animation-name: verification-mobile-enter; }
   .verification-product-panel { overflow: visible; border-right: 0; }
@@ -1116,6 +1174,8 @@ html[data-theme="dark"] .home-hero-shade {
   .hero-carousel-heading { min-height: 2.2rem; padding-bottom: .45rem; }
   .hero-carousel-media { height: 8.75rem; }
   .hero-carousel-body { padding: .65rem .7rem .7rem; }
+  .category-marquee-group { gap: .5rem; padding-right: .5rem; }
+  .category-preview-copy { font-size: .6rem; }
   .journal-image-link { height: 8.5rem; }
   .journal-card.is-compact .journal-image-link { height: 8rem; }
   .product-cover { height: 8rem; }
@@ -1185,4 +1245,13 @@ html[data-theme="dark"] .home-hero-shade {
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
+  .category-marquee {
+    overflow-x: auto;
+    -webkit-mask-image: none;
+    mask-image: none;
+    scrollbar-width: none;
+  }
+  .category-marquee::-webkit-scrollbar { display: none; }
+  .category-marquee-track { animation: none !important; }
+  .category-marquee-group:nth-child(2) { display: none; }
 }
