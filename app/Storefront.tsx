@@ -5,6 +5,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Icon } from "./Icon";
 import {
+  AccountPage,
   ArticleDetailPage,
   BestSellersPage,
   ContactPage,
@@ -15,6 +16,7 @@ import {
   ShopPage,
   StoryPage,
 } from "./Pages";
+import type { ChatGPTUser } from "./chatgpt-auth";
 import { formatPrice, products, shopCategories } from "./data";
 
 type CartState = Record<string, number>;
@@ -22,7 +24,19 @@ type CartState = Record<string, number>;
 const CART_KEY = "hb-cart-v1";
 const THEME_KEY = "hb-theme";
 
-export default function Storefront({ initialPath }: { initialPath: string }) {
+export default function Storefront({
+  initialPath,
+  user,
+  accountSignInPath,
+  mobileSignInPath,
+  signOutPath,
+}: {
+  initialPath: string;
+  user: ChatGPTUser | null;
+  accountSignInPath: string;
+  mobileSignInPath: string;
+  signOutPath: string;
+}) {
   const [path, setPath] = useState(initialPath || "/");
   const [theme, setTheme] = useState<"light" | "dark">("light");
   const [cart, setCart] = useState<CartState>({});
@@ -33,6 +47,7 @@ export default function Storefront({ initialPath }: { initialPath: string }) {
   const [searchActive, setSearchActive] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [moreOpen, setMoreOpen] = useState(false);
+  const [accountOpen, setAccountOpen] = useState(false);
   const [bottomVisible, setBottomVisible] = useState(path !== "/");
   const [showScrollTop, setShowScrollTop] = useState(false);
   const [toast, setToast] = useState("");
@@ -72,6 +87,7 @@ export default function Storefront({ initialPath }: { initialPath: string }) {
       setSearchActive(false);
       setCartOpen(false);
       setMoreOpen(false);
+      setAccountOpen(false);
     };
     window.addEventListener("popstate", onPopState);
     return () => window.removeEventListener("popstate", onPopState);
@@ -82,6 +98,8 @@ export default function Storefront({ initialPath }: { initialPath: string }) {
       if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === "k") {
         event.preventDefault();
         setMenuOpen(false);
+        setMoreOpen(false);
+        setAccountOpen(false);
         setSearchOpen(true);
         setSearchActive(true);
         window.setTimeout(() => searchInputRef.current?.focus(), 60);
@@ -92,6 +110,7 @@ export default function Storefront({ initialPath }: { initialPath: string }) {
         setCartOpen(false);
         setMenuOpen(false);
         setMoreOpen(false);
+        setAccountOpen(false);
       }
     };
     window.addEventListener("keydown", onKeyDown);
@@ -105,7 +124,10 @@ export default function Storefront({ initialPath }: { initialPath: string }) {
         setSearchActive(false);
         setCartOpen(false);
       }
-      if (bottomRef.current && !bottomRef.current.contains(target)) setMoreOpen(false);
+      if (bottomRef.current && !bottomRef.current.contains(target)) {
+        setMoreOpen(false);
+        setAccountOpen(false);
+      }
     };
     document.addEventListener("mousedown", onOutside);
     return () => document.removeEventListener("mousedown", onOutside);
@@ -120,6 +142,7 @@ export default function Storefront({ initialPath }: { initialPath: string }) {
     const onScroll = () => {
       const current = container.scrollTop;
       setMoreOpen(false);
+      setAccountOpen(false);
       setShowScrollTop(current > 300);
       if (current <= 40) {
         setBottomVisible(path !== "/");
@@ -151,6 +174,7 @@ export default function Storefront({ initialPath }: { initialPath: string }) {
     setCartOpen(false);
     setMenuOpen(false);
     setMoreOpen(false);
+    setAccountOpen(false);
   }, [path]);
 
   const toggleTheme = () => {
@@ -212,6 +236,7 @@ export default function Storefront({ initialPath }: { initialPath: string }) {
               setSearchOpen(false);
               setSearchActive(false);
               setMoreOpen(false);
+              setAccountOpen(false);
             }}
             aria-label={menuOpen ? "Close navigation menu" : "Open navigation menu"}
             aria-expanded={menuOpen}
@@ -228,7 +253,7 @@ export default function Storefront({ initialPath }: { initialPath: string }) {
             <NavItem href="/" label="Home" path={path} navigate={navigate} />
             <NavItem href="/shop" label="Online Shop" path={path} navigate={navigate} />
             <NavItem href="/best-sellers" label="Best Sellers" path={path} navigate={navigate} />
-            <NavItem href="/journal" label="Journal" path={path} navigate={navigate} />
+            <NavItem href="/account" label="Account" path={path} navigate={navigate} />
           </nav>
 
           <div className="nav-actions">
@@ -306,7 +331,7 @@ export default function Storefront({ initialPath }: { initialPath: string }) {
       </div>
 
       <div id="main-scroll-container" className="main-scroll-container" ref={scrollRef}>
-        <div className="content-wrapper"><main><PageRouter path={path} navigate={navigate} addToCart={addToCart} /></main></div>
+        <div className="content-wrapper"><main><PageRouter path={path} navigate={navigate} addToCart={addToCart} user={user} accountSignInPath={accountSignInPath} signOutPath={signOutPath} /></main></div>
         <SiteFooter navigate={navigate} />
       </div>
 
@@ -314,19 +339,52 @@ export default function Storefront({ initialPath }: { initialPath: string }) {
         <Icon name="arrow-up" /><span>Top</span>
       </button>
 
-      <MobileBottomNav path={path} navigate={navigate} visible={bottomVisible} moreOpen={moreOpen} setMoreOpen={setMoreOpen} bottomRef={bottomRef} />
+      <MobileBottomNav
+        path={path}
+        navigate={navigate}
+        visible={bottomVisible}
+        user={user}
+        accountOpen={accountOpen}
+        setAccountOpen={setAccountOpen}
+        moreOpen={moreOpen}
+        setMoreOpen={setMoreOpen}
+        mobileSignInPath={mobileSignInPath}
+        signOutPath={signOutPath}
+        bottomRef={bottomRef}
+      />
 
       <div className={`toast ${toast ? "is-visible" : ""}`} role="status"><Icon name="check" />{toast}</div>
     </div>
   );
 }
 
-function PageRouter({ path, navigate, addToCart }: { path: string; navigate: (path: string) => void; addToCart: (productId: string) => void }) {
+function PageRouter({
+  path,
+  navigate,
+  addToCart,
+  user,
+  accountSignInPath,
+  signOutPath,
+}: {
+  path: string;
+  navigate: (path: string) => void;
+  addToCart: (productId: string) => void;
+  user: ChatGPTUser | null;
+  accountSignInPath: string;
+  signOutPath: string;
+}) {
   const shared = { navigate, addToCart };
   const shopRoute = shopCategories.find((category) => category.path === path);
   if (path === "/") return <HomePage {...shared} />;
   if (shopRoute) return <ShopPage {...shared} activeCategory={shopRoute.label} />;
   if (path === "/best-sellers") return <BestSellersPage {...shared} />;
+  if (path === "/account" || path.startsWith("/account/")) {
+    const section = path === "/account" ? undefined : path.slice("/account/".length);
+    const accountSection = ["orders", "wishlist", "history", "edit-profile"].includes(section ?? "")
+      ? section as "orders" | "wishlist" | "history" | "edit-profile"
+      : undefined;
+    return <AccountPage navigate={navigate} user={user} section={accountSection} accountSignInPath={accountSignInPath} signOutPath={signOutPath} />;
+  }
   if (path === "/journal") return <JournalPage {...shared} />;
   if (path.startsWith("/journal/")) return <ArticleDetailPage {...shared} articleId={decodeURIComponent(path.slice("/journal/".length))} />;
   if (path.startsWith("/product/")) return <ProductDetailPage {...shared} productId={decodeURIComponent(path.slice("/product/".length))} />;
@@ -399,33 +457,96 @@ function MobileBottomNav({
   path,
   navigate,
   visible,
+  user,
+  accountOpen,
+  setAccountOpen,
   moreOpen,
   setMoreOpen,
+  mobileSignInPath,
+  signOutPath,
   bottomRef,
 }: {
   path: string;
   navigate: (path: string) => void;
   visible: boolean;
+  user: ChatGPTUser | null;
+  accountOpen: boolean;
+  setAccountOpen: (open: boolean) => void;
   moreOpen: boolean;
   setMoreOpen: (open: boolean) => void;
+  mobileSignInPath: string;
+  signOutPath: string;
   bottomRef: React.RefObject<HTMLElement | null>;
 }) {
-  const moreActive = path === "/best-sellers" || path === "/our-story" || path === "/contact" || moreOpen;
+  const moreActive = path.startsWith("/journal") || path === "/best-sellers" || path === "/our-story" || path === "/contact" || moreOpen;
   return (
     <nav className={`mobile-bottom-nav ${visible ? "is-visible" : ""}`} ref={bottomRef} aria-label="Mobile navigation">
       <BottomButton icon="home" label="Home" active={path === "/"} onClick={() => navigate("/")} />
       <BottomButton icon="shop" label="Shop" active={path.startsWith("/shop") || path.startsWith("/product/")} onClick={() => navigate("/shop")} />
-      <BottomButton icon="journal" label="Journal" active={path.startsWith("/journal")} onClick={() => navigate("/journal")} />
-      <BottomButton icon="more" label="More" active={moreActive} onClick={() => setMoreOpen(!moreOpen)} />
-      <div className={`mobile-more-menu ${moreOpen ? "is-visible" : ""}`}>
-        <button type="button" className={path === "/best-sellers" ? "is-active" : ""} onClick={() => navigate("/best-sellers")}><Icon name="heart" /> Best sellers</button>
-        <button type="button" className={path === "/our-story" ? "is-active" : ""} onClick={() => navigate("/our-story")}><Icon name="shield" /> Our promise</button>
-        <button type="button" className={path === "/contact" ? "is-active" : ""} onClick={() => navigate("/contact")}><Icon name="mail" /> Contact us</button>
+      <BottomButton
+        icon="user"
+        label="Account"
+        active={path.startsWith("/account") || accountOpen}
+        onClick={() => {
+          setAccountOpen(!accountOpen);
+          setMoreOpen(false);
+        }}
+        expanded={accountOpen}
+        controls="mobile-account-menu"
+      />
+      <BottomButton
+        icon="more"
+        label="More"
+        active={moreActive}
+        onClick={() => {
+          setMoreOpen(!moreOpen);
+          setAccountOpen(false);
+        }}
+        expanded={moreOpen}
+        controls="mobile-more-menu"
+      />
+      <div id="mobile-account-menu" className={`mobile-nav-popover mobile-account-menu ${accountOpen ? "is-visible" : ""}`} role="menu" aria-hidden={!accountOpen}>
+        {user ? (
+          <>
+            <div className="mobile-account-identity" aria-label={`Signed in as ${user.displayName}`}>
+              <span><Icon name="user" /></span>
+              <strong>{user.displayName}</strong>
+            </div>
+            <div className="mobile-popover-divider" />
+            <button type="button" role="menuitem" onClick={() => navigate("/account/edit-profile")}><Icon name="edit" /> Edit Profile</button>
+            <button type="button" role="menuitem" onClick={() => navigate("/account/orders")}><Icon name="bag" /> Orders</button>
+            <button type="button" role="menuitem" onClick={() => navigate("/account/wishlist")}><Icon name="heart" /> Wishlist</button>
+            <button type="button" role="menuitem" onClick={() => navigate("/account/history")}><Icon name="clock" /> History</button>
+            <a href={signOutPath} role="menuitem" className="mobile-account-logout"><Icon name="logout" /> Logout</a>
+          </>
+        ) : (
+          <a href={mobileSignInPath} role="menuitem" className="mobile-login-link"><Icon name="user" /> Login / Register</a>
+        )}
+      </div>
+      <div id="mobile-more-menu" className={`mobile-nav-popover mobile-more-menu ${moreOpen ? "is-visible" : ""}`} role="menu" aria-hidden={!moreOpen}>
+        <button type="button" role="menuitem" className={path.startsWith("/journal") ? "is-active" : ""} onClick={() => navigate("/journal")}><Icon name="journal" /> Beauty journal</button>
+        <button type="button" role="menuitem" className={path === "/best-sellers" ? "is-active" : ""} onClick={() => navigate("/best-sellers")}><Icon name="heart" /> Best sellers</button>
+        <button type="button" role="menuitem" className={path === "/our-story" ? "is-active" : ""} onClick={() => navigate("/our-story")}><Icon name="shield" /> Our promise</button>
+        <button type="button" role="menuitem" className={path === "/contact" ? "is-active" : ""} onClick={() => navigate("/contact")}><Icon name="mail" /> Contact us</button>
       </div>
     </nav>
   );
 }
 
-function BottomButton({ icon, label, active, onClick }: { icon: "home" | "shop" | "journal" | "more"; label: string; active: boolean; onClick: () => void }) {
-  return <button type="button" className={active ? "is-active" : ""} onClick={onClick}><Icon name={icon} /><span>{label}</span></button>;
+function BottomButton({
+  icon,
+  label,
+  active,
+  onClick,
+  expanded,
+  controls,
+}: {
+  icon: "home" | "shop" | "user" | "more";
+  label: string;
+  active: boolean;
+  onClick: () => void;
+  expanded?: boolean;
+  controls?: string;
+}) {
+  return <button type="button" className={active ? "is-active" : ""} onClick={onClick} aria-expanded={expanded} aria-controls={controls}><Icon name={icon} /><span>{label}</span></button>;
 }
