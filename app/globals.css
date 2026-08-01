@@ -588,7 +588,11 @@ html[data-theme="dark"] .home-hero-shade {
 .price-wrap { display: flex; align-items: baseline; gap: .45rem; }
 .price-wrap strong { font-family: Georgia, "Times New Roman", serif; font-size: 1.08rem; }
 .price-wrap span { color: var(--global-text-muted); font-size: .68rem; text-decoration: line-through; }
-.card-actions { display: flex; align-items: center; gap: .4rem; }
+.card-actions { width: min(100%, 13.5rem); display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: stretch; gap: .4rem; }
+.card-action-button { position: relative; width: 100%; min-width: 0; height: 2.3rem; min-height: 2.3rem; padding: .5rem .65rem; box-sizing: border-box; white-space: nowrap; }
+.card-action-button svg { flex: 0 0 auto; }
+.verify-button { border-color: color-mix(in srgb, var(--primary-accent) 34%, var(--global-border)); color: var(--primary-accent); }
+.verify-button:hover { border-color: var(--primary-accent); background: var(--primary-accent-bg); color: var(--primary-accent-strong); }
 
 .product-card.is-compact .product-cover { height: 8rem; }
 .product-card.is-compact .product-card-body { padding: .7rem; gap: .48rem; }
@@ -607,8 +611,9 @@ html[data-theme="dark"] .home-hero-shade {
 .product-card.is-compact .price-wrap strong { font-size: .92rem; }
 .product-card.is-compact .price-wrap span { font-size: .58rem; }
 .product-card.is-compact .card-actions { width: 100%; }
-.product-card.is-compact .card-actions .quiet-button { display: none; }
-.product-card.is-compact .card-actions .solid-button { width: 100%; min-height: 2.1rem; padding: .4rem .5rem; font-size: .66rem; }
+.product-card.is-compact .card-action-button { height: 2.25rem; min-height: 2.25rem; padding: .45rem; }
+.product-card.is-compact .card-action-button .action-label { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); clip-path: inset(50%); white-space: nowrap; }
+.product-card.is-compact .card-action-button svg { width: .92rem; height: .92rem; }
 .product-card.is-compact .cover-badge { top: .42rem; left: .42rem; padding: .14rem .34rem; font-size: .52rem; }
 .product-card.is-compact .cover-origin { right: .42rem; left: auto; }
 

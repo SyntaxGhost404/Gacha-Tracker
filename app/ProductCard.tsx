@@ -16,10 +16,16 @@ type ProductCardProps = {
 export default function ProductCard({ product, navigate, addToCart, compact = false }: ProductCardProps) {
   const [expanded, setExpanded] = useState(false);
   const productPath = `/product/${product.id}`;
+  const verifyPath = "/journal/how-we-check-authenticity";
 
   const follow = (event: React.MouseEvent<HTMLAnchorElement>) => {
     event.preventDefault();
     navigate(productPath);
+  };
+
+  const verify = (event: React.MouseEvent<HTMLAnchorElement>) => {
+    event.preventDefault();
+    navigate(verifyPath);
   };
 
   return (
@@ -89,16 +95,24 @@ export default function ProductCard({ product, navigate, addToCart, compact = fa
             {product.compareAt && <span>{formatPrice(product.compareAt)}</span>}
           </div>
           <div className="card-actions">
-            <a className="quiet-button" href={productPath} onClick={follow}>Details</a>
+            <a
+              className="outline-button card-action-button verify-button"
+              href={verifyPath}
+              onClick={verify}
+              aria-label={`Verify how ORAVÈ checks ${product.name}`}
+            >
+              <Icon name="shield" />
+              <span className="action-label">Verify</span>
+            </a>
             <button
-              className="solid-button compact"
+              className="solid-button card-action-button"
               type="button"
               disabled={product.stock === 0}
               onClick={() => addToCart(product.id)}
               aria-label={product.stock === 0 ? `${product.name} is restocking` : `Add ${product.name} to bag`}
             >
               <Icon name={product.stock === 0 ? "clock" : "bag"} />
-              {product.stock === 0 ? "Restocking" : compact ? "Add" : "Add to bag"}
+              <span className="action-label">{product.stock === 0 ? "Restocking" : "Add to bag"}</span>
             </button>
           </div>
         </div>
