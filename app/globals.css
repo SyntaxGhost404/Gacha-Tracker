@@ -729,20 +729,16 @@ html[data-theme="dark"] .home-hero-shade {
 
 .account-route { padding-top: 0; }
 .account-content { width: min(calc(100% - (var(--page-gutter) + var(--page-gutter))), var(--content-standard)); margin: 0 auto; padding: clamp(.75rem, 1.4vw, 1rem) 0 2.5rem; }
-.account-profile-header { min-height: 8rem; display: flex; align-items: center; gap: 1.15rem; }
-.account-profile-header > div { min-width: 0; display: flex; flex-direction: column; align-items: flex-start; gap: .45rem; }
+.account-profile-header { min-height: 8rem; display: flex; flex-direction: column; align-items: flex-start; justify-content: center; gap: .5rem; }
 .account-profile-header h1 { margin: 0; overflow-wrap: anywhere; font-family: Georgia, "Times New Roman", serif; font-size: clamp(2rem, 4.5vw, 3.25rem); font-weight: 540; line-height: 1.06; letter-spacing: -.04em; }
-.account-avatar { width: 4.5rem; height: 4.5rem; flex: 0 0 auto; border: 1px solid color-mix(in srgb, var(--primary-accent) 32%, var(--global-border)); border-radius: var(--global-border-radius); background: var(--primary-accent-bg); color: var(--primary-accent); display: flex; align-items: center; justify-content: center; }
-.account-avatar svg { width: 1.8rem; height: 1.8rem; }
-.account-edit-link { color: var(--primary-accent); display: inline-flex; align-items: center; gap: .35rem; text-decoration: none; font-size: .72rem; font-weight: 700; }
+.account-edit-link { color: var(--primary-accent); display: inline-flex; align-items: center; text-decoration: none; font-size: .72rem; font-weight: 700; }
 .account-edit-link:hover { color: var(--primary-accent-strong); }
-.account-edit-link svg { width: .75rem; }
 .account-divider { height: 1px; margin-bottom: 1.25rem; background: var(--global-border); }
 .account-dashboard { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .75rem; }
 .account-dashboard-card { min-height: 7rem; padding: 1rem 1.05rem; border: 1px solid var(--global-border); border-radius: var(--global-border-radius); background: var(--global-card-bg); color: var(--global-text); box-shadow: 0 4px 14px var(--global-shadow); display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: .85rem; text-decoration: none; transition: background-color .15s ease, border-color .15s ease, color .15s ease, transform .15s ease, box-shadow .15s ease; }
 .account-dashboard-card:hover { border-color: color-mix(in srgb, var(--primary-accent) 48%, var(--global-border)); background: color-mix(in srgb, var(--primary-accent-bg) 42%, var(--global-card-bg)); transform: translateY(-2px); box-shadow: 0 8px 22px var(--global-card-shadow); }
-.account-dashboard-card > span, .account-detail-heading > span { width: 2.65rem; height: 2.65rem; border: 1px solid var(--global-border); border-radius: var(--global-border-radius); background: var(--global-secondary-bg); color: var(--primary-accent); display: flex; align-items: center; justify-content: center; }
-.account-dashboard-card > span svg, .account-detail-heading > span svg { width: 1.05rem; }
+.account-dashboard-card > span { width: 2.65rem; height: 2.65rem; border: 1px solid var(--global-border); border-radius: var(--global-border-radius); background: var(--global-secondary-bg); color: var(--primary-accent); display: flex; align-items: center; justify-content: center; }
+.account-dashboard-card > span svg { width: 1.05rem; }
 .account-dashboard-card > div { min-width: 0; }
 .account-dashboard-card strong { font-size: .84rem; }
 .account-dashboard-card p { margin: .28rem 0 0; color: var(--global-text-muted); font-size: .67rem; line-height: 1.5; }
@@ -751,20 +747,23 @@ html[data-theme="dark"] .home-hero-shade {
 .account-logout-card { color: var(--danger); }
 .account-logout-card > span { color: var(--danger); }
 .account-signin-card { width: min(100%, 34rem); min-height: 23rem; margin: 2rem auto 0; padding: 2.25rem; border: 1px solid var(--global-border); border-radius: .55rem; background: var(--global-card-bg); box-shadow: 0 8px 28px var(--global-shadow); display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
-.account-signin-card .account-avatar { margin-bottom: 1rem; }
 .account-signin-card h1 { margin: 0 0 .6rem; font-family: Georgia, "Times New Roman", serif; font-size: 2rem; font-weight: 540; letter-spacing: -.035em; }
 .account-signin-card p { max-width: 25rem; margin: 0 0 1.2rem; color: var(--global-text-muted); font-size: .8rem; line-height: 1.65; }
-.account-detail-card { padding: 1.5rem; border: 1px solid var(--global-border); border-radius: .5rem; background: var(--global-card-bg); box-shadow: 0 5px 18px var(--global-shadow); }
-.account-detail-heading { display: flex; align-items: center; gap: .9rem; }
-.account-detail-heading > div { min-width: 0; }
-.account-detail-heading h2 { margin: 0; font-family: Georgia, "Times New Roman", serif; font-size: 1.5rem; font-weight: 560; letter-spacing: -.025em; }
-.account-detail-heading p { margin: .3rem 0 0; max-width: 42rem; color: var(--global-text-muted); font-size: .75rem; line-height: 1.55; }
-.account-profile-values { margin: 1.25rem 0; border-top: 1px solid var(--global-border); }
+.account-section-page { padding-top: clamp(.8rem, 2vw, 1.5rem); animation: fade-in .3s ease; }
+.account-section-header { max-width: 45rem; margin-bottom: 1.2rem; padding-bottom: 1.15rem; border-bottom: 1px solid var(--global-border); }
+.account-section-header h1 { margin: 0; font-family: Georgia, "Times New Roman", serif; font-size: clamp(2rem, 4.5vw, 3.1rem); font-weight: 540; line-height: 1.08; letter-spacing: -.04em; }
+.account-section-header p { max-width: 40rem; margin: .55rem 0 0; color: var(--global-text-muted); font-size: .78rem; line-height: 1.65; }
+.account-detail-card { padding: clamp(1.2rem, 2.5vw, 1.75rem); border: 1px solid var(--global-border); border-radius: .5rem; background: var(--global-card-bg); box-shadow: 0 5px 18px var(--global-shadow); }
+.account-profile-values { margin: 0 0 1.25rem; border-top: 1px solid var(--global-border); }
 .account-profile-values > div { min-height: 3.4rem; padding: .75rem 0; border-bottom: 1px solid var(--global-border); display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
 .account-profile-values span { color: var(--global-text-muted); font-size: .7rem; }
 .account-profile-values strong { overflow-wrap: anywhere; font-size: .75rem; text-align: right; }
 .account-detail-note { margin: 0 0 1.1rem; color: var(--global-text-muted); font-size: .7rem; line-height: 1.6; }
-.account-detail-actions { margin-top: 1.3rem; padding-top: 1rem; border-top: 1px solid var(--global-border); display: flex; justify-content: space-between; gap: .7rem; }
+.account-empty-state { min-height: 15rem; display: flex; flex-direction: column; align-items: flex-start; justify-content: center; }
+.account-empty-state h2 { margin: 0; font-family: Georgia, "Times New Roman", serif; font-size: clamp(1.35rem, 2.5vw, 1.7rem); font-weight: 560; letter-spacing: -.025em; }
+.account-empty-state > p { max-width: 38rem; margin: .5rem 0 0; color: var(--global-text-muted); font-size: .75rem; line-height: 1.65; }
+.account-detail-actions { width: 100%; margin-top: 1.3rem; padding-top: 1rem; border-top: 1px solid var(--global-border); display: flex; justify-content: space-between; gap: .7rem; }
+.account-detail-actions-single { justify-content: flex-start; }
 
 .timeline-content { width: min(calc(100% - (var(--page-gutter) + var(--page-gutter))), var(--content-timeline)); margin: 0 auto; padding: clamp(.75rem, 1.4vw, 1rem) 0 2rem; }
 .timeline-filter { margin-bottom: 1.5rem; padding-bottom: 1rem; border-bottom: 1px solid var(--global-border); }
@@ -882,7 +881,7 @@ html[data-theme="dark"] .home-hero-shade {
   .mobile-bottom-nav > button:active { transform: scale(.94); }
   .mobile-nav-popover { position: absolute; bottom: calc(100% + .6rem); padding: .35rem; border: 1px solid var(--global-border); border-radius: var(--global-border-radius); background: var(--global-card-bg); box-shadow: 0 8px 24px var(--global-card-shadow); display: flex; flex-direction: column; gap: .2rem; opacity: 0; visibility: hidden; transform: scale(.95) translateY(.6rem); transition: opacity .2s cubic-bezier(.16,1,.3,1), transform .2s cubic-bezier(.16,1,.3,1), visibility .2s; }
   .mobile-more-menu { right: .75rem; width: 11.5rem; transform-origin: bottom right; }
-  .mobile-account-menu { right: calc(25% + .35rem); width: min(17rem, calc(100vw - 1.5rem)); transform-origin: bottom right; }
+  .mobile-account-menu { left: max(.75rem, env(safe-area-inset-left, 0px)); right: calc(25% + .35rem + env(safe-area-inset-right, 0px)); width: auto; max-width: 17rem; margin-left: auto; box-sizing: border-box; transform-origin: bottom right; }
   .mobile-nav-popover.is-visible { opacity: 1; visibility: visible; transform: scale(1) translateY(0); }
   .mobile-nav-popover::after { content: ""; position: absolute; bottom: -6px; width: 10px; height: 10px; border-right: 1px solid var(--global-border); border-bottom: 1px solid var(--global-border); background: var(--global-card-bg); transform: rotate(45deg); }
   .mobile-more-menu::after { right: 1.45rem; }
@@ -891,15 +890,12 @@ html[data-theme="dark"] .home-hero-shade {
   .mobile-nav-popover button:hover, .mobile-nav-popover button.is-active, .mobile-nav-popover > a:hover { background: var(--primary-accent-bg); color: var(--primary-accent); }
   .mobile-nav-popover button svg, .mobile-nav-popover > a svg { width: .9rem; flex: 0 0 auto; color: var(--global-text-muted); }
   .mobile-nav-popover button.is-active svg, .mobile-nav-popover > a:hover svg { color: var(--primary-accent); }
-  .mobile-account-identity { min-width: 0; padding: .7rem .75rem; display: flex; align-items: center; gap: .7rem; }
-  .mobile-account-identity > span { width: 2rem; height: 2rem; flex: 0 0 auto; border: 1px solid var(--global-border); border-radius: var(--global-border-radius); background: var(--primary-accent-bg); color: var(--primary-accent); display: flex; align-items: center; justify-content: center; }
-  .mobile-account-identity svg { width: .9rem; }
-  .mobile-account-identity strong { min-width: 0; overflow: hidden; font-family: Georgia, "Times New Roman", serif; font-size: .9rem; font-weight: 600; text-overflow: ellipsis; white-space: nowrap; }
+  .mobile-account-identity { min-width: 0; padding: .8rem .75rem; }
+  .mobile-account-identity strong { min-width: 0; overflow: hidden; display: block; font-family: Georgia, "Times New Roman", serif; font-size: .9rem; font-weight: 600; text-overflow: ellipsis; white-space: nowrap; }
   .mobile-popover-divider { height: 1px; margin: .2rem .4rem; background: var(--global-border); }
   .mobile-nav-popover > a.mobile-account-logout { color: var(--danger); }
   .mobile-nav-popover > a.mobile-account-logout svg { color: var(--danger); }
   .mobile-nav-popover > a.mobile-login-link { justify-content: center; min-height: 3rem; background: var(--global-text); color: var(--global-primary-bg); font-weight: 720; }
-  .mobile-nav-popover > a.mobile-login-link svg { color: currentColor; }
   .site-footer { padding-bottom: calc(8.5rem + env(safe-area-inset-bottom, 0px)); }
   .scroll-top-button { width: 2.35rem; padding: .55rem; justify-content: center; }
   .scroll-top-button span { display: none; }
@@ -996,13 +992,14 @@ html[data-theme="dark"] .home-hero-shade {
   .form-grid-two { grid-template-columns: 1fr; }
   .form-pills button { flex: 1 1 calc(50% - .4rem); }
   .success-actions { width: 100%; flex-direction: column; }
-  .account-profile-header { min-height: 6.8rem; gap: .85rem; }
+  .account-profile-header { min-height: 6.8rem; gap: .45rem; }
   .account-profile-header h1 { font-size: 2rem; }
-  .account-avatar { width: 3.75rem; height: 3.75rem; }
-  .account-avatar svg { width: 1.45rem; height: 1.45rem; }
   .account-dashboard { grid-template-columns: 1fr; gap: .55rem; }
   .account-dashboard-card { min-height: 5.75rem; padding: .8rem; }
   .account-signin-card { min-height: 20rem; padding: 1.5rem; }
+  .account-section-page { padding-top: .55rem; }
+  .account-section-header { margin-bottom: .85rem; padding-bottom: .9rem; }
+  .account-section-header h1 { font-size: 2rem; }
   .account-detail-card { padding: 1.15rem; }
   .account-detail-actions { flex-direction: column-reverse; }
   .account-detail-actions > * { width: 100%; }

@@ -686,22 +686,28 @@ const accountDashboardOptions: Array<{
   { section: "edit-profile", label: "Edit Profile", copy: "Review the identity connected to your account.", icon: "edit" },
 ];
 
-const accountSectionContent: Record<Exclude<AccountSection, "edit-profile">, { title: string; copy: string; actionPath: string; actionLabel: string }> = {
+const accountSectionContent: Record<Exclude<AccountSection, "edit-profile">, { title: string; subtitle: string; emptyTitle: string; copy: string; actionPath: string; actionLabel: string }> = {
   orders: {
-    title: "Your orders",
-    copy: "Confirmed ORAVÈ online orders and Bangladesh home-delivery updates will appear here when account-linked ordering is available.",
+    title: "Orders",
+    subtitle: "Review online purchases and nationwide home-delivery updates in one place.",
+    emptyTitle: "No linked orders yet",
+    copy: "Confirmed ORAVÈ orders will appear here when account-linked ordering is available. For an existing delivery, our online team can help you track it now.",
     actionPath: "/contact",
     actionLabel: "Track an order",
   },
   wishlist: {
-    title: "Your wishlist",
-    copy: "Products you save for later will be gathered here. Browse the online catalog to continue building your edit.",
+    title: "Wishlist",
+    subtitle: "Keep a considered shortlist of products you would like to revisit.",
+    emptyTitle: "Your wishlist is ready for you",
+    copy: "Products you save for later will be gathered here. Browse the online catalog to start building your edit.",
     actionPath: "/shop",
     actionLabel: "Browse products",
   },
   history: {
-    title: "Your history",
-    copy: "Your recent ORAVÈ account activity will appear here while you are signed in.",
+    title: "History",
+    subtitle: "Return to your recent account and shopping activity.",
+    emptyTitle: "No recent activity",
+    copy: "Your recent ORAVÈ account activity will appear here as you browse and shop while signed in.",
     actionPath: "/shop",
     actionLabel: "Continue shopping",
   },
@@ -726,10 +732,9 @@ export function AccountPage({
         <div className="account-content">
           <BackLink href="/" label="Back to home" navigate={navigate} />
           <section className="account-signin-card">
-            <span className="account-avatar"><Icon name="user" /></span>
             <h1>Your ORAVÈ account</h1>
             <p>Login or register to access your orders, wishlist, history and profile from one place.</p>
-            <a className="solid-button" href={accountSignInPath}><Icon name="user" /> Login / Register</a>
+            <a className="solid-button" href={accountSignInPath}>Login / Register</a>
           </section>
         </div>
       </div>
@@ -741,15 +746,17 @@ export function AccountPage({
   return (
     <div className="route-page standard-route account-route">
       <div className="account-content">
-        <BackLink href="/" label="Back to home" navigate={navigate} />
-        <header className="account-profile-header">
-          <span className="account-avatar"><Icon name="user" /></span>
-          <div>
+        <BackLink href={section ? "/account" : "/"} label={section ? "Back to account" : "Back to home"} navigate={navigate} />
+
+        {!section ? (
+          <>
+            <header className="account-profile-header">
             <h1>{user.displayName}</h1>
-            <InternalLink href="/account/edit-profile" navigate={navigate} className="account-edit-link"><Icon name="edit" /> Edit Profile</InternalLink>
-          </div>
-        </header>
-        <div className="account-divider" />
+              <InternalLink href="/account/edit-profile" navigate={navigate} className="account-edit-link">Edit Profile</InternalLink>
+            </header>
+            <div className="account-divider" />
+          </>
+        ) : null}
 
         {!section ? (
           <section className="account-dashboard" aria-label="Account dashboard">
@@ -767,23 +774,37 @@ export function AccountPage({
             </a>
           </section>
         ) : section === "edit-profile" ? (
-          <section className="account-detail-card">
-            <div className="account-detail-heading"><span><Icon name="edit" /></span><div><h2>Edit Profile</h2><p>Your account identity is managed through your secure ChatGPT sign-in.</p></div></div>
-            <div className="account-profile-values">
-              <div><span>Name</span><strong>{user.displayName}</strong></div>
-              <div><span>Email</span><strong>{user.email}</strong></div>
-            </div>
-            <p className="account-detail-note">ORAVÈ reads these details only for your signed-in account experience and does not store your login credentials.</p>
-            <InternalLink href="/account" navigate={navigate} className="outline-button"><Icon name="arrow-left" /> Back to account</InternalLink>
-          </section>
+          <div className="account-section-page">
+            <header className="account-section-header">
+              <h1>Edit Profile</h1>
+              <p>Review the name and email connected to your ORAVÈ account.</p>
+            </header>
+            <section className="account-detail-card">
+              <div className="account-profile-values">
+                <div><span>Name</span><strong>{user.displayName}</strong></div>
+                <div><span>Email</span><strong>{user.email}</strong></div>
+              </div>
+              <p className="account-detail-note">These details are used only for your signed-in ORAVÈ experience. ORAVÈ does not store your login credentials.</p>
+              <div className="account-detail-actions account-detail-actions-single">
+                <InternalLink href="/account" navigate={navigate} className="outline-button"><Icon name="arrow-left" /> Back to account</InternalLink>
+              </div>
+            </section>
+          </div>
         ) : detail ? (
-          <section className="account-detail-card">
-            <div className="account-detail-heading"><span><Icon name={accountDashboardOptions.find((option) => option.section === section)?.icon ?? "user"} /></span><div><h2>{detail.title}</h2><p>{detail.copy}</p></div></div>
-            <div className="account-detail-actions">
-              <InternalLink href="/account" navigate={navigate} className="outline-button"><Icon name="arrow-left" /> Back to account</InternalLink>
-              <InternalLink href={detail.actionPath} navigate={navigate} className="solid-button">{detail.actionLabel}<Icon name="arrow-right" /></InternalLink>
-            </div>
-          </section>
+          <div className="account-section-page">
+            <header className="account-section-header">
+              <h1>{detail.title}</h1>
+              <p>{detail.subtitle}</p>
+            </header>
+            <section className="account-detail-card account-empty-state">
+              <h2>{detail.emptyTitle}</h2>
+              <p>{detail.copy}</p>
+              <div className="account-detail-actions">
+                <InternalLink href="/account" navigate={navigate} className="outline-button"><Icon name="arrow-left" /> Back to account</InternalLink>
+                <InternalLink href={detail.actionPath} navigate={navigate} className="solid-button">{detail.actionLabel}<Icon name="arrow-right" /></InternalLink>
+              </div>
+            </section>
+          </div>
         ) : null}
       </div>
     </div>

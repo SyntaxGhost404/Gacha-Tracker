@@ -509,7 +509,6 @@ function MobileBottomNav({
         {user ? (
           <>
             <div className="mobile-account-identity" aria-label={`Signed in as ${user.displayName}`}>
-              <span><Icon name="user" /></span>
               <strong>{user.displayName}</strong>
             </div>
             <div className="mobile-popover-divider" />
@@ -520,7 +519,7 @@ function MobileBottomNav({
             <a href={signOutPath} role="menuitem" className="mobile-account-logout"><Icon name="logout" /> Logout</a>
           </>
         ) : (
-          <a href={mobileSignInPath} role="menuitem" className="mobile-login-link"><Icon name="user" /> Login / Register</a>
+          <a href={mobileSignInPath} role="menuitem" className="mobile-login-link">Login / Register</a>
         )}
       </div>
       <div id="mobile-more-menu" className={`mobile-nav-popover mobile-more-menu ${moreOpen ? "is-visible" : ""}`} role="menu" aria-hidden={!moreOpen}>
