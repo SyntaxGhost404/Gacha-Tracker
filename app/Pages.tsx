@@ -168,7 +168,8 @@ export function ShopPage({ navigate, addToCart, activeCategory }: SharedPageProp
   const [origin, setOrigin] = useState("All");
   const [skinType, setSkinType] = useState("All");
   const [sort, setSort] = useState("featured");
-  const [panel, setPanel] = useState<"filter" | "sort" | null>(null);
+  const [viewMode, setViewMode] = useState<"standard" | "compact">("standard");
+  const [panel, setPanel] = useState<"filter" | "sort" | "view" | null>(null);
 
   const filtered = useMemo(() => {
     const normalized = query.trim().toLowerCase();
@@ -240,8 +241,15 @@ export function ShopPage({ navigate, addToCart, activeCategory }: SharedPageProp
           </button>
           <button type="button" className={panel === "sort" ? "is-active" : ""} onClick={() => setPanel(panel === "sort" ? null : "sort")}>
             <Icon name="sort" /> Sort
+            {sort !== "featured" && <span className="control-dot" />}
             <span className="control-value">{sort.replace("-", " ")}</span>
             <Icon name="chevron-down" className={panel === "sort" ? "is-rotated" : ""} />
+          </button>
+          <button type="button" className={panel === "view" ? "is-active" : ""} onClick={() => setPanel(panel === "view" ? null : "view")}>
+            <Icon name="grid" /> View
+            {viewMode === "compact" && <span className="control-dot" />}
+            <span className="control-value">{viewMode}</span>
+            <Icon name="chevron-down" className={panel === "view" ? "is-rotated" : ""} />
           </button>
         </div>
 
@@ -269,6 +277,19 @@ export function ShopPage({ navigate, addToCart, activeCategory }: SharedPageProp
           </div>
         )}
 
+        {panel === "view" && (
+          <div className="control-panel sort-panel view-panel">
+            {[
+              ["standard", "Standard view"],
+              ["compact", "Compact view"],
+            ].map(([value, label]) => (
+              <button key={value} type="button" className={viewMode === value ? "is-selected" : ""} onClick={() => { setViewMode(value as "standard" | "compact"); setPanel(null); }}>
+                <span>{label}</span>{viewMode === value && <Icon name="check" />}
+              </button>
+            ))}
+          </div>
+        )}
+
         <div className="results-row">
           <span>Showing <strong>{filtered.length}</strong> of {products.length} pieces</span>
           {hasRefinement && <button type="button" onClick={reset}>Reset all</button>}
@@ -286,13 +307,13 @@ export function ShopPage({ navigate, addToCart, activeCategory }: SharedPageProp
             {available.length > 0 && (
               <section className="result-section">
                 <SectionHeader title="Available now" count={available.length} />
-                <div className="product-list">{available.map((product) => <ProductCard key={product.id} product={product} navigate={navigate} addToCart={addToCart} />)}</div>
+                <div className={`product-list ${viewMode === "compact" ? "is-compact" : "is-standard"}`}>{available.map((product) => <ProductCard key={product.id} product={product} navigate={navigate} addToCart={addToCart} compact={viewMode === "compact"} />)}</div>
               </section>
             )}
             {restocking.length > 0 && (
               <section className="result-section">
                 <SectionHeader title="Returning soon" count={restocking.length} />
-                <div className="product-list">{restocking.map((product) => <ProductCard key={product.id} product={product} navigate={navigate} addToCart={addToCart} />)}</div>
+                <div className={`product-list ${viewMode === "compact" ? "is-compact" : "is-standard"}`}>{restocking.map((product) => <ProductCard key={product.id} product={product} navigate={navigate} addToCart={addToCart} compact={viewMode === "compact"} />)}</div>
               </section>
             )}
           </>

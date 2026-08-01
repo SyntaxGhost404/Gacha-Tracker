@@ -10,9 +10,10 @@ type ProductCardProps = {
   product: Product;
   navigate: (path: string) => void;
   addToCart: (productId: string) => void;
+  compact?: boolean;
 };
 
-export default function ProductCard({ product, navigate, addToCart }: ProductCardProps) {
+export default function ProductCard({ product, navigate, addToCart, compact = false }: ProductCardProps) {
   const [expanded, setExpanded] = useState(false);
   const productPath = `/product/${product.id}`;
 
@@ -22,7 +23,7 @@ export default function ProductCard({ product, navigate, addToCart }: ProductCar
   };
 
   return (
-    <article className="product-card">
+    <article className={`product-card ${compact ? "is-compact" : "is-standard"}`}>
       <a className="product-cover" href={productPath} onClick={follow} aria-label={`View ${product.name}`}>
         <img src={product.image} alt="" />
         <span className={`cover-badge status-${product.status.toLowerCase().replaceAll(" ", "-")}`}>
@@ -54,7 +55,7 @@ export default function ProductCard({ product, navigate, addToCart }: ProductCar
             {product.category}
           </span>
           {product.skinTypes.slice(0, 2).map((item) => <span className="tag" key={item}>{item}</span>)}
-          <span className="tag">{product.size}</span>
+          <span className="tag tag-size">{product.size}</span>
         </div>
 
         <div className="description-block">
@@ -94,9 +95,10 @@ export default function ProductCard({ product, navigate, addToCart }: ProductCar
               type="button"
               disabled={product.stock === 0}
               onClick={() => addToCart(product.id)}
+              aria-label={product.stock === 0 ? `${product.name} is restocking` : `Add ${product.name} to bag`}
             >
               <Icon name={product.stock === 0 ? "clock" : "bag"} />
-              {product.stock === 0 ? "Restocking" : "Add to bag"}
+              {product.stock === 0 ? "Restocking" : compact ? "Add" : "Add to bag"}
             </button>
           </div>
         </div>

@@ -10,6 +10,7 @@ export type IconName =
   | "clock"
   | "external"
   | "filter"
+  | "grid"
   | "heart"
   | "home"
   | "journal"
@@ -42,6 +43,7 @@ const paths: Record<IconName, React.ReactNode> = {
   clock: <><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></>,
   external: <><path d="M14 4h6v6"/><path d="M10 14 20 4"/><path d="M20 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1h5"/></>,
   filter: <><path d="M4 6h16"/><path d="M7 12h10"/><path d="M10 18h4"/></>,
+  grid: <><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></>,
   heart: <path d="M20.8 5.7a5.5 5.5 0 0 0-7.8 0L12 6.8l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8l1.1 1.1L12 22l7.8-7.4 1.1-1.1a5.5 5.5 0 0 0-.1-7.8Z"/>,
   home: <><path d="m3 11 9-8 9 8"/><path d="M5 10v10h14V10"/><path d="M9 20v-6h6v6"/></>,
   journal: <><path d="M4 5a2 2 0 0 1 2-2h12v17H6a2 2 0 0 1-2-2V5Z"/><path d="M8 7h6M8 11h7M8 15h5"/></>,
