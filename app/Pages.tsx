@@ -2,7 +2,7 @@
 
 /* eslint-disable @next/next/no-img-element */
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Icon } from "./Icon";
 import JournalCard from "./JournalCard";
 import ProductCard from "./ProductCard";
@@ -100,31 +100,138 @@ function ProductRibbon({ product, navigate }: { product: Product; navigate: (pat
   );
 }
 
+function HeroProductCarousel({ items, navigate }: { items: Product[]; navigate: (path: string) => void }) {
+  const [activeIndex, setActiveIndex] = useState(0);
+  const [isPaused, setIsPaused] = useState(false);
+
+  useEffect(() => {
+    if (items.length < 2 || isPaused || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+    const timer = window.setInterval(() => {
+      setActiveIndex((current) => (current + 1) % items.length);
+    }, 4800);
+
+    return () => window.clearInterval(timer);
+  }, [isPaused, items.length]);
+
+  const move = (direction: -1 | 1) => {
+    setActiveIndex((current) => (current + direction + items.length) % items.length);
+  };
+
+  if (items.length === 0) return null;
+
+  return (
+    <aside
+      className="hero-product-carousel"
+      aria-label="Featured products"
+      onMouseEnter={() => setIsPaused(true)}
+      onMouseLeave={() => setIsPaused(false)}
+      onFocusCapture={() => setIsPaused(true)}
+      onBlurCapture={(event) => {
+        if (!event.currentTarget.contains(event.relatedTarget as Node | null)) setIsPaused(false);
+      }}
+    >
+      <div className="hero-carousel-heading">
+        <div>
+          <span>Featured online</span>
+          <strong>{String(activeIndex + 1).padStart(2, "0")} / {String(items.length).padStart(2, "0")}</strong>
+        </div>
+        <div className="hero-carousel-controls">
+          <button type="button" onClick={() => move(-1)} aria-label="Previous featured product">
+            <Icon name="arrow-left" />
+          </button>
+          <button type="button" onClick={() => move(1)} aria-label="Next featured product">
+            <Icon name="arrow-right" />
+          </button>
+        </div>
+      </div>
+
+      <div className="hero-carousel-viewport" aria-live="off">
+        <div className="hero-carousel-track" style={{ transform: `translate3d(-${activeIndex * 100}%, 0, 0)` }}>
+          {items.map((product, index) => {
+            const href = `/product/${product.id}`;
+            return (
+              <article className="hero-carousel-slide" key={product.id} aria-hidden={index !== activeIndex}>
+                <a
+                  className="hero-carousel-card"
+                  href={href}
+                  tabIndex={index === activeIndex ? 0 : -1}
+                  onClick={(event) => {
+                    event.preventDefault();
+                    navigate(href);
+                  }}
+                >
+                  <div className="hero-carousel-media">
+                    <img src={product.image} alt="" />
+                    <span className={`cover-badge status-${product.status.toLowerCase().replaceAll(" ", "-")}`}>{product.status}</span>
+                    <span className="cover-badge cover-origin">{product.origin}</span>
+                    <span className="cover-shade" />
+                  </div>
+                  <div className="hero-carousel-body">
+                    <div className="hero-carousel-category-row">
+                      <span style={{ "--hero-card-accent": product.accent } as React.CSSProperties}>{product.category}</span>
+                      <span><Icon name="star" /> {product.rating}</span>
+                    </div>
+                    <h2>{product.name}</h2>
+                    <p>{product.line}</p>
+                    <div className="hero-carousel-price-row">
+                      <strong>{formatPrice(product.price)}</strong>
+                      <span>{product.size}</span>
+                      <Icon name="arrow-right" />
+                    </div>
+                  </div>
+                </a>
+              </article>
+            );
+          })}
+        </div>
+      </div>
+
+      <div className="hero-carousel-dots" aria-label="Choose featured product">
+        {items.map((product, index) => (
+          <button
+            key={product.id}
+            type="button"
+            className={index === activeIndex ? "is-active" : ""}
+            onClick={() => setActiveIndex(index)}
+            aria-label={`Show ${product.name}`}
+            aria-current={index === activeIndex ? "true" : undefined}
+          />
+        ))}
+      </div>
+    </aside>
+  );
+}
+
 export function HomePage({ navigate }: SharedPageProps) {
   const featured = products.filter((product) => product.featured).slice(0, 8);
+  const heroProducts = featured.slice(0, 6);
 
   return (
     <div className="route-page home-page">
       <section className="home-hero">
         <div className="home-hero-shade" aria-hidden="true" />
-        <div className="hero-inner">
-          <h1>Authentic beauty,<br />thoughtfully sourced.</h1>
-          <p>
-            ORAVÈ is a 100% online-only beauty store for authentic cosmetics imported from South Korea, Japan, the USA and China, with home delivery across Bangladesh.
-          </p>
-          <div className="hero-actions">
-            <InternalLink href="/shop" navigate={navigate} className="solid-button hero-button">
-              Shop online <Icon name="arrow-right" />
-            </InternalLink>
-            <InternalLink href="/our-story" navigate={navigate} className="outline-button hero-button">
-              <Icon name="shield" /> How we source
-            </InternalLink>
+        <div className="hero-layout">
+          <div className="hero-inner">
+            <h1>Authentic beauty,<br />thoughtfully sourced.</h1>
+            <p>
+              ORAVÈ is a 100% online-only beauty store for authentic cosmetics imported from South Korea, Japan, the USA and China, with home delivery across Bangladesh.
+            </p>
+            <div className="hero-actions">
+              <InternalLink href="/shop" navigate={navigate} className="solid-button hero-button">
+                Shop online <Icon name="arrow-right" />
+              </InternalLink>
+              <InternalLink href="/our-story" navigate={navigate} className="outline-button hero-button">
+                <Icon name="shield" /> How we source
+              </InternalLink>
+            </div>
+            <div className="hero-trust-row" aria-label="Service highlights">
+              <span><Icon name="shield" /> Authentic imports</span>
+              <span><Icon name="truck" /> Home delivery nationwide</span>
+              <span><Icon name="heart" /> 100% online-only</span>
+            </div>
           </div>
-          <div className="hero-trust-row" aria-label="Service highlights">
-            <span><Icon name="shield" /> Authentic imports</span>
-            <span><Icon name="truck" /> Home delivery nationwide</span>
-            <span><Icon name="heart" /> 100% online-only</span>
-          </div>
+          <HeroProductCarousel items={heroProducts} navigate={navigate} />
         </div>
       </section>
 
