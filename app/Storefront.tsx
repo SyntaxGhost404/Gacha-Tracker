@@ -403,7 +403,7 @@ export default function Storefront({
       {verificationProduct && <ProductVerificationModal product={verificationProduct} onClose={closeVerification} />}
 
       <div id="main-scroll-container" className="main-scroll-container" ref={scrollRef} aria-hidden={Boolean(verificationProduct)} inert={Boolean(verificationProduct)}>
-        <div className="content-wrapper"><main><PageRouter path={path} navigate={navigate} addToCart={addToCart} verifyProduct={verifyProduct} wishlistIds={wishlistIds} toggleWishlist={toggleWishlist} user={user} accountSignInPath={accountSignInPath} signOutPath={signOutPath} /></main></div>
+        <div className="content-wrapper"><main><PageRouter path={path} navigate={navigate} addToCart={addToCart} verifyProduct={verifyProduct} wishlistIds={wishlistIds} toggleWishlist={toggleWishlist} verificationActive={Boolean(verificationProduct)} user={user} accountSignInPath={accountSignInPath} signOutPath={signOutPath} /></main></div>
         <SiteFooter navigate={navigate} />
       </div>
 
@@ -441,6 +441,7 @@ function PageRouter({
   verifyProduct,
   wishlistIds,
   toggleWishlist,
+  verificationActive,
   user,
   accountSignInPath,
   signOutPath,
@@ -451,11 +452,12 @@ function PageRouter({
   verifyProduct: (productId: string) => void;
   wishlistIds: string[];
   toggleWishlist: (productId: string) => void;
+  verificationActive: boolean;
   user: ChatGPTUser | null;
   accountSignInPath: string;
   signOutPath: string;
 }) {
-  const shared = { navigate, addToCart, verifyProduct, wishlistIds, toggleWishlist };
+  const shared = { navigate, addToCart, verifyProduct, wishlistIds, toggleWishlist, verificationActive };
   const shopRoute = shopCategories.find((category) => category.path === path);
   if (path === "/") return <HomePage {...shared} />;
   if (shopRoute) return <ShopPage {...shared} activeCategory={shopRoute.label} />;

@@ -583,29 +583,27 @@ html[data-theme="dark"] .home-hero-shade {
   position: relative;
   min-width: 0;
   width: 100%;
-  overflow: hidden;
-  touch-action: pan-y;
+  overflow-x: auto;
+  overflow-y: hidden;
+  overscroll-behavior-inline: contain;
+  touch-action: pan-x pan-y;
+  cursor: grab;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+  will-change: scroll-position;
   -webkit-mask-image: linear-gradient(to right, transparent 0, #000 1.4rem, #000 calc(100% - 1.4rem), transparent 100%);
   mask-image: linear-gradient(to right, transparent 0, #000 1.4rem, #000 calc(100% - 1.4rem), transparent 100%);
 }
+.category-marquee::-webkit-scrollbar { display: none; }
+.category-marquee.is-dragging { cursor: grabbing; user-select: none; }
 .category-marquee-track {
   width: max-content;
   display: flex;
-  animation: category-marquee-scroll var(--category-marquee-duration, 45s) linear infinite;
-  animation-delay: var(--category-marquee-delay, 0s);
-  will-change: transform;
-}
-.category-marquee.is-paused .category-marquee-track { animation-play-state: paused; }
-@media (hover: hover) and (pointer: fine) {
-  .category-marquee:hover .category-marquee-track,
-  .category-marquee:focus-within .category-marquee-track { animation-play-state: paused; }
 }
 .category-marquee-group { display: flex; align-items: stretch; gap: .65rem; padding-right: .65rem; }
 .category-marquee-card { width: var(--category-card-width); height: var(--category-card-height); flex: 0 0 var(--category-card-width); display: flex; }
 .category-marquee-card > .product-card { height: 100%; }
 .category-marquee .product-card.is-compact { animation: none; }
-
-@keyframes category-marquee-scroll { from { transform: translate3d(0, 0, 0); } to { transform: translate3d(-50%, 0, 0); } }
 
 .solid-button, .outline-button, .quiet-button {
   border-radius: var(--global-border-radius);
@@ -1247,6 +1245,5 @@ html[data-theme="dark"] .home-hero-shade {
     scrollbar-width: none;
   }
   .category-marquee::-webkit-scrollbar { display: none; }
-  .category-marquee-track { animation: none !important; }
-  .category-marquee-group:nth-child(2) { display: none; }
+  .category-marquee-group:nth-child(n + 2) { display: none; }
 }

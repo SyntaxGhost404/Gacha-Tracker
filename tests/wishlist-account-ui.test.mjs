@@ -16,7 +16,7 @@ test("wishlist state is device-persistent and shared with every product card sur
   assert.match(storefront, /localStorage\.getItem\(WISHLIST_KEY\)/);
   assert.match(storefront, /localStorage\.setItem\(WISHLIST_KEY, JSON\.stringify\(wishlistIds\)\)/);
   assert.match(storefront, /const toggleWishlist = useCallback/);
-  assert.match(storefront, /const shared = \{ navigate, addToCart, verifyProduct, wishlistIds, toggleWishlist \}/);
+  assert.match(storefront, /const shared = \{ navigate, addToCart, verifyProduct, wishlistIds, toggleWishlist, verificationActive \}/);
 
   assert.match(card, /className=\{`wishlist-button/);
   assert.match(card, /<Icon name="heart" \/>/);

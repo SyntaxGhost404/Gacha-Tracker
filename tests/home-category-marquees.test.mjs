@@ -76,20 +76,49 @@ test("legacy home sections stay in source but remain disabled", async () => {
   assert.doesNotMatch(pages, /Not sure where to begin\?|Tell us about your routine|Ask ORAVÈ/);
 });
 
-test("category rails move continuously and pause for pointer interaction", async () => {
+test("category rails use native infinite scrolling with delayed interaction resume", async () => {
   const [pages, styles] = await Promise.all([
     readFile(projectFile("app/Pages.tsx"), "utf8"),
     readFile(projectFile("app/globals.css"), "utf8"),
   ]);
 
-  assert.match(styles, /animation: category-marquee-scroll[^;]*linear infinite;/);
-  assert.match(styles, /translate3d\(-50%, 0, 0\)/);
-  assert.match(styles, /\.category-marquee\.is-paused \.category-marquee-track \{ animation-play-state: paused; \}/);
-  assert.match(styles, /@media \(hover: hover\) and \(pointer: fine\)/);
+  assert.match(pages, /const CATEGORY_INTERACTION_RESUME_MS = 8_000;/);
+  assert.match(pages, /const CATEGORY_AUTO_SCROLL_PX_PER_MS = 0\.028;/);
+  assert.match(pages, /window\.requestAnimationFrame\(move\)/);
+  assert.match(pages, /viewport\.scrollLeft \+= Math\.min\(time - previousTime, 40\) \* CATEGORY_AUTO_SCROLL_PX_PER_MS/);
+  assert.match(pages, /\[0, 1, 2\]\.map\(\(groupIndex\) =>/);
+  assert.match(pages, /onPointerDown=\{handlePointerDown\}/);
+  assert.match(pages, /onPointerMove=\{handlePointerMove\}/);
+  assert.match(pages, /onPointerUp=\{handlePointerEnd\}/);
+  assert.match(pages, /onMouseEnter=\{pauseForInteraction\}/);
+  assert.match(pages, /onMouseLeave=/);
+  assert.match(pages, /onWheel=/);
+  assert.match(pages, /onFocusCapture=\{pauseForInteraction\}/);
+  assert.match(styles, /\.category-marquee \{[\s\S]*?overflow-x: auto;[\s\S]*?touch-action: pan-x pan-y;/);
+  assert.match(styles, /\.category-marquee\.is-dragging \{ cursor: grabbing; user-select: none; \}/);
   assert.match(styles, /\.category-marquee-card \{[^}]*width: var\(--category-card-width\);[^}]*height: var\(--category-card-height\);[^}]*flex: 0 0 var\(--category-card-width\);/);
   assert.match(styles, /@media \(max-width: 768px\) \{[\s\S]*?--category-card-width: clamp\(/);
-  assert.match(styles, /@media \(prefers-reduced-motion: reduce\) \{[\s\S]*?\.category-marquee-track \{ animation: none !important; \}/);
-  assert.match(pages, /onPointerDown=\{\(event\) => \{[\s\S]*?event\.pointerType !== "mouse"/);
-  assert.match(pages, /window\.addEventListener\("pointerup", resume/);
-  assert.match(pages, /window\.addEventListener\("pointercancel", resume/);
+  assert.match(styles, /@media \(prefers-reduced-motion: reduce\) \{[\s\S]*?\.category-marquee-group:nth-child\(n \+ 2\) \{ display: none; \}/);
+  assert.doesNotMatch(pages, /inert=\{visualClone\}|aria-hidden=\{visualClone\}/);
+});
+
+test("every repeated home card keeps the shared actions and verification cooldown", async () => {
+  const [pages, storefront, card] = await Promise.all([
+    readFile(projectFile("app/Pages.tsx"), "utf8"),
+    readFile(projectFile("app/Storefront.tsx"), "utf8"),
+    readFile(projectFile("app/ProductCard.tsx"), "utf8"),
+  ]);
+
+  assert.match(pages, /const CATEGORY_VERIFICATION_RESUME_MS = 5_000;/);
+  assert.match(pages, /setVerificationPaused\(true\);[\s\S]*?verifyProduct\(productId\)/);
+  assert.match(pages, /verificationOpenedRef\.current = true/);
+  assert.match(pages, /setVerificationPaused\(false\)[\s\S]*?CATEGORY_VERIFICATION_RESUME_MS/);
+  assert.match(pages, /verifyProduct=\{openVerification\}/);
+  assert.match(pages, /addToCart=\{addToCart\}/);
+  assert.match(pages, /toggleWishlist=\{toggleWishlist\}/);
+  assert.match(storefront, /verificationActive=\{Boolean\(verificationProduct\)\}/);
+  assert.match(storefront, /menuOpen \|\| verificationProduct \? "is-open"/);
+  assert.match(card, /onClick=\{\(\) => verifyProduct\(product\.id\)\}/);
+  assert.match(card, /onClick=\{\(\) => addToCart\(product\.id\)\}/);
+  assert.match(card, /onClick=\{\(\) => toggleWishlist\(product\.id\)\}/);
 });

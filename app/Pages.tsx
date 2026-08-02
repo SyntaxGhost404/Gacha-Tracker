@@ -2,7 +2,7 @@
 
 /* eslint-disable @next/next/no-img-element */
 
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Icon } from "./Icon";
 import type { ChatGPTUser } from "./chatgpt-auth";
 import JournalCard from "./JournalCard";
@@ -23,6 +23,7 @@ type SharedPageProps = {
   verifyProduct: (productId: string) => void;
   wishlistIds: string[];
   toggleWishlist: (productId: string) => void;
+  verificationActive: boolean;
 };
 
 function InternalLink({
@@ -209,6 +210,9 @@ function HeroProductCarousel({ items, navigate }: { items: Product[]; navigate: 
 
 const SHOW_LEGACY_HOME_SECTIONS = false;
 const HOME_CATEGORY_CARDS_MINIMUM = 6;
+const CATEGORY_AUTO_SCROLL_PX_PER_MS = 0.028;
+const CATEGORY_INTERACTION_RESUME_MS = 8_000;
+const CATEGORY_VERIFICATION_RESUME_MS = 5_000;
 const homeCategoryDefinitions = shopCategories.filter((category) => category.label !== "All Products");
 
 function CategoryMarquee({
@@ -220,12 +224,24 @@ function CategoryMarquee({
   verifyProduct,
   wishlistIds,
   toggleWishlist,
+  verificationActive,
 }: SharedPageProps & {
   category: (typeof homeCategoryDefinitions)[number];
   items: Product[];
   sectionIndex: number;
 }) {
-  const [touchPaused, setTouchPaused] = useState(false);
+  const [interactionPaused, setInteractionPaused] = useState(false);
+  const [verificationPaused, setVerificationPaused] = useState(false);
+  const [isDragging, setIsDragging] = useState(false);
+  const viewportRef = useRef<HTMLDivElement>(null);
+  const primaryGroupRef = useRef<HTMLDivElement>(null);
+  const interactionResumeTimerRef = useRef<number | null>(null);
+  const verificationResumeTimerRef = useRef<number | null>(null);
+  const verificationOpenedRef = useRef(false);
+  const mouseDraggingRef = useRef(false);
+  const dragStartXRef = useRef(0);
+  const dragStartScrollRef = useRef(0);
+  const dragMovedRef = useRef(false);
   const loopLength = items.length
     ? Math.max(
       HOME_CATEGORY_CARDS_MINIMUM,
@@ -235,34 +251,141 @@ function CategoryMarquee({
   const loopItems = items.length
     ? Array.from({ length: loopLength }, (_, index) => items[index % items.length])
     : [];
+  const autoMotionPaused = interactionPaused || verificationPaused;
+
+  const normalizeLoopPosition = useCallback(() => {
+    const viewport = viewportRef.current;
+    const groupWidth = primaryGroupRef.current?.scrollWidth ?? 0;
+    if (!viewport || groupWidth <= 0) return;
+    if (viewport.scrollLeft >= groupWidth * 2) viewport.scrollLeft -= groupWidth;
+    else if (viewport.scrollLeft <= 0) viewport.scrollLeft += groupWidth;
+  }, []);
+
+  const pauseForInteraction = useCallback(() => {
+    if (interactionResumeTimerRef.current) window.clearTimeout(interactionResumeTimerRef.current);
+    interactionResumeTimerRef.current = null;
+    setInteractionPaused(true);
+  }, []);
+
+  const scheduleInteractionResume = useCallback(() => {
+    if (interactionResumeTimerRef.current) window.clearTimeout(interactionResumeTimerRef.current);
+    interactionResumeTimerRef.current = window.setTimeout(() => {
+      interactionResumeTimerRef.current = null;
+      setInteractionPaused(false);
+    }, CATEGORY_INTERACTION_RESUME_MS);
+  }, []);
+
+  const openVerification = useCallback((productId: string) => {
+    if (interactionResumeTimerRef.current) window.clearTimeout(interactionResumeTimerRef.current);
+    if (verificationResumeTimerRef.current) window.clearTimeout(verificationResumeTimerRef.current);
+    interactionResumeTimerRef.current = null;
+    verificationResumeTimerRef.current = null;
+    verificationOpenedRef.current = false;
+    setInteractionPaused(false);
+    setVerificationPaused(true);
+    verifyProduct(productId);
+  }, [verifyProduct]);
 
   useEffect(() => {
-    if (!touchPaused) return;
-    const resume = () => setTouchPaused(false);
-    window.addEventListener("pointerup", resume, { passive: true });
-    window.addEventListener("pointercancel", resume, { passive: true });
-    return () => {
-      window.removeEventListener("pointerup", resume);
-      window.removeEventListener("pointercancel", resume);
+    if (!verificationPaused) return;
+    if (verificationActive) {
+      verificationOpenedRef.current = true;
+      return;
+    }
+    if (!verificationOpenedRef.current || verificationResumeTimerRef.current) return;
+    verificationOpenedRef.current = false;
+    verificationResumeTimerRef.current = window.setTimeout(() => {
+      verificationResumeTimerRef.current = null;
+      setVerificationPaused(false);
+    }, CATEGORY_VERIFICATION_RESUME_MS);
+  }, [verificationActive, verificationPaused]);
+
+  useEffect(() => {
+    const viewport = viewportRef.current;
+    const primaryGroup = primaryGroupRef.current;
+    if (!viewport || !primaryGroup) return;
+    const alignToMiddleGroup = () => {
+      const groupWidth = primaryGroup.scrollWidth;
+      if (groupWidth <= 0) return;
+      const cardOffset = loopItems.length > 0 ? (groupWidth / loopItems.length) * (sectionIndex % loopItems.length) * .24 : 0;
+      viewport.scrollLeft = groupWidth + cardOffset;
     };
-  }, [touchPaused]);
+    const frame = window.requestAnimationFrame(alignToMiddleGroup);
+    const resizeObserver = typeof ResizeObserver === "undefined" ? null : new ResizeObserver(alignToMiddleGroup);
+    resizeObserver?.observe(primaryGroup);
+    return () => {
+      window.cancelAnimationFrame(frame);
+      resizeObserver?.disconnect();
+    };
+  }, [loopItems.length, sectionIndex]);
+
+  useEffect(() => {
+    if (autoMotionPaused || items.length === 0 || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    let animationFrame = 0;
+    let previousTime: number | null = null;
+    const move = (time: number) => {
+      const viewport = viewportRef.current;
+      if (viewport && previousTime !== null) {
+        viewport.scrollLeft += Math.min(time - previousTime, 40) * CATEGORY_AUTO_SCROLL_PX_PER_MS;
+        normalizeLoopPosition();
+      }
+      previousTime = time;
+      animationFrame = window.requestAnimationFrame(move);
+    };
+    animationFrame = window.requestAnimationFrame(move);
+    return () => window.cancelAnimationFrame(animationFrame);
+  }, [autoMotionPaused, items.length, normalizeLoopPosition]);
+
+  useEffect(() => () => {
+    if (interactionResumeTimerRef.current) window.clearTimeout(interactionResumeTimerRef.current);
+    if (verificationResumeTimerRef.current) window.clearTimeout(verificationResumeTimerRef.current);
+  }, []);
+
+  const handlePointerDown = (event: React.PointerEvent<HTMLDivElement>) => {
+    pauseForInteraction();
+    const target = event.target as HTMLElement;
+    const interactiveTarget = target.closest("a, button, input, select, textarea");
+    if (event.pointerType === "mouse" && event.button === 0 && !interactiveTarget) {
+      mouseDraggingRef.current = true;
+      dragMovedRef.current = false;
+      dragStartXRef.current = event.clientX;
+      dragStartScrollRef.current = event.currentTarget.scrollLeft;
+      event.currentTarget.setPointerCapture(event.pointerId);
+      setIsDragging(true);
+    }
+  };
+
+  const handlePointerMove = (event: React.PointerEvent<HTMLDivElement>) => {
+    if (!mouseDraggingRef.current) return;
+    const distance = event.clientX - dragStartXRef.current;
+    if (Math.abs(distance) > 4) dragMovedRef.current = true;
+    event.currentTarget.scrollLeft = dragStartScrollRef.current - distance;
+    normalizeLoopPosition();
+  };
+
+  const handlePointerEnd = (event: React.PointerEvent<HTMLDivElement>) => {
+    if (mouseDraggingRef.current) {
+      mouseDraggingRef.current = false;
+      if (event.currentTarget.hasPointerCapture(event.pointerId)) event.currentTarget.releasePointerCapture(event.pointerId);
+      setIsDragging(false);
+      if (dragMovedRef.current) window.setTimeout(() => { dragMovedRef.current = false; }, 0);
+    }
+    scheduleInteractionResume();
+  };
 
   if (items.length === 0) return null;
 
   const renderCard = (product: Product, itemIndex: number, groupIndex: number) => {
-    const visualClone = groupIndex > 0 || itemIndex >= items.length;
     return (
       <div
         className="category-marquee-card"
         key={`${groupIndex}-${product.id}-${itemIndex}`}
-        aria-hidden={visualClone}
-        inert={visualClone}
       >
         <ProductCard
           product={product}
           navigate={navigate}
           addToCart={addToCart}
-          verifyProduct={verifyProduct}
+          verifyProduct={openVerification}
           isWishlisted={wishlistIds.includes(product.id)}
           toggleWishlist={toggleWishlist}
           compact
@@ -285,19 +408,29 @@ function CategoryMarquee({
         )}
       />
       <div
-        className={`category-marquee ${touchPaused ? "is-paused" : ""}`}
+        ref={viewportRef}
+        className={`category-marquee ${autoMotionPaused ? "is-paused" : ""} ${isDragging ? "is-dragging" : ""}`}
         aria-label={`${category.label} continuously moving product carousel`}
-        onPointerDown={(event) => {
-          if (event.pointerType !== "mouse") setTouchPaused(true);
+        onPointerDown={handlePointerDown}
+        onPointerMove={handlePointerMove}
+        onPointerUp={handlePointerEnd}
+        onPointerCancel={handlePointerEnd}
+        onMouseEnter={pauseForInteraction}
+        onMouseLeave={() => { if (!mouseDraggingRef.current) scheduleInteractionResume(); }}
+        onWheel={() => { pauseForInteraction(); scheduleInteractionResume(); }}
+        onFocusCapture={pauseForInteraction}
+        onBlurCapture={(event) => { if (!event.currentTarget.contains(event.relatedTarget as Node | null)) scheduleInteractionResume(); }}
+        onScroll={normalizeLoopPosition}
+        onClickCapture={(event) => {
+          if (!dragMovedRef.current) return;
+          event.preventDefault();
+          event.stopPropagation();
+          dragMovedRef.current = false;
         }}
-        style={{
-          "--category-marquee-duration": `${loopLength * 7.5}s`,
-          "--category-marquee-delay": `${sectionIndex * -3.75}s`,
-        } as React.CSSProperties}
       >
         <div className="category-marquee-track">
-          {[0, 1].map((groupIndex) => (
-            <div className="category-marquee-group" key={groupIndex} aria-hidden={groupIndex > 0} inert={groupIndex > 0}>
+          {[0, 1, 2].map((groupIndex) => (
+            <div className="category-marquee-group" key={groupIndex} ref={groupIndex === 0 ? primaryGroupRef : undefined}>
               {loopItems.map((product, itemIndex) => renderCard(product, itemIndex, groupIndex))}
             </div>
           ))}
@@ -330,7 +463,7 @@ function LegacyHomeSections({ featured, navigate }: { featured: Product[]; navig
   );
 }
 
-export function HomePage({ navigate, addToCart, verifyProduct, wishlistIds, toggleWishlist }: SharedPageProps) {
+export function HomePage({ navigate, addToCart, verifyProduct, wishlistIds, toggleWishlist, verificationActive }: SharedPageProps) {
   const featured = products.filter((product) => product.featured).slice(0, 8);
   const heroProducts = featured.slice(0, 6);
 
@@ -377,6 +510,7 @@ export function HomePage({ navigate, addToCart, verifyProduct, wishlistIds, togg
               verifyProduct={verifyProduct}
               wishlistIds={wishlistIds}
               toggleWishlist={toggleWishlist}
+              verificationActive={verificationActive}
             />
           ))}
         </div>
@@ -831,7 +965,7 @@ const accountSectionContent: Record<Exclude<AccountSection, "edit-profile">, { t
   },
 };
 
-function WishlistCatalog({ navigate, addToCart, verifyProduct, wishlistIds, toggleWishlist }: SharedPageProps) {
+function WishlistCatalog({ navigate, addToCart, verifyProduct, wishlistIds, toggleWishlist }: Omit<SharedPageProps, "verificationActive">) {
   const [query, setQuery] = useState("");
   const [category, setCategory] = useState("All Products");
   const [origin, setOrigin] = useState("All");
