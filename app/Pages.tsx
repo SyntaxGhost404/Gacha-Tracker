@@ -21,6 +21,8 @@ type SharedPageProps = {
   navigate: (path: string) => void;
   addToCart: (productId: string) => void;
   verifyProduct: (productId: string) => void;
+  wishlistIds: string[];
+  toggleWishlist: (productId: string) => void;
 };
 
 function InternalLink({
@@ -216,6 +218,8 @@ function CategoryMarquee({
   navigate,
   addToCart,
   verifyProduct,
+  wishlistIds,
+  toggleWishlist,
 }: SharedPageProps & {
   category: (typeof homeCategoryDefinitions)[number];
   items: Product[];
@@ -259,6 +263,8 @@ function CategoryMarquee({
           navigate={navigate}
           addToCart={addToCart}
           verifyProduct={verifyProduct}
+          isWishlisted={wishlistIds.includes(product.id)}
+          toggleWishlist={toggleWishlist}
           compact
         />
       </div>
@@ -324,7 +330,7 @@ function LegacyHomeSections({ featured, navigate }: { featured: Product[]; navig
   );
 }
 
-export function HomePage({ navigate, addToCart, verifyProduct }: SharedPageProps) {
+export function HomePage({ navigate, addToCart, verifyProduct, wishlistIds, toggleWishlist }: SharedPageProps) {
   const featured = products.filter((product) => product.featured).slice(0, 8);
   const heroProducts = featured.slice(0, 6);
 
@@ -369,6 +375,8 @@ export function HomePage({ navigate, addToCart, verifyProduct }: SharedPageProps
               navigate={navigate}
               addToCart={addToCart}
               verifyProduct={verifyProduct}
+              wishlistIds={wishlistIds}
+              toggleWishlist={toggleWishlist}
             />
           ))}
         </div>
@@ -381,7 +389,7 @@ const categories = shopCategories.map((category) => category.label);
 const origins = ["All", "South Korea", "Japan", "USA", "China"];
 const skinTypes = ["All", "Sensitive", "Dry", "Combination", "Dehydrated", "All skin"];
 
-export function ShopPage({ navigate, addToCart, verifyProduct, activeCategory }: SharedPageProps & { activeCategory: ShopCategory }) {
+export function ShopPage({ navigate, addToCart, verifyProduct, wishlistIds, toggleWishlist, activeCategory }: SharedPageProps & { activeCategory: ShopCategory }) {
   const [query, setQuery] = useState("");
   const [origin, setOrigin] = useState("All");
   const [skinType, setSkinType] = useState("All");
@@ -525,13 +533,13 @@ export function ShopPage({ navigate, addToCart, verifyProduct, activeCategory }:
             {available.length > 0 && (
               <section className="result-section">
                 <SectionHeader title="Available now" count={available.length} />
-                <div className={`product-list ${viewMode === "compact" ? "is-compact" : "is-standard"}`}>{available.map((product) => <ProductCard key={product.id} product={product} navigate={navigate} addToCart={addToCart} verifyProduct={verifyProduct} compact={viewMode === "compact"} />)}</div>
+                <div className={`product-list ${viewMode === "compact" ? "is-compact" : "is-standard"}`}>{available.map((product) => <ProductCard key={product.id} product={product} navigate={navigate} addToCart={addToCart} verifyProduct={verifyProduct} isWishlisted={wishlistIds.includes(product.id)} toggleWishlist={toggleWishlist} compact={viewMode === "compact"} />)}</div>
               </section>
             )}
             {restocking.length > 0 && (
               <section className="result-section">
                 <SectionHeader title="Returning soon" count={restocking.length} />
-                <div className={`product-list ${viewMode === "compact" ? "is-compact" : "is-standard"}`}>{restocking.map((product) => <ProductCard key={product.id} product={product} navigate={navigate} addToCart={addToCart} verifyProduct={verifyProduct} compact={viewMode === "compact"} />)}</div>
+                <div className={`product-list ${viewMode === "compact" ? "is-compact" : "is-standard"}`}>{restocking.map((product) => <ProductCard key={product.id} product={product} navigate={navigate} addToCart={addToCart} verifyProduct={verifyProduct} isWishlisted={wishlistIds.includes(product.id)} toggleWishlist={toggleWishlist} compact={viewMode === "compact"} />)}</div>
               </section>
             )}
           </>
@@ -563,7 +571,7 @@ function EmptyState({ title, copy, action, onAction }: { title: string; copy: st
   );
 }
 
-export function BestSellersPage({ navigate, addToCart, verifyProduct }: SharedPageProps) {
+export function BestSellersPage({ navigate, addToCart, verifyProduct, wishlistIds, toggleWishlist }: SharedPageProps) {
   const bestSellers = products.filter((product) => product.status === "Bestseller");
   return (
     <div className="route-page standard-route">
@@ -577,7 +585,7 @@ export function BestSellersPage({ navigate, addToCart, verifyProduct }: SharedPa
         </div>
         <section className="result-section">
           <SectionHeader title="Most loved" count={bestSellers.length} />
-          <div className="product-list">{bestSellers.map((product) => <ProductCard key={product.id} product={product} navigate={navigate} addToCart={addToCart} verifyProduct={verifyProduct} />)}</div>
+          <div className="product-list">{bestSellers.map((product) => <ProductCard key={product.id} product={product} navigate={navigate} addToCart={addToCart} verifyProduct={verifyProduct} isWishlisted={wishlistIds.includes(product.id)} toggleWishlist={toggleWishlist} />)}</div>
         </section>
       </div>
     </div>
@@ -798,15 +806,15 @@ const accountDashboardOptions: Array<{
 
 const accountSectionContent: Record<Exclude<AccountSection, "edit-profile">, { title: string; subtitle: string; emptyTitle: string; copy: string; actionPath: string; actionLabel: string }> = {
   orders: {
-    title: "Orders",
-    subtitle: "Review online purchases and nationwide home-delivery updates in one place.",
+    title: "Order Status",
+    subtitle: "Follow active, delivered and cancelled online purchases and their nationwide home-delivery progress.",
     emptyTitle: "No linked orders yet",
     copy: "Confirmed ORAVÈ orders will appear here when account-linked ordering is available. For an existing delivery, our online team can help you track it now.",
     actionPath: "/contact",
     actionLabel: "Track an order",
   },
   wishlist: {
-    title: "Wishlist",
+    title: "Wishlisted Products",
     subtitle: "Keep a considered shortlist of products you would like to revisit.",
     emptyTitle: "Your wishlist is ready for you",
     copy: "Products you save for later will be gathered here. Browse the online catalog to start building your edit.",
@@ -814,8 +822,8 @@ const accountSectionContent: Record<Exclude<AccountSection, "edit-profile">, { t
     actionLabel: "Browse products",
   },
   history: {
-    title: "History",
-    subtitle: "Return to your recent account and shopping activity.",
+    title: "Activity History",
+    subtitle: "Review broader account activity, including recent shopping, saved-product and profile events.",
     emptyTitle: "No recent activity",
     copy: "Your recent ORAVÈ account activity will appear here as you browse and shop while signed in.",
     actionPath: "/shop",
@@ -823,14 +831,180 @@ const accountSectionContent: Record<Exclude<AccountSection, "edit-profile">, { t
   },
 };
 
+function WishlistCatalog({ navigate, addToCart, verifyProduct, wishlistIds, toggleWishlist }: SharedPageProps) {
+  const [query, setQuery] = useState("");
+  const [category, setCategory] = useState("All Products");
+  const [origin, setOrigin] = useState("All");
+  const [sort, setSort] = useState("saved");
+  const [viewMode, setViewMode] = useState<"standard" | "compact">("standard");
+  const [panel, setPanel] = useState<"filter" | "sort" | "view" | null>(null);
+
+  const savedProducts = useMemo(
+    () => wishlistIds
+      .map((id) => products.find((product) => product.id === id))
+      .filter((product): product is Product => Boolean(product)),
+    [wishlistIds],
+  );
+
+  const filtered = useMemo(() => {
+    const normalized = query.trim().toLowerCase();
+    const matches = savedProducts.filter((product) => {
+      const matchesQuery = !normalized || [
+        product.name,
+        product.category,
+        product.shopCategory,
+        product.origin,
+        product.concerns.join(" "),
+      ].join(" ").toLowerCase().includes(normalized);
+      const matchesCategory = category === "All Products" || product.shopCategory === category;
+      const matchesOrigin = origin === "All" || product.originKey === origin;
+      return matchesQuery && matchesCategory && matchesOrigin;
+    });
+
+    if (sort === "name") return [...matches].sort((a, b) => a.name.localeCompare(b.name));
+    if (sort === "price-low") return [...matches].sort((a, b) => a.price - b.price);
+    if (sort === "price-high") return [...matches].sort((a, b) => b.price - a.price);
+    if (sort === "rating") return [...matches].sort((a, b) => b.rating - a.rating);
+    return [...matches].reverse();
+  }, [category, origin, query, savedProducts, sort]);
+
+  const filterActive = category !== "All Products" || origin !== "All";
+  const hasRefinement = Boolean(query || filterActive || sort !== "saved");
+  const reset = () => {
+    setQuery("");
+    setCategory("All Products");
+    setOrigin("All");
+    setSort("saved");
+    setPanel(null);
+  };
+
+  return (
+    <div className="account-section-page wishlist-section-page">
+      <header className="account-section-header">
+        <h1>Wishlisted Products</h1>
+        <p>Search, refine and revisit the products saved on this device.</p>
+      </header>
+
+      <label className="directory-search">
+        <Icon name="search" />
+        <input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search wishlisted products" />
+        {query && <button type="button" onClick={() => setQuery("")} aria-label="Clear wishlist search"><Icon name="x" /></button>}
+      </label>
+
+      <div className="directory-controls wishlist-controls">
+        <button type="button" className={panel === "filter" ? "is-active" : ""} onClick={() => setPanel(panel === "filter" ? null : "filter")}>
+          <Icon name="filter" /> Filter
+          {filterActive && <span className="control-dot" />}
+          <Icon name="chevron-down" className={panel === "filter" ? "is-rotated" : ""} />
+        </button>
+        <button type="button" className={panel === "sort" ? "is-active" : ""} onClick={() => setPanel(panel === "sort" ? null : "sort")}>
+          <Icon name="sort" /> Sort
+          {sort !== "saved" && <span className="control-dot" />}
+          <span className="control-value">{sort.replace("-", " ")}</span>
+          <Icon name="chevron-down" className={panel === "sort" ? "is-rotated" : ""} />
+        </button>
+        <button type="button" className={panel === "view" ? "is-active" : ""} onClick={() => setPanel(panel === "view" ? null : "view")}>
+          <Icon name="grid" /> View
+          {viewMode === "compact" && <span className="control-dot" />}
+          <span className="control-value">{viewMode}</span>
+          <Icon name="chevron-down" className={panel === "view" ? "is-rotated" : ""} />
+        </button>
+      </div>
+
+      {panel === "filter" && (
+        <div className="control-panel">
+          <FilterGroup label="Category" options={categories} value={category} setValue={setCategory} />
+          <FilterGroup label="Origin" options={origins} value={origin} setValue={setOrigin} />
+        </div>
+      )}
+
+      {panel === "sort" && (
+        <div className="control-panel sort-panel">
+          {[
+            ["saved", "Recently saved"],
+            ["rating", "Highest rated"],
+            ["price-low", "Price: low to high"],
+            ["price-high", "Price: high to low"],
+            ["name", "Name: A to Z"],
+          ].map(([value, label]) => (
+            <button key={value} type="button" className={sort === value ? "is-selected" : ""} onClick={() => { setSort(value); setPanel(null); }}>
+              <span>{label}</span>{sort === value && <Icon name="check" />}
+            </button>
+          ))}
+        </div>
+      )}
+
+      {panel === "view" && (
+        <div className="control-panel sort-panel view-panel">
+          {[
+            ["standard", "Standard view"],
+            ["compact", "Compact view"],
+          ].map(([value, label]) => (
+            <button key={value} type="button" className={viewMode === value ? "is-selected" : ""} onClick={() => { setViewMode(value as "standard" | "compact"); setPanel(null); }}>
+              <span>{label}</span>{viewMode === value && <Icon name="check" />}
+            </button>
+          ))}
+        </div>
+      )}
+
+      <div className="results-row">
+        <span>Showing <strong>{filtered.length}</strong> of {savedProducts.length} saved products</span>
+        {hasRefinement && <button type="button" onClick={reset}>Reset all</button>}
+      </div>
+
+      {savedProducts.length === 0 ? (
+        <EmptyState
+          title="Your wishlist is ready for you"
+          copy="Use the heart button on any product card to build a shortlist that stays on this device."
+          action="Browse products"
+          onAction={() => navigate("/shop")}
+        />
+      ) : filtered.length === 0 ? (
+        <EmptyState
+          title="No saved products match"
+          copy="Try clearing a filter or using a broader search."
+          action="Reset filters"
+          onAction={reset}
+        />
+      ) : (
+        <section className="result-section wishlist-results">
+          <SectionHeader title="Saved products" count={filtered.length} />
+          <div className={`product-list ${viewMode === "compact" ? "is-compact" : "is-standard"}`}>
+            {filtered.map((product) => (
+              <ProductCard
+                key={product.id}
+                product={product}
+                navigate={navigate}
+                addToCart={addToCart}
+                verifyProduct={verifyProduct}
+                isWishlisted
+                toggleWishlist={toggleWishlist}
+                compact={viewMode === "compact"}
+              />
+            ))}
+          </div>
+        </section>
+      )}
+    </div>
+  );
+}
+
 export function AccountPage({
   navigate,
+  addToCart,
+  verifyProduct,
+  wishlistIds,
+  toggleWishlist,
   user,
   section,
   accountSignInPath,
   signOutPath,
 }: {
   navigate: (path: string) => void;
+  addToCart: (productId: string) => void;
+  verifyProduct: (productId: string) => void;
+  wishlistIds: string[];
+  toggleWishlist: (productId: string) => void;
   user: ChatGPTUser | null;
   section?: AccountSection;
   accountSignInPath: string;
@@ -886,7 +1060,7 @@ export function AccountPage({
         ) : section === "edit-profile" ? (
           <div className="account-section-page">
             <header className="account-section-header">
-              <h1>Edit Profile</h1>
+              <h1>Edit Your Profile</h1>
               <p>Review the name and email connected to your ORAVÈ account.</p>
             </header>
             <section className="account-detail-card">
@@ -900,6 +1074,14 @@ export function AccountPage({
               </div>
             </section>
           </div>
+        ) : section === "wishlist" ? (
+          <WishlistCatalog
+            navigate={navigate}
+            addToCart={addToCart}
+            verifyProduct={verifyProduct}
+            wishlistIds={wishlistIds}
+            toggleWishlist={toggleWishlist}
+          />
         ) : detail ? (
           <div className="account-section-page">
             <header className="account-section-header">

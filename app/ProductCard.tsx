@@ -11,10 +11,20 @@ type ProductCardProps = {
   navigate: (path: string) => void;
   addToCart: (productId: string) => void;
   verifyProduct: (productId: string) => void;
+  isWishlisted: boolean;
+  toggleWishlist: (productId: string) => void;
   compact?: boolean;
 };
 
-export default function ProductCard({ product, navigate, addToCart, verifyProduct, compact = false }: ProductCardProps) {
+export default function ProductCard({
+  product,
+  navigate,
+  addToCart,
+  verifyProduct,
+  isWishlisted,
+  toggleWishlist,
+  compact = false,
+}: ProductCardProps) {
   const [expanded, setExpanded] = useState(false);
   const productPath = `/product/${product.id}`;
 
@@ -25,14 +35,25 @@ export default function ProductCard({ product, navigate, addToCart, verifyProduc
 
   return (
     <article className={`product-card ${compact ? "is-compact" : "is-standard"}`}>
-      <a className="product-cover" href={productPath} onClick={follow} aria-label={`View ${product.name}`}>
-        <img src={product.image} alt="" />
-        <span className={`cover-badge status-${product.status.toLowerCase().replaceAll(" ", "-")}`}>
-          {product.status}
-        </span>
-        <span className="cover-badge cover-origin">{product.origin}</span>
-        <span className="cover-shade" />
-      </a>
+      <div className="product-cover">
+        <a className="product-cover-link" href={productPath} onClick={follow} aria-label={`View ${product.name}`}>
+          <img src={product.image} alt="" />
+          <span className={`cover-badge status-${product.status.toLowerCase().replaceAll(" ", "-")}`}>
+            {product.status}
+          </span>
+          <span className="cover-badge cover-origin">{product.origin}</span>
+          <span className="cover-shade" />
+        </a>
+        <button
+          className={`wishlist-button ${isWishlisted ? "is-wishlisted" : ""}`}
+          type="button"
+          onClick={() => toggleWishlist(product.id)}
+          aria-label={isWishlisted ? `Remove ${product.name} from wishlist` : `Add ${product.name} to wishlist`}
+          aria-pressed={isWishlisted}
+        >
+          <Icon name="heart" />
+        </button>
+      </div>
 
       <div className="product-card-body">
         <div className="identity-row">

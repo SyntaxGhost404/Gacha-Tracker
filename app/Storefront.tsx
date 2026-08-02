@@ -24,6 +24,7 @@ type CartState = Record<string, number>;
 
 const CART_KEY = "hb-cart-v1";
 const THEME_KEY = "hb-theme";
+const WISHLIST_KEY = "orave-wishlist-v1";
 
 export default function Storefront({
   initialPath,
@@ -41,6 +42,7 @@ export default function Storefront({
   const [path, setPath] = useState(initialPath || "/");
   const [theme, setTheme] = useState<"light" | "dark">("light");
   const [cart, setCart] = useState<CartState>({});
+  const [wishlistIds, setWishlistIds] = useState<string[]>([]);
   const [storageReady, setStorageReady] = useState(false);
   const [cartOpen, setCartOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
@@ -99,6 +101,18 @@ export default function Storefront({
       } catch {
         localStorage.removeItem(CART_KEY);
       }
+
+      try {
+        const savedWishlist = JSON.parse(localStorage.getItem(WISHLIST_KEY) ?? "[]");
+        if (Array.isArray(savedWishlist)) {
+          const validIds = savedWishlist.filter(
+            (id): id is string => typeof id === "string" && products.some((product) => product.id === id),
+          );
+          setWishlistIds(Array.from(new Set(validIds)));
+        }
+      } catch {
+        localStorage.removeItem(WISHLIST_KEY);
+      }
       setStorageReady(true);
     }, 0);
     return () => window.clearTimeout(timer);
@@ -107,6 +121,10 @@ export default function Storefront({
   useEffect(() => {
     if (storageReady) localStorage.setItem(CART_KEY, JSON.stringify(cart));
   }, [cart, storageReady]);
+
+  useEffect(() => {
+    if (storageReady) localStorage.setItem(WISHLIST_KEY, JSON.stringify(wishlistIds));
+  }, [storageReady, wishlistIds]);
 
   useEffect(() => {
     const onPopState = () => {
@@ -233,6 +251,16 @@ export default function Storefront({
     setSearchActive(false);
     notify(`${product.name} added to your bag`);
   }, [notify]);
+
+  const toggleWishlist = useCallback((productId: string) => {
+    const product = products.find((item) => item.id === productId);
+    if (!product) return;
+    const isSaved = wishlistIds.includes(productId);
+    setWishlistIds((current) => isSaved
+      ? current.filter((id) => id !== productId)
+      : [...current, productId]);
+    notify(isSaved ? `${product.name} removed from your wishlist` : `${product.name} saved to your wishlist`);
+  }, [notify, wishlistIds]);
 
   const updateQuantity = (productId: string, quantity: number) => {
     const product = products.find((item) => item.id === productId);
@@ -375,7 +403,7 @@ export default function Storefront({
       {verificationProduct && <ProductVerificationModal product={verificationProduct} onClose={closeVerification} />}
 
       <div id="main-scroll-container" className="main-scroll-container" ref={scrollRef} aria-hidden={Boolean(verificationProduct)} inert={Boolean(verificationProduct)}>
-        <div className="content-wrapper"><main><PageRouter path={path} navigate={navigate} addToCart={addToCart} verifyProduct={verifyProduct} user={user} accountSignInPath={accountSignInPath} signOutPath={signOutPath} /></main></div>
+        <div className="content-wrapper"><main><PageRouter path={path} navigate={navigate} addToCart={addToCart} verifyProduct={verifyProduct} wishlistIds={wishlistIds} toggleWishlist={toggleWishlist} user={user} accountSignInPath={accountSignInPath} signOutPath={signOutPath} /></main></div>
         <SiteFooter navigate={navigate} />
       </div>
 
@@ -411,6 +439,8 @@ function PageRouter({
   navigate,
   addToCart,
   verifyProduct,
+  wishlistIds,
+  toggleWishlist,
   user,
   accountSignInPath,
   signOutPath,
@@ -419,11 +449,13 @@ function PageRouter({
   navigate: (path: string) => void;
   addToCart: (productId: string) => void;
   verifyProduct: (productId: string) => void;
+  wishlistIds: string[];
+  toggleWishlist: (productId: string) => void;
   user: ChatGPTUser | null;
   accountSignInPath: string;
   signOutPath: string;
 }) {
-  const shared = { navigate, addToCart, verifyProduct };
+  const shared = { navigate, addToCart, verifyProduct, wishlistIds, toggleWishlist };
   const shopRoute = shopCategories.find((category) => category.path === path);
   if (path === "/") return <HomePage {...shared} />;
   if (shopRoute) return <ShopPage {...shared} activeCategory={shopRoute.label} />;
@@ -433,7 +465,7 @@ function PageRouter({
     const accountSection = ["orders", "wishlist", "history", "edit-profile"].includes(section ?? "")
       ? section as "orders" | "wishlist" | "history" | "edit-profile"
       : undefined;
-    return <AccountPage navigate={navigate} user={user} section={accountSection} accountSignInPath={accountSignInPath} signOutPath={signOutPath} />;
+    return <AccountPage navigate={navigate} addToCart={addToCart} verifyProduct={verifyProduct} wishlistIds={wishlistIds} toggleWishlist={toggleWishlist} user={user} section={accountSection} accountSignInPath={accountSignInPath} signOutPath={signOutPath} />;
   }
   if (path === "/journal") return <JournalPage {...shared} />;
   if (path.startsWith("/journal/")) return <ArticleDetailPage {...shared} articleId={decodeURIComponent(path.slice("/journal/".length))} />;

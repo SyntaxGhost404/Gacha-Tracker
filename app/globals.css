@@ -717,14 +717,21 @@ html[data-theme="dark"] .home-hero-shade {
 .product-card { width: 100%; min-width: 0; max-width: 100%; height: 100%; overflow: hidden; border: 1px solid var(--global-border); border-radius: .5rem; background: var(--global-card-bg); display: flex; flex-direction: column; transition: transform .2s ease, border-color .25s ease, box-shadow .2s ease; animation: slide-up .35s ease both; }
 .product-card:hover { transform: translateY(-1px); border-color: color-mix(in srgb, var(--global-text-muted) 52%, transparent); box-shadow: 0 8px 20px var(--global-shadow); }
 .product-cover { position: relative; height: 10rem; overflow: hidden; display: block; background: #f5dcd1; }
-.product-cover > img { width: 100%; height: 100%; object-fit: contain; object-position: center; filter: grayscale(.42) brightness(.96); transition: filter .4s ease, transform .5s cubic-bezier(.16,1,.3,1); }
-.product-card:hover .product-cover > img { filter: grayscale(0) brightness(1); transform: scale(1.01); }
+.product-cover-link { position: relative; width: 100%; height: 100%; display: block; color: inherit; }
+.product-cover-link > img { width: 100%; height: 100%; object-fit: contain; object-position: center; filter: grayscale(.42) brightness(.96); transition: filter .4s ease, transform .5s cubic-bezier(.16,1,.3,1); }
+.product-card:hover .product-cover-link > img { filter: grayscale(0) brightness(1); transform: scale(1.01); }
 .cover-shade { position: absolute; inset: 0; background: linear-gradient(to bottom, rgba(28,17,14,.03), rgba(28,17,14,.42)); pointer-events: none; }
 .cover-badge { position: absolute; top: .6rem; left: .65rem; z-index: 2; padding: .18rem .48rem; border: 1px solid rgba(255,255,255,.2); border-radius: .24rem; background: rgba(30,19,16,.68); color: #fff; backdrop-filter: blur(4px); font-size: .6rem; font-weight: 720; letter-spacing: .04em; }
 .cover-origin { left: auto; right: .65rem; }
 .status-bestseller { background: rgba(143,79,93,.88); }
 .status-new { background: rgba(81,113,89,.86); }
 .status-limited { background: rgba(165,115,55,.88); }
+.wishlist-button { position: absolute; z-index: 4; right: .65rem; bottom: .65rem; width: 2.15rem; height: 2.15rem; padding: .52rem; border: 1px solid rgba(255,255,255,.44); border-radius: .34rem; background: color-mix(in srgb, var(--global-card-bg) 86%, transparent); color: var(--global-text); box-shadow: 0 4px 14px rgba(28,17,14,.2); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); display: inline-flex; align-items: center; justify-content: center; cursor: pointer; transition: transform .2s cubic-bezier(.16,1,.3,1), background .2s ease, border-color .2s ease, color .2s ease, box-shadow .2s ease; }
+.wishlist-button svg { width: 1rem; height: 1rem; transition: fill .2s ease, transform .2s cubic-bezier(.16,1,.3,1); }
+.wishlist-button:hover { transform: translateY(-2px); border-color: color-mix(in srgb, var(--primary-accent) 55%, white); color: var(--primary-accent-strong); box-shadow: 0 7px 18px rgba(28,17,14,.26); }
+.wishlist-button:focus-visible { outline: 2px solid var(--primary-accent); outline-offset: 2px; }
+.wishlist-button.is-wishlisted { border-color: var(--primary-accent); background: var(--primary-accent); color: #fff; }
+.wishlist-button.is-wishlisted svg { fill: currentColor; animation: wishlist-heart-pop .34s cubic-bezier(.16,1,.3,1); }
 .product-card-body { min-width: 0; padding: .95rem 1rem; flex: 1; display: flex; flex-direction: column; gap: .65rem; }
 .identity-row { display: flex; align-items: center; gap: .75rem; }
 .product-thumb { width: 3.25rem; height: 3.25rem; flex-shrink: 0; overflow: hidden; border: 1px solid var(--global-border); border-radius: .55rem; background: var(--global-secondary-bg); }
@@ -781,6 +788,8 @@ html[data-theme="dark"] .home-hero-shade {
 .product-card.is-compact .card-action-button svg { width: .92rem; height: .92rem; }
 .product-card.is-compact .cover-badge { top: .42rem; left: .42rem; padding: .14rem .34rem; font-size: .52rem; }
 .product-card.is-compact .cover-origin { right: .42rem; left: auto; }
+.product-card.is-compact .wishlist-button { right: .42rem; bottom: .42rem; width: 1.9rem; height: 1.9rem; padding: .46rem; }
+.product-card.is-compact .wishlist-button svg { width: .9rem; height: .9rem; }
 
 .journal-filter-row { margin-bottom: .7rem; display: flex; justify-content: space-between; align-items: center; gap: 1rem; }
 .sort-select { position: relative; min-width: 8.5rem; height: 2rem; display: flex; align-items: center; }
@@ -992,6 +1001,7 @@ html[data-theme="dark"] .home-hero-shade {
 @keyframes slide-up { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
 @keyframes slide-down { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
 @keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
+@keyframes wishlist-heart-pop { 0% { transform: scale(.72); } 58% { transform: scale(1.22); } 100% { transform: scale(1); } }
 
 @media (max-width: 1024px) {
   .media-product-slide { flex-basis: 80%; }
