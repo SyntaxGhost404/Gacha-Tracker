@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { readFile } from "node:fs/promises";
+import { access, readFile } from "node:fs/promises";
 import test from "node:test";
 import ts from "typescript";
 
@@ -16,8 +16,8 @@ async function loadCatalogData() {
   return import(`data:text/javascript;base64,${Buffer.from(compiled).toString("base64")}`);
 }
 
-test("home directory is generated for every catalog category", async () => {
-  const { shopCategories } = await loadCatalogData();
+test("home directory is generated for every populated catalog category", async () => {
+  const { products, shopCategories } = await loadCatalogData();
   assert.deepEqual(
     shopCategories.slice(1).map(({ label }) => label),
     [
@@ -32,10 +32,38 @@ test("home directory is generated for every catalog category", async () => {
     ],
   );
 
+  for (const { label } of shopCategories.slice(1)) {
+    const categoryItems = products.filter((product) => product.shopCategory === label && product.stock > 0);
+    assert.ok(categoryItems.length > 0, `${label} needs at least one active product`);
+    for (const product of categoryItems) {
+      assert.ok(product.name.trim(), `${product.id} needs a title`);
+      assert.ok(product.category.trim(), `${product.id} needs a product tag`);
+      assert.ok(product.price > 0, `${product.id} needs a price`);
+      assert.ok(product.size.trim(), `${product.id} needs a size`);
+      assert.ok(product.summary.trim(), `${product.id} needs summary copy`);
+      assert.ok(product.image.startsWith("/images/products/"), `${product.id} needs a local product image`);
+      await access(projectFile(`public${product.image}`));
+    }
+  }
+
   const pages = await readFile(projectFile("app/Pages.tsx"), "utf8");
   assert.match(pages, /homeCategoryDefinitions\.map\(\(category, sectionIndex\) =>/);
   assert.match(pages, /product\.shopCategory === category\.label/);
   assert.match(pages, /<ProductCard[\s\S]*?compact/);
+  assert.doesNotMatch(pages, /CategoryPreviewCard|Collection in progress|Authenticity review|Arrival planning/);
+});
+
+test("home category metadata adapts only at the mobile breakpoint", async () => {
+  const [pages, styles] = await Promise.all([
+    readFile(projectFile("app/Pages.tsx"), "utf8"),
+    readFile(projectFile("app/globals.css"), "utf8"),
+  ]);
+
+  assert.match(pages, /className="view-category-label-full">View category<\/span>/);
+  assert.match(pages, /className="view-category-label-short">View<\/span>/);
+  assert.match(styles, /\.view-category-label-short \{ display: none; \}/);
+  assert.match(styles, /@media \(max-width: 600px\) \{[\s\S]*?\.home-category-section \.count-badge \{ display: none; \}/);
+  assert.match(styles, /@media \(max-width: 600px\) \{[\s\S]*?\.view-category-label-full \{ display: none; \}[\s\S]*?\.view-category-label-short \{ display: inline; \}/);
 });
 
 test("legacy home sections stay in source but remain disabled", async () => {

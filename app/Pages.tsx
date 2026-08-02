@@ -3,7 +3,7 @@
 /* eslint-disable @next/next/no-img-element */
 
 import { useEffect, useMemo, useState } from "react";
-import { Icon, type IconName } from "./Icon";
+import { Icon } from "./Icon";
 import type { ChatGPTUser } from "./chatgpt-auth";
 import JournalCard from "./JournalCard";
 import ProductCard from "./ProductCard";
@@ -208,45 +208,6 @@ function HeroProductCarousel({ items, navigate }: { items: Product[]; navigate: 
 const SHOW_LEGACY_HOME_SECTIONS = false;
 const HOME_CATEGORY_CARDS_MINIMUM = 6;
 const homeCategoryDefinitions = shopCategories.filter((category) => category.label !== "All Products");
-const categoryPreviewSteps: { icon: IconName; title: string; copy: string; badge: string }[] = [
-  { icon: "shield", title: "Authenticity review", copy: "Supplier and origin records are being reviewed before anything is listed online.", badge: "In review" },
-  { icon: "truck", title: "Arrival planning", copy: "The next import is being prepared for Bangladesh-wide home delivery.", badge: "Coming online" },
-  { icon: "sparkles", title: "Collection in progress", copy: "A focused edit is being assembled for this category without rushing the selection.", badge: "Curating" },
-];
-
-function CategoryPreviewCard({
-  category,
-  navigate,
-  variant,
-}: {
-  category: (typeof homeCategoryDefinitions)[number];
-  navigate: (path: string) => void;
-  variant: number;
-}) {
-  const preview = categoryPreviewSteps[variant % categoryPreviewSteps.length];
-
-  return (
-    <article className="product-card is-compact category-preview-card">
-      <div className="product-cover category-preview-cover">
-        <span className="category-preview-icon"><Icon name={preview.icon} /></span>
-        <span className="cover-badge">{preview.badge}</span>
-        <span className="cover-badge cover-origin">Online only</span>
-        <span className="cover-shade" />
-      </div>
-      <div className="product-card-body">
-        <div className="identity-copy">
-          <h3>{preview.title}</h3>
-          <span className="identity-subline">ORAVÈ category preview</span>
-        </div>
-        <div className="tag-row"><span className="tag tag-accent">{category.label}</span></div>
-        <p className="category-preview-copy">{preview.copy}</p>
-        <InternalLink href={category.path} navigate={navigate} className="outline-button category-preview-link">
-          Explore category <Icon name="arrow-right" />
-        </InternalLink>
-      </div>
-    </article>
-  );
-}
 
 function CategoryMarquee({
   category,
@@ -261,13 +222,15 @@ function CategoryMarquee({
   sectionIndex: number;
 }) {
   const [touchPaused, setTouchPaused] = useState(false);
-  const sourceCount = items.length || categoryPreviewSteps.length;
-  const loopLength = Math.max(
-    HOME_CATEGORY_CARDS_MINIMUM,
-    Math.ceil(HOME_CATEGORY_CARDS_MINIMUM / sourceCount) * sourceCount,
-  );
-  const loopItems = Array.from({ length: loopLength }, (_, index) => items.length ? items[index % items.length] : null);
-  const accessibleCount = items.length || categoryPreviewSteps.length;
+  const loopLength = items.length
+    ? Math.max(
+      HOME_CATEGORY_CARDS_MINIMUM,
+      Math.ceil(HOME_CATEGORY_CARDS_MINIMUM / items.length) * items.length,
+    )
+    : 0;
+  const loopItems = items.length
+    ? Array.from({ length: loopLength }, (_, index) => items[index % items.length])
+    : [];
 
   useEffect(() => {
     if (!touchPaused) return;
@@ -280,26 +243,24 @@ function CategoryMarquee({
     };
   }, [touchPaused]);
 
-  const renderCard = (product: Product | null, itemIndex: number, groupIndex: number) => {
-    const visualClone = groupIndex > 0 || itemIndex >= accessibleCount;
+  if (items.length === 0) return null;
+
+  const renderCard = (product: Product, itemIndex: number, groupIndex: number) => {
+    const visualClone = groupIndex > 0 || itemIndex >= items.length;
     return (
       <div
         className="category-marquee-card"
-        key={`${groupIndex}-${product?.id ?? "preview"}-${itemIndex}`}
+        key={`${groupIndex}-${product.id}-${itemIndex}`}
         aria-hidden={visualClone}
         inert={visualClone}
       >
-        {product ? (
-          <ProductCard
-            product={product}
-            navigate={navigate}
-            addToCart={addToCart}
-            verifyProduct={verifyProduct}
-            compact
-          />
-        ) : (
-          <CategoryPreviewCard category={category} navigate={navigate} variant={itemIndex} />
-        )}
+        <ProductCard
+          product={product}
+          navigate={navigate}
+          addToCart={addToCart}
+          verifyProduct={verifyProduct}
+          compact
+        />
       </div>
     );
   };
@@ -308,8 +269,14 @@ function CategoryMarquee({
     <section className="home-category-section" aria-label={`${category.label} products`}>
       <SectionHeader
         title={category.label}
-        count={items.length || undefined}
-        action={<InternalLink href={category.path} navigate={navigate} className="view-all-link">View category <Icon name="arrow-right" /></InternalLink>}
+        count={items.length}
+        action={(
+          <InternalLink href={category.path} navigate={navigate} className="view-all-link home-category-link">
+            <span className="view-category-label-full">View category</span>
+            <span className="view-category-label-short">View</span>
+            <Icon name="arrow-right" />
+          </InternalLink>
+        )}
       />
       <div
         className={`category-marquee ${touchPaused ? "is-paused" : ""}`}
