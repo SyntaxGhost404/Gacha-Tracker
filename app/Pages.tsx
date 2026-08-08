@@ -485,11 +485,7 @@ export function HomePage({ navigate, addToCart, verifyProduct, wishlistIds, togg
                 <Icon name="shield" /> How we source
               </InternalLink>
             </div>
-            <div className="hero-trust-row" aria-label="Service highlights">
-              <span><Icon name="shield" /> Authentic imports</span>
-              <span><Icon name="truck" /> Home delivery nationwide</span>
-              <span><Icon name="heart" /> 100% online-only</span>
-            </div>
+            <div className="hero-mobile-spacer" aria-hidden="true" />
           </div>
           <HeroProductCarousel items={heroProducts} navigate={navigate} />
         </div>

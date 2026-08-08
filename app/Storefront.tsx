@@ -2,7 +2,7 @@
 
 /* eslint-disable @next/next/no-html-link-for-pages, @next/next/no-img-element */
 
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { Icon } from "./Icon";
 import ProductVerificationModal, { PRODUCT_VERIFICATION_DRAWER_ID } from "./ProductVerificationModal";
 import {
@@ -55,9 +55,13 @@ export default function Storefront({
   const [bottomVisible, setBottomVisible] = useState(path !== "/");
   const [showScrollTop, setShowScrollTop] = useState(false);
   const [toast, setToast] = useState("");
+  const [searchPopoverStyle, setSearchPopoverStyle] = useState<React.CSSProperties>({});
+  const [cartPopoverStyle, setCartPopoverStyle] = useState<React.CSSProperties>({});
   const scrollRef = useRef<HTMLDivElement>(null);
   const searchInputRef = useRef<HTMLInputElement>(null);
   const headerRef = useRef<HTMLElement>(null);
+  const globalSearchRef = useRef<HTMLDivElement>(null);
+  const cartButtonRef = useRef<HTMLButtonElement>(null);
   const bottomRef = useRef<HTMLElement>(null);
   const toastTimerRef = useRef<number | null>(null);
   const verificationScrollTopRef = useRef(0);
@@ -140,6 +144,53 @@ export default function Storefront({
     window.addEventListener("popstate", onPopState);
     return () => window.removeEventListener("popstate", onPopState);
   }, []);
+
+  useLayoutEffect(() => {
+    if (!(cartOpen || (searchActive && searchQuery))) return;
+
+    const updatePopoverPositions = () => {
+      const headerRect = headerRef.current?.getBoundingClientRect();
+      if (!headerRect) return;
+
+      const isMobile = window.matchMedia("(max-width: 600px)").matches;
+      const viewportWidth = window.innerWidth;
+
+      if (searchActive && searchQuery && globalSearchRef.current) {
+        const searchRect = globalSearchRef.current.getBoundingClientRect();
+        const width = Math.min(22 * 16, Math.max(16, viewportWidth - 16));
+        const left = Math.min(
+          Math.max(8, searchRect.right - width),
+          Math.max(8, viewportWidth - width - 8),
+        );
+        setSearchPopoverStyle({
+          "--search-results-top": `${isMobile ? searchRect.bottom : headerRect.bottom}px`,
+          "--search-results-left": `${left}px`,
+          "--search-results-width": `${width}px`,
+        } as React.CSSProperties);
+      }
+
+      if (cartOpen && cartButtonRef.current) {
+        const buttonRect = cartButtonRef.current.getBoundingClientRect();
+        const width = Math.min(24 * 16, Math.max(16, viewportWidth - 16));
+        const left = Math.min(
+          Math.max(8, buttonRect.right - width),
+          Math.max(8, viewportWidth - width - 8),
+        );
+        setCartPopoverStyle({
+          "--cart-panel-top": `${headerRect.bottom}px`,
+          "--cart-panel-left": `${left}px`,
+        } as React.CSSProperties);
+      }
+    };
+
+    updatePopoverPositions();
+    window.addEventListener("resize", updatePopoverPositions);
+    window.addEventListener("scroll", updatePopoverPositions, true);
+    return () => {
+      window.removeEventListener("resize", updatePopoverPositions);
+      window.removeEventListener("scroll", updatePopoverPositions, true);
+    };
+  }, [cartOpen, searchActive, searchOpen, searchQuery]);
 
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
@@ -326,7 +377,7 @@ export default function Storefront({
           </nav>
 
           <div className="nav-actions">
-            <div className={`global-search ${searchOpen ? "is-mobile-open" : ""}`}>
+            <div ref={globalSearchRef} className={`global-search ${searchOpen ? "is-mobile-open" : ""}`}>
               <Icon name="search" className="search-prefix" />
               <input
                 ref={searchInputRef}
@@ -340,7 +391,7 @@ export default function Storefront({
               {searchQuery && <button type="button" className="search-clear" onClick={() => setSearchQuery("")} aria-label="Clear search"><Icon name="x" /></button>}
               <span className="shortcut-hint">⌘K</span>
               {searchActive && searchQuery && (
-                <div className="search-results" role="list">
+                <div className="search-results" style={searchPopoverStyle} role="list">
                   {searchResults.length ? searchResults.map((product) => (
                     <button key={product.id} type="button" role="listitem" onClick={() => navigate(`/product/${product.id}`)}>
                       <span className="result-image"><img src={product.image} alt="" /><i style={{ background: product.accent }} /></span>
@@ -358,10 +409,10 @@ export default function Storefront({
             </button>
 
             <div className="cart-anchor">
-              <button className={`nav-icon-button bag-button ${cartOpen ? "is-active" : ""}`} type="button" disabled={Boolean(verificationProduct)} onClick={() => { setCartOpen((value) => !value); setSearchOpen(false); setSearchActive(false); setMenuOpen(false); }} aria-label={`Shopping bag with ${cartCount} items`} aria-expanded={cartOpen}>
+              <button ref={cartButtonRef} className={`nav-icon-button bag-button ${cartOpen ? "is-active" : ""}`} type="button" disabled={Boolean(verificationProduct)} onClick={() => { setCartOpen((value) => !value); setSearchOpen(false); setSearchActive(false); setMenuOpen(false); }} aria-label={`Shopping bag with ${cartCount} items`} aria-expanded={cartOpen}>
                 <Icon name="bag" /><span className="bag-label">Bag</span>{cartCount > 0 && <b>{cartCount}</b>}
               </button>
-              {cartOpen && <CartPanel lines={cartLines} total={cartTotal} updateQuantity={updateQuantity} clear={() => setCart({})} orderMessage={orderMessage} navigate={navigate} />}
+              {cartOpen && <CartPanel lines={cartLines} total={cartTotal} updateQuantity={updateQuantity} clear={() => setCart({})} orderMessage={orderMessage} navigate={navigate} style={cartPopoverStyle} />}
             </div>
 
             <button className="nav-icon-button theme-button" type="button" onClick={toggleTheme} aria-label={`Switch to ${theme === "light" ? "dark" : "light"} theme`} title={`Switch to ${theme === "light" ? "dark" : "light"} theme`}>
@@ -489,6 +540,7 @@ function CartPanel({
   clear,
   orderMessage,
   navigate,
+  style,
 }: {
   lines: { product: (typeof products)[number]; quantity: number }[];
   total: number;
@@ -496,9 +548,10 @@ function CartPanel({
   clear: () => void;
   orderMessage: string;
   navigate: (path: string) => void;
+  style?: React.CSSProperties;
 }) {
   return (
-    <div className="cart-panel">
+    <div className="cart-panel" style={style}>
       <div className="cart-panel-header"><strong>Shopping bag</strong>{lines.length > 0 && <button type="button" onClick={clear}><Icon name="trash" /> Clear</button>}</div>
       {lines.length === 0 ? (
         <div className="empty-cart"><span><Icon name="bag" /></span><strong>Your bag is quietly waiting</strong><p>Add an authentic imported essential from ORAVÈ.</p><button className="solid-button" type="button" onClick={() => navigate("/shop")}>Browse online shop</button></div>
